@@ -4,10 +4,10 @@ import { Button, Card } from '../components/ui';
 import { Search, CalendarCheck, Home, FileBarChart, ArrowRight } from 'lucide-react';
 
 const steps = [
-  { icon: Search, title: 'Browse & Choose', desc: 'Search from 200+ lab tests, health packages, or book a doctor consultation. Compare prices and read test details.', emoji: '🔍', color: 'from-primary to-primary-light' },
-  { icon: CalendarCheck, title: 'Book & Schedule', desc: 'Pick a convenient date and time slot. Choose between home sample collection or lab visit. Secure online payment.', emoji: '📅', color: 'from-secondary to-emerald-500' },
-  { icon: Home, title: 'Sample Collection', desc: 'Our certified phlebotomist visits your home, or visit any of our partner labs. Safe, hygienic, and professional.', emoji: '🏠', color: 'from-accent to-amber-500' },
-  { icon: FileBarChart, title: 'Get Smart Reports', desc: 'Receive digital reports on your dashboard within hours. AI-powered health summaries help you understand results at a glance.', emoji: '📊', color: 'from-purple-500 to-indigo-500' },
+  { icon: Search, title: 'Browse & Choose', desc: 'Search from 200+ lab tests, health packages, or book a doctor consultation. Compare prices and read test details.', color: 'from-primary to-primary-light' },
+  { icon: CalendarCheck, title: 'Book & Schedule', desc: 'Pick a convenient date and time slot. Choose between home sample collection or lab visit. Secure online payment.', color: 'from-secondary to-emerald-500' },
+  { icon: Home, title: 'Sample Collection', desc: 'Our certified phlebotomist visits your home, or visit any of our partner labs. Safe, hygienic, and professional.', color: 'from-accent to-amber-500' },
+  { icon: FileBarChart, title: 'Get Smart Reports', desc: 'Receive digital reports on your dashboard within hours. AI-powered health summaries help you understand results at a glance.', color: 'from-purple-500 to-indigo-500' },
 ];
 
 export default function HowItWorksPage() {
@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-16">
-            {steps.map(({ icon: Icon, title, desc, emoji, color }, i) => (
+            {steps.map(({ icon: Icon, title, desc, color }, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
@@ -36,7 +36,7 @@ export default function HowItWorksPage() {
                 className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 <div className={`w-32 h-32 bg-gradient-to-br ${color} rounded-3xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
-                  <span className="text-5xl">{emoji}</span>
+                  <Icon className="w-14 h-14 text-white drop-shadow-md" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
                   <span className="text-xs font-bold text-accent tracking-widest uppercase">Step {String(i + 1).padStart(2, '0')}</span>

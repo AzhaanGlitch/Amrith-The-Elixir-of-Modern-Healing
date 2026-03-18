@@ -6,7 +6,8 @@ import { departments, specialties, testimonials, tests } from '../data/mockData'
 import {
   Search, ArrowRight, Shield, Clock, Home, Star, ChevronLeft, ChevronRight,
   Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse, Scan,
-  Microscope, Activity, Wind, Leaf, Users, Award, Zap, CheckCircle2
+  Microscope, Activity, Wind, Leaf, Users, Award, Zap, CheckCircle2,
+  TestTubes, Smile, UserCheck, CalendarDays, FileOutput, MousePointerClick, Building2
 } from 'lucide-react';
 
 const iconMap = { Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse, Scan, Microscope, Activity, Wind, Leaf };
@@ -26,121 +27,120 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary via-primary-dark to-[#004E57] text-white overflow-hidden">
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+      <section 
+        className="relative min-h-screen bg-cover bg-center bg-no-repeat text-white overflow-hidden flex items-center pt-24 pb-16"
+        style={{ backgroundImage: `url('/home_page.png')` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/50 to-transparent" />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="max-w-3xl mx-auto text-center">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-              <Badge variant="accent" className="mb-6 bg-accent/20 text-accent-light border border-accent/30 px-4 py-1.5 text-sm">
-                ✨ Trusted by 50,000+ patients across India
-              </Badge>
-            </motion.div>
+        <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-between">
+          <div className="max-w-3xl text-left relative z-10">
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold leading-tight mb-6"
-            >
-              Amrith — The Elixir of{' '}
-              <span className="relative">
-                <span className="text-accent">Modern Healing</span>
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 8C50 2 150 2 198 8" stroke="#D4A017" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-              </span>
-            </motion.h1>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="font-heading font-black leading-[1.1] tracking-tight mb-8"
+              >
+                <span className="block text-6xl sm:text-7xl lg:text-[8rem] mb-2 uppercase tracking-widest text-white drop-shadow-lg leading-none">AMRITH</span>
+                <span className="block text-3xl sm:text-4xl lg:text-[3rem] text-white/80 font-bold tracking-tight mb-1">
+                  The Elixir of
+                </span>
+                <span className="block text-4xl sm:text-5xl lg:text-[4.5rem] text-secondary drop-shadow-sm font-black leading-none">
+                  Modern Healing
+                </span>
+              </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-lg sm:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl mx-auto"
-            >
-              Book lab tests, health packages, and doctor consultations — all from the comfort of your home. 
-              Quality diagnostics at transparent prices.
-            </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-lg sm:text-xl text-white/80 mb-10 leading-relaxed max-w-xl"
+              >
+                Book lab tests, health packages, and doctor consultations, all from the comfort of your home. 
+                Quality diagnostics at transparent prices.
+              </motion.p>
 
-            {/* Hero Search */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="max-w-2xl mx-auto mb-10"
-            >
-              <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for tests, packages, or specialties..."
-                  className="w-full py-4 lg:py-5 pl-14 pr-36 bg-white rounded-2xl text-text text-base shadow-xl focus:ring-4 focus:ring-white/20 border-0 placeholder:text-text-muted"
-                  aria-label="Search for health tests and services"
-                />
-                <button
-                  onClick={() => navigate('/departments')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-light transition-all hidden sm:block"
+              {/* Hero Search */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="max-w-xl mb-10"
+              >
+                <div className="relative flex items-center w-full">
+                  <Search className="absolute left-5 w-5 h-5 text-text-muted z-10" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for tests, packages, or specialties..."
+                    className="w-full py-4 lg:py-4.5 pl-14 pr-32 bg-white rounded-2xl text-text text-base shadow-xl focus:ring-4 focus:ring-secondary/30 outline-none border-0 placeholder:text-text-muted"
+                    aria-label="Search for health tests and services"
+                  />
+                  <button
+                    onClick={() => navigate('/departments')}
+                    className="absolute right-2 px-6 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-light transition-all hidden sm:block shadow-md"
+                  >
+                    Search
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Role Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="flex flex-col sm:flex-row gap-4 justify-start"
+              >
+                <Button
+                  variant="white"
+                  size="lg"
+                  onClick={() => navigate('/signup?role=patient')}
+                  className="group"
                 >
-                  Search
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Role Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <Button
-                variant="white"
-                size="lg"
-                onClick={() => navigate('/signup?role=patient')}
-                className="group"
-              >
-                <span className="text-lg">🧑‍⚕️</span>
-                I'm a Patient
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate('/signup?role=doctor')}
-                className="!border-white/30 !text-white hover:!bg-white/10 group"
-              >
-                <span className="text-lg">👨‍⚕️</span>
-                I'm a Doctor
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </motion.div>
+                  <UserCheck className="w-5 h-5 text-primary" />
+                  I'm a Patient
+                  <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate('/signup?role=doctor')}
+                  className="!border-white/30 !text-white hover:!bg-white/10 group bg-white/5 backdrop-blur-sm"
+                >
+                  <Stethoscope className="w-5 h-5" />
+                  I'm a Doctor
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </motion.div>
+            </div>
           </div>
-
-          {/* Trust Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 max-w-4xl mx-auto"
+        
+        {/* 3D Model Absolute Container */}
+        <motion.div
+          initial={{ opacity: 0, x: 300, scale: 0.8 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.3, type: 'spring', damping: 20 }}
+          className="hidden lg:flex absolute -right-[60vw] xl:-right-[55vw] top-1/2 -translate-y-1/2 w-[150vw] h-[150vh] pointer-events-none z-0"
+        >
+          <model-viewer
+            src="/medical_equipment.glb"
+            alt="3D Medical Equipment Model"
+            auto-rotate
+            interaction-prompt="none"
+            shadow-intensity="1"
+            exposure="1.2"
+            autoplay
+            style={{ width: '100%', height: '100%', outline: 'none' }}
+            camera-orbit="0deg 75deg 85%"
           >
-            {[
-              { value: '200+', label: 'Lab Tests', icon: '🧪' },
-              { value: '50K+', label: 'Happy Patients', icon: '😊' },
-              { value: '500+', label: 'Expert Doctors', icon: '👨‍⚕️' },
-              { value: '4.9★', label: 'Patient Rating', icon: '⭐' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center border border-white/10">
-                <span className="text-2xl mb-1 block">{stat.icon}</span>
-                <p className="text-2xl font-heading font-bold">{stat.value}</p>
-                <p className="text-white/60 text-sm">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
+            <div slot="poster" className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 border-4 border-white border-t-transparent flex items-center justify-center rounded-full animate-spin opacity-30" />
+            </div>
+          </model-viewer>
+        </motion.div>
       </section>
 
       {/* Featured Specialties Carousel */}
@@ -151,49 +151,29 @@ export default function HomePage() {
             <p className="text-text-muted text-lg">Browse healthcare services across medical disciplines</p>
           </div>
 
-          <div className="relative">
-            <div className="flex gap-5 overflow-hidden">
-              <motion.div
-                className="flex gap-5"
-                animate={{ x: -carouselIndex * 220 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              >
-                {specialties.map((spec, i) => {
-                  const Icon = iconMap[spec.icon] || Heart;
-                  return (
-                    <motion.div
-                      key={i}
-                      whileHover={{ y: -8, scale: 1.03 }}
-                      className={`flex-shrink-0 w-48 bg-gradient-to-br ${spec.gradient} rounded-2xl p-6 text-white cursor-pointer shadow-lg`}
-                      onClick={() => navigate('/departments')}
-                    >
-                      <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <h3 className="font-heading font-semibold text-sm">{spec.name}</h3>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </div>
-
-            {/* Carousel Controls */}
-            <button
-              onClick={() => setCarouselIndex(Math.max(0, carouselIndex - 1))}
-              disabled={carouselIndex === 0}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-text hover:text-primary disabled:opacity-30 transition-all z-10"
-              aria-label="Previous specialties"
+          <div className="relative w-full overflow-hidden py-4 px-4 -mx-4 sm:px-0 sm:mx-0" style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
+            <motion.div
+              className="flex gap-6 w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ ease: "linear", duration: 30, repeat: Infinity }}
             >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setCarouselIndex(Math.min(maxSpIndex, carouselIndex + 1))}
-              disabled={carouselIndex >= maxSpIndex}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-text hover:text-primary disabled:opacity-30 transition-all z-10"
-              aria-label="Next specialties"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+              {[...specialties, ...specialties].map((spec, i) => {
+                const Icon = iconMap[spec.icon] || Heart;
+                return (
+                  <motion.div
+                    key={i}
+                    whileHover={{ y: -8, scale: 1.03 }}
+                    className={`flex-shrink-0 w-52 bg-gradient-to-br ${spec.gradient} rounded-2xl p-6 text-white cursor-pointer shadow-lg`}
+                    onClick={() => navigate('/departments')}
+                  >
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-heading font-semibold text-sm leading-tight">{spec.name}</h3>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -223,7 +203,11 @@ export default function HomePage() {
                 <Card className="p-6 h-full flex flex-col">
                   <div className="flex items-start justify-between mb-3">
                     <Badge variant={test.homeCollection ? 'secondary' : 'primary'}>
-                      {test.homeCollection ? '🏠 Home' : '🏥 Lab'}
+                      {test.homeCollection ? (
+                        <span className="flex items-center gap-1"><Home className="w-3.5 h-3.5" /> Home</span>
+                      ) : (
+                        <span className="flex items-center gap-1"><Building2 className="w-3.5 h-3.5" /> Lab</span>
+                      )}
                     </Badge>
                     {test.fasting && <Badge variant="warning">Fasting</Badge>}
                   </div>
@@ -297,11 +281,11 @@ export default function HomePage() {
             <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-primary via-secondary to-accent" />
             
             {[
-              { step: '01', title: 'Choose a Test', desc: 'Browse 200+ tests and health packages.', emoji: '🔍' },
-              { step: '02', title: 'Book & Pay', desc: 'Pick your slot and pay securely online.', emoji: '📅' },
-              { step: '03', title: 'Sample Collection', desc: 'At home or visit our nearest center.', emoji: '🏠' },
-              { step: '04', title: 'Get Reports', desc: 'Digital reports with AI health insights.', emoji: '📊' },
-            ].map(({ step, title, desc, emoji }, i) => (
+              { step: '01', title: 'Choose a Test', desc: 'Browse 200+ tests and health packages.', icon: <Search className="w-8 h-8 text-primary" /> },
+              { step: '02', title: 'Book & Pay', desc: 'Pick your slot and pay securely online.', icon: <CalendarDays className="w-8 h-8 text-secondary-dark" /> },
+              { step: '03', title: 'Sample Collection', desc: 'At home or visit our nearest center.', icon: <Home className="w-8 h-8 text-accent" /> },
+              { step: '04', title: 'Get Reports', desc: 'Digital reports with AI health insights.', icon: <FileOutput className="w-8 h-8 text-indigo-500" /> },
+            ].map(({ step, title, desc, icon }, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
@@ -310,8 +294,8 @@ export default function HomePage() {
                 transition={{ delay: i * 0.15 }}
                 className="text-center relative z-10"
               >
-                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center text-3xl mx-auto mb-5 border border-border-light">
-                  {emoji}
+                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-5 border border-border-light">
+                  {icon}
                 </div>
                 <span className="text-xs font-bold text-accent tracking-widest uppercase">Step {step}</span>
                 <h3 className="font-heading font-bold text-text mt-2 mb-2">{title}</h3>

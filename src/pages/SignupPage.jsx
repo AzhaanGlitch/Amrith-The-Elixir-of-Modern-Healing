@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/ui';
-import { ArrowRight, User, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowRight, User, Phone, Mail, MapPin, Stethoscope } from 'lucide-react';
 
 export default function SignupPage() {
   const [searchParams] = useSearchParams();
@@ -42,9 +42,8 @@ export default function SignupPage() {
       >
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-border-light">
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <span className="text-3xl">💧</span>
-              <span className="text-2xl font-heading font-bold text-primary">Amrith</span>
+            <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
+              <img src="/logo.png" alt="Amrith Logo" className="h-14 w-auto object-contain group-hover:scale-105 transition-transform" />
             </Link>
             <h1 className="text-2xl font-heading font-bold text-text">Create Account</h1>
             <p className="text-text-muted text-sm mt-1">Join 50,000+ users on Amrith</p>
@@ -60,7 +59,11 @@ export default function SignupPage() {
                   role === r ? 'bg-white text-primary shadow-sm' : 'text-text-muted hover:text-text'
                 }`}
               >
-                {r === 'patient' ? '🧑 Patient' : '👨‍⚕️ Doctor'}
+                {r === 'patient' ? (
+                  <span className="flex items-center justify-center gap-2"><User className="w-4 h-4" /> Patient</span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2"><Stethoscope className="w-4 h-4" /> Doctor</span>
+                )}
               </button>
             ))}
           </div>

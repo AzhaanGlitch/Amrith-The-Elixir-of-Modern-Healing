@@ -49,16 +49,14 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-border-light" role="navigation" aria-label="Main navigation">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group" aria-label="Amrith Home">
-            <span className="text-2xl group-hover:scale-110 transition-transform duration-300">💧</span>
-            <span className="text-xl font-heading font-bold text-primary tracking-tight">
-              Amrith
-            </span>
-          </Link>
+    <div className="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+      <nav className="max-w-7xl mx-auto bg-black/40 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-4xl pointer-events-auto" role="navigation" aria-label="Main navigation">
+        <div className="px-3 sm:px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 group" aria-label="Amrith Home">
+              <img src="/logo.png" alt="Amrith Logo" className="h-9 w-auto object-contain brightness-0 invert group-hover:scale-105 transition-transform duration-300" />
+            </Link>
 
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-1">
@@ -68,8 +66,8 @@ export default function Navbar() {
                 to={link.path}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive(link.path)
-                    ? 'text-primary bg-primary/8'
-                    : 'text-text-secondary hover:text-primary hover:bg-primary/5'
+                    ? 'text-white bg-white/10'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
                 }`}
               >
                 {link.label}
@@ -82,7 +80,7 @@ export default function Navbar() {
             {/* Search Toggle */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-primary/5 transition-all"
+              className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
               aria-label="Toggle search"
             >
               <Search className="w-5 h-5" />
@@ -93,7 +91,7 @@ export default function Navbar() {
                 {/* Dashboard Quick Link */}
                 <Link
                   to={dashboardPath}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-primary bg-primary/8 hover:bg-primary/15 transition-all"
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white bg-white/10 hover:bg-white/20 transition-all"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
@@ -103,14 +101,14 @@ export default function Navbar() {
                 <div ref={profileRef} className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-50 transition-all"
+                    className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/10 transition-all"
                     aria-label="User menu"
                     aria-expanded={profileOpen}
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light text-white text-xs font-semibold flex items-center justify-center">
                       {user.avatar}
                     </div>
-                    <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-white/70 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   <AnimatePresence>
@@ -165,13 +163,13 @@ export default function Navbar() {
               <div className="hidden sm:flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-5 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-xl transition-all"
+                  className="px-5 py-2 text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-5 py-2 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary-light hover:shadow-md transition-all"
+                  className="px-5 py-2 text-sm font-medium text-black bg-white rounded-3xl hover:bg-gray-100 hover:shadow-lg transition-all"
                 >
                   Get Started
                 </Link>
@@ -181,7 +179,7 @@ export default function Navbar() {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-text hover:bg-gray-50 transition-all"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
               aria-label="Toggle mobile menu"
               aria-expanded={mobileOpen}
             >
@@ -198,15 +196,15 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-t border-border-light bg-white overflow-hidden"
+            className="border-t border-white/10 rounded-b-2xl overflow-hidden"
           >
             <div className="max-w-3xl mx-auto px-4 py-4">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                 <input
                   type="text"
                   placeholder="Search tests, departments, doctors..."
-                  className="w-full py-3.5 pl-12 pr-4 bg-background rounded-xl border border-border text-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                  className="w-full py-3.5 pl-12 pr-4 bg-white/5 rounded-xl border border-white/10 text-white placeholder:text-white/50 focus:border-white/30 focus:ring-2 focus:ring-white/10 text-sm"
                   autoFocus
                   aria-label="Search across Amrith"
                 />
@@ -223,7 +221,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-border-light bg-white overflow-hidden"
+            className="lg:hidden border-t border-white/10 bg-black/50 backdrop-blur-md overflow-hidden rounded-b-2xl"
           >
             <div className="px-4 py-4 space-y-1">
               {publicLinks.map(link => (
@@ -232,29 +230,29 @@ export default function Navbar() {
                   to={link.path}
                   className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     isActive(link.path)
-                      ? 'text-primary bg-primary/8'
-                      : 'text-text-secondary hover:text-primary hover:bg-primary/5'
+                      ? 'text-white bg-white/10'
+                      : 'text-white/70 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
               {!isAuthenticated && (
-                <div className="pt-4 border-t border-border-light flex flex-col gap-2">
-                  <Link to="/login" className="block text-center px-4 py-3 rounded-xl text-sm font-medium text-primary border border-primary hover:bg-primary/5 transition-all">
+                <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
+                  <Link to="/login" className="block text-center px-4 py-3 rounded-xl text-sm font-medium text-white border border-white/30 hover:bg-white/10 transition-all">
                     Sign In
                   </Link>
-                  <Link to="/signup" className="block text-center px-4 py-3 rounded-xl text-sm font-medium text-white bg-primary hover:bg-primary-light transition-all">
+                  <Link to="/signup" className="block text-center px-4 py-3 rounded-xl text-sm font-medium text-black bg-white hover:bg-gray-100 transition-all">
                     Get Started
                   </Link>
                 </div>
               )}
               {isAuthenticated && (
-                <div className="pt-4 border-t border-border-light space-y-1">
-                  <Link to={dashboardPath} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-text-secondary hover:text-primary hover:bg-primary/5 transition-all">
+                <div className="pt-4 border-t border-white/10 space-y-1">
+                  <Link to={dashboardPath} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 transition-all">
                     <LayoutDashboard className="w-4 h-4" /> Dashboard
                   </Link>
-                  <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-error hover:bg-error/5 transition-all w-full text-left">
+                  <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all w-full text-left">
                     <LogOut className="w-4 h-4" /> Sign Out
                   </button>
                 </div>
@@ -263,6 +261,7 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+      </nav>
+    </div>
   );
 }

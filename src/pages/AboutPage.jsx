@@ -51,8 +51,8 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-3xl p-12 flex items-center justify-center">
-              <div className="text-center">
-                <span className="text-8xl mb-6 block">💧</span>
+              <div className="text-center flex flex-col items-center">
+                <img src="/logo.png" alt="Amrith Logo" className="h-32 w-auto object-contain drop-shadow-md mb-6" />
                 <p className="text-2xl font-heading font-bold text-primary">The Elixir of</p>
                 <p className="text-2xl font-heading font-bold text-accent">Modern Healing</p>
               </div>

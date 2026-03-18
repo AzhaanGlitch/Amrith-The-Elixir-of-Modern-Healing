@@ -43,8 +43,7 @@ export default function PatientLayout() {
               <Menu className="w-5 h-5" />
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-xl">💧</span>
-              <span className="text-lg font-heading font-bold text-primary">Amrith</span>
+              <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain" />
             </Link>
           </div>
 
@@ -126,8 +125,7 @@ export default function PatientLayout() {
               >
                 <div className="flex items-center justify-between p-4 border-b border-border-light">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">💧</span>
-                    <span className="text-lg font-heading font-bold text-primary">Amrith</span>
+                    <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain" />
                   </div>
                   <button
                     onClick={() => setSidebarOpen(false)}

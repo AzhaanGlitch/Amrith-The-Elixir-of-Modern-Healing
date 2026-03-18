@@ -9,9 +9,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">💧</span>
-              <span className="text-xl font-heading font-bold text-white">Amrith</span>
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
+              <img src="/logo.png" alt="Amrith Logo" className="h-10 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               The Elixir of Modern Healing. Premium healthcare platform making quality diagnostics accessible, 

@@ -42,8 +42,7 @@ export default function DoctorLayout() {
               <Menu className="w-5 h-5" />
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-xl">💧</span>
-              <span className="text-lg font-heading font-bold text-white">Amrith</span>
+              <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain brightness-0 invert" />
               <span className="hidden sm:inline text-xs font-medium text-accent bg-accent/15 px-2 py-0.5 rounded-full">Doctor</span>
             </Link>
           </div>
@@ -135,8 +134,7 @@ export default function DoctorLayout() {
               >
                 <div className="flex items-center justify-between p-4 border-b border-white/10">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">💧</span>
-                    <span className="text-lg font-heading font-bold text-white">Amrith</span>
+                    <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain brightness-0 invert" />
                   </div>
                   <button
                     onClick={() => setSidebarOpen(false)}

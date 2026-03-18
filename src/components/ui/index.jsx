@@ -84,8 +84,7 @@ export function LoadingScreen() {
         transition={{ duration: 0.5 }}
         className="text-3xl font-heading font-bold text-primary flex items-center gap-2"
       >
-        <span className="text-accent text-4xl">💧</span>
-        Amrith
+        <img src="/logo.png" alt="Amrith Logo" className="h-16 w-auto object-contain drop-shadow-lg" />
       </motion.div>
       <Spinner size="lg" />
       <p className="text-text-muted text-sm">Loading your health dashboard...</p>

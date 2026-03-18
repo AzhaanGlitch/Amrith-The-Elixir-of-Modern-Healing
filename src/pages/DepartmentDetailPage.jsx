@@ -5,7 +5,7 @@ import { Card, Badge, Button, SearchBar } from '../components/ui';
 import { departments, tests } from '../data/mockData';
 import { useAuth } from '../context/AuthContext';
 import {
-  ArrowLeft, Clock, Home, Building2, Filter, SortAsc
+  ArrowLeft, Clock, Home, Building2, Filter, SortAsc, Star, Stethoscope
 } from 'lucide-react';
 
 export default function DepartmentDetailPage() {
@@ -49,7 +49,7 @@ export default function DepartmentDetailPage() {
         <div className="mb-10">
           <div className="flex items-center gap-4 mb-3">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: department.color + '15' }}>
-              <span className="text-2xl">🏥</span>
+              <Stethoscope className="w-8 h-8 opacity-80" style={{ color: department.color }} />
             </div>
             <div>
               <h1 className="text-3xl font-heading font-bold text-text">{department.name}</h1>
@@ -104,9 +104,17 @@ export default function DepartmentDetailPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex gap-2">
                     <Badge variant={test.homeCollection ? 'secondary' : 'primary'}>
-                      {test.homeCollection ? '🏠 Home' : '🏥 Lab Visit'}
+                      {test.homeCollection ? (
+                        <span className="flex items-center gap-1"><Home className="w-3.5 h-3.5" /> Home</span>
+                      ) : (
+                        <span className="flex items-center gap-1"><Building2 className="w-3.5 h-3.5" /> Lab Visit</span>
+                      )}
                     </Badge>
-                    {test.popular && <Badge variant="accent">⭐ Popular</Badge>}
+                    {test.popular && (
+                      <Badge variant="accent">
+                        <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 fill-current" /> Popular</span>
+                      </Badge>
+                    )}
                   </div>
                   {test.fasting && <Badge variant="warning">Fasting</Badge>}
                 </div>

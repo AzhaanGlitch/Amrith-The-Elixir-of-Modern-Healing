@@ -116,7 +116,7 @@ export default function BookingPage() {
                 {departments.map(dept => (
                   <Card key={dept.id} className="p-5 cursor-pointer" onClick={() => setSelectedDept(dept.id)}>
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: dept.color + '15' }}>
-                      <span className="text-lg">🏥</span>
+                      <Building2 className="w-5 h-5 opacity-80" style={{ color: dept.color }} />
                     </div>
                     <h3 className="font-semibold text-text text-sm">{dept.name}</h3>
                     <p className="text-text-muted text-xs mt-1">{dept.testsCount} tests</p>

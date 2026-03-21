@@ -1,33 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #006D77;
-  --color-primary-light: #0891A1;
-  --color-primary-dark: #005A63;
-  --color-secondary: #81C784;
-  --color-secondary-light: #A5D6A7;
-  --color-secondary-dark: #66BB6A;
-  --color-accent: #D4A017;
-  --color-accent-light: #E6B530;
-  --color-accent-dark: #B8860B;
-  --color-background: #F8FCFD;
-  --color-background-alt: #F1F9FF;
+  --color-primary: #7e57c2;
+  --color-primary-light: #b085f5;
+  --color-primary-dark: #4d2c91;
+  --color-secondary: #8c9eff;
+  --color-secondary-light: #c0cfff;
+  --color-secondary-dark: #5870cb;
+  --color-accent: #e1bee7;
+  --color-accent-light: #fff1ff;
+  --color-accent-dark: #af8eb5;
+  --color-background: #faf8fc;
+  --color-background-alt: #f4f1f8;
   --color-surface: #FFFFFF;
-  --color-text: #233E42;
-  --color-text-secondary: #5A7D82;
-  --color-text-muted: #8BA4A8;
-  --color-border: #D4E8EC;
-  --color-border-light: #E8F4F7;
+  --color-text: #2c223a;
+  --color-text-secondary: #5c526d;
+  --color-text-muted: #8c839f;
+  --color-border: #e8dff0;
+  --color-border-light: #f5f0f9;
   --color-error: #E53E3E;
   --color-warning: #ED8936;
 
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  --shadow-card: 0 1px 3px rgba(0, 109, 119, 0.06), 0 4px 12px rgba(0, 109, 119, 0.04);
-  --shadow-card-hover: 0 4px 12px rgba(0, 109, 119, 0.1), 0 8px 24px rgba(0, 109, 119, 0.06);
-  --shadow-modal: 0 8px 32px rgba(0, 109, 119, 0.12), 0 16px 48px rgba(0, 109, 119, 0.08);
-  --shadow-gold: 0 2px 8px rgba(212, 160, 23, 0.2);
+  --shadow-card: 0 1px 3px rgba(126, 87, 194, 0.06), 0 4px 12px rgba(126, 87, 194, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(126, 87, 194, 0.1), 0 8px 24px rgba(126, 87, 194, 0.06);
+  --shadow-modal: 0 8px 32px rgba(126, 87, 194, 0.12), 0 16px 48px rgba(126, 87, 194, 0.08);
+  --shadow-gold: 0 2px 8px rgba(225, 190, 231, 0.5);
 }
 
 @layer base {
@@ -68,7 +68,7 @@
   }
 
   ::selection {
-    background: rgba(0, 109, 119, 0.15);
+    background: rgba(126, 87, 194, 0.15);
     color: var(--color-primary-dark);
   }
 
@@ -92,8 +92,8 @@
     to { opacity: 1; transform: translateX(0); }
   }
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 109, 119, 0.3); }
-    50% { box-shadow: 0 0 0 8px rgba(0, 109, 119, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(126, 87, 194, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(126, 87, 194, 0); }
   }
 
   .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }

@@ -31,23 +31,21 @@ export default function HomePage() {
         className="relative min-h-screen bg-cover bg-center bg-no-repeat text-white overflow-hidden flex items-center pt-24 pb-16"
         style={{ backgroundImage: `url('/home_page.png')` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/50 to-transparent" />
+        {/* Bottom transparent-to-white fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-12 md:h-20 bg-gradient-to-b from-transparent to-white pointer-events-none z-0" />
         
-        <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-between">
-          <div className="max-w-3xl text-left relative z-10">
+        <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-center">
+          <div className="max-w-3xl text-center relative z-10 flex flex-col items-center">
 
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="font-heading font-black leading-[1.1] tracking-tight mb-8"
+                className="font-heading font-black leading-tight mb-8"
               >
-                <span className="block text-6xl sm:text-7xl lg:text-[8rem] mb-2 uppercase tracking-widest text-white drop-shadow-lg leading-none">AMRITH</span>
-                <span className="block text-3xl sm:text-4xl lg:text-[3rem] text-white/80 font-bold tracking-tight mb-1">
-                  The Elixir of
-                </span>
-                <span className="block text-4xl sm:text-5xl lg:text-[4.5rem] text-secondary drop-shadow-sm font-black leading-none">
-                  Modern Healing
+                <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">AMRITH</span>
+                <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-white/90 font-bold tracking-widest pl-2">
+                  THE ELIXIR OF MODERN HEALING
                 </span>
               </motion.h1>
 
@@ -55,92 +53,41 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="text-lg sm:text-xl text-white/80 mb-10 leading-relaxed max-w-xl"
+                className="text-base sm:text-lg text-white/90 mb-12 leading-relaxed max-w-xl mx-auto"
               >
-                Book lab tests, health packages, and doctor consultations, all from the comfort of your home. 
-                Quality diagnostics at transparent prices.
+                Book lab tests, health packages, and doctor consultations,<br className="hidden sm:block" /> 
+                all from the comfort of your home. Quality diagnostics at<br className="hidden sm:block" /> 
+                transparent prices.
               </motion.p>
-
-              {/* Hero Search */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                className="max-w-xl mb-10"
-              >
-                <div className="relative flex items-center w-full">
-                  <Search className="absolute left-5 w-5 h-5 text-text-muted z-10" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for tests, packages, or specialties..."
-                    className="w-full py-4 lg:py-4.5 pl-14 pr-32 bg-white rounded-2xl text-text text-base shadow-xl focus:ring-4 focus:ring-secondary/30 outline-none border-0 placeholder:text-text-muted"
-                    aria-label="Search for health tests and services"
-                  />
-                  <button
-                    onClick={() => navigate('/departments')}
-                    className="absolute right-2 px-6 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-light transition-all hidden sm:block shadow-md"
-                  >
-                    Search
-                  </button>
-                </div>
-              </motion.div>
 
               {/* Role Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4 justify-start"
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <Button
-                  variant="white"
-                  size="lg"
+                  variant="outline"
                   onClick={() => navigate('/signup?role=patient')}
-                  className="group"
+                  className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
                 >
-                  <UserCheck className="w-5 h-5 text-primary" />
+                  <UserCheck className="w-4 h-4 mr-2" />
                   I'm a Patient
-                  <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-all ml-2" />
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
                   onClick={() => navigate('/signup?role=doctor')}
-                  className="!border-white/30 !text-white hover:!bg-white/10 group bg-white/5 backdrop-blur-sm"
+                  className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
                 >
-                  <Stethoscope className="w-5 h-5" />
+                  <Stethoscope className="w-4 h-4 mr-2" />
                   I'm a Doctor
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-2" />
                 </Button>
               </motion.div>
             </div>
           </div>
-        
-        {/* 3D Model Absolute Container */}
-        <motion.div
-          initial={{ opacity: 0, x: 300, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.3, type: 'spring', damping: 20 }}
-          className="hidden lg:flex absolute -right-[60vw] xl:-right-[55vw] top-1/2 -translate-y-1/2 w-[150vw] h-[150vh] pointer-events-none z-0"
-        >
-          <model-viewer
-            src="/medical_equipment.glb"
-            alt="3D Medical Equipment Model"
-            auto-rotate
-            interaction-prompt="none"
-            shadow-intensity="1"
-            exposure="1.2"
-            autoplay
-            style={{ width: '100%', height: '100%', outline: 'none' }}
-            camera-orbit="0deg 75deg 85%"
-          >
-            <div slot="poster" className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-white border-t-transparent flex items-center justify-center rounded-full animate-spin opacity-30" />
-            </div>
-          </model-viewer>
-        </motion.div>
       </section>
 
       {/* Featured Specialties Carousel */}

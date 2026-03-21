@@ -44,16 +44,16 @@ export const packages = [
 ];
 
 export const specialties = [
-  { name: 'Heart Care', icon: 'Heart', gradient: 'from-[#006D77] to-[#004E57]' },
-  { name: 'Brain & Spine', icon: 'Brain', gradient: 'from-[#233E42] to-[#16292C]' },
-  { name: 'Bone & Joint', icon: 'Bone', gradient: 'from-[#4A5568] to-[#2D3748]' },
-  { name: 'Skin Care', icon: 'Sparkles', gradient: 'from-[#81C784] to-[#66A569]' },
-  { name: 'Eye Care', icon: 'Eye', gradient: 'from-[#006D77] to-[#81C784]' },
-  { name: 'Child Health', icon: 'Baby', gradient: 'from-[#ED64A6] to-[#C53030]' },
-  { name: 'Lab Tests', icon: 'Microscope', gradient: 'from-[#4A5568] to-[#1A202C]' },
-  { name: 'Wellness', icon: 'Leaf', gradient: 'from-[#006D77] to-[#D4A017]' },
-  { name: 'Women', icon: 'HeartPulse', gradient: 'from-[#D53F8C] to-[#97266D]' },
-  { name: 'Imaging', icon: 'Scan', gradient: 'from-[#004E57] to-[#233E42]' },
+  { name: 'Heart Care', icon: 'Heart', gradient: 'from-[#7e57c2] to-[#4d2c91]' },
+  { name: 'Brain & Spine', icon: 'Brain', gradient: 'from-[#8c9eff] to-[#5870cb]' },
+  { name: 'Bone & Joint', icon: 'Bone', gradient: 'from-[#b085f5] to-[#7e57c2]' },
+  { name: 'Skin Care', icon: 'Sparkles', gradient: 'from-[#e1bee7] to-[#b085f5]' },
+  { name: 'Eye Care', icon: 'Eye', gradient: 'from-[#c0cfff] to-[#8c9eff]' },
+  { name: 'Child Health', icon: 'Baby', gradient: 'from-[#a280df] to-[#4d2c91]' },
+  { name: 'Lab Tests', icon: 'Microscope', gradient: 'from-[#d3c0ff] to-[#8c9eff]' },
+  { name: 'Wellness', icon: 'Leaf', gradient: 'from-[#7e57c2] to-[#b085f5]' },
+  { name: 'Women', icon: 'HeartPulse', gradient: 'from-[#e6d4fa] to-[#a280df]' },
+  { name: 'Imaging', icon: 'Scan', gradient: 'from-[#8c9eff] to-[#b085f5]' },
 ];
 
 export const testimonials = [

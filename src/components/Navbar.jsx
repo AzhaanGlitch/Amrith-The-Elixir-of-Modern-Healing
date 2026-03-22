@@ -41,7 +41,6 @@ export default function Navbar() {
   const publicLinks = [
     { label: 'Departments', path: '/departments' },
     { label: 'How It Works', path: '/how-it-works' },
-    { label: 'Packages', path: '/packages' },
     { label: 'Blog', path: '/blog' },
     { label: 'Contact', path: '/contact' },
   ];
@@ -203,7 +202,7 @@ export default function Navbar() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                 <input
                   type="text"
-                  placeholder="Search tests, departments, doctors..."
+                  placeholder="Search AI tools, departments..."
                   className="w-full py-3.5 pl-12 pr-4 bg-white/5 rounded-xl border border-white/10 text-white placeholder:text-white/50 focus:border-white/30 focus:ring-2 focus:ring-white/10 text-sm"
                   autoFocus
                   aria-label="Search across Amrith"

@@ -13,8 +13,8 @@ export default function Footer() {
               <img src="/logo.png" alt="Amrith Logo" className="h-10 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              The Elixir of Modern Healing. Premium healthcare platform making quality diagnostics accessible, 
-              affordable, and convenient for everyone.
+              The Elixir of Modern Healing. A premium AI-powered virtual hospital making quality diagnostics accessible, 
+              free, and convenient for everyone.
             </p>
             <div className="flex items-center gap-2 text-accent text-sm font-medium">
               <Heart className="w-4 h-4 fill-accent" />
@@ -26,7 +26,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-3">
-              {['About Us', 'How It Works', 'Departments', 'Packages', 'Blog', 'Contact'].map(item => (
+              {['About Us', 'How It Works', 'Departments', 'Blog', 'Contact'].map(item => (
                 <li key={item}>
                   <Link
                     to={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
@@ -43,7 +43,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-white mb-4">Services</h4>
             <ul className="space-y-3">
-              {['Lab Tests', 'Health Packages', 'Home Collection', 'Doctor Consultation', 'Health Reports', 'AI Health Summary'].map(item => (
+              {['Tuberculosis AI', 'Skin Cancer AI', 'Heart Health AI', 'Virtual Consultations', 'Digital Reports'].map(item => (
                 <li key={item}>
                   <span className="text-gray-400 text-sm">{item}</span>
                 </li>

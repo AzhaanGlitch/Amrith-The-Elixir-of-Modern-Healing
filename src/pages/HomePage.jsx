@@ -1,38 +1,49 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Button, Card, Badge, SearchBar } from '../components/ui';
-import { departments, specialties, testimonials, tests } from '../data/mockData';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button, Card, Badge } from '../components/ui';
 import {
-  Search, ArrowRight, Shield, Clock, Home, Star, ChevronLeft, ChevronRight,
-  Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse, Scan,
-  Microscope, Activity, Wind, Leaf, Users, Award, Zap, CheckCircle2,
-  TestTubes, Smile, UserCheck, CalendarDays, FileOutput, MousePointerClick, Building2
+  HeartPulse, Scan, Microscope, Activity, Star, Send, Shield, Zap, Award, CheckCircle2,
+  Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home
 } from 'lucide-react';
-
-const iconMap = { Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse, Scan, Microscope, Activity, Wind, Leaf };
 
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 
 export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [carouselIndex, setCarouselIndex] = useState(0);
   const navigate = useNavigate();
 
-  const popularTests = tests.filter(t => t.popular);
-  const visibleSpecialties = 5;
-  const maxSpIndex = Math.max(0, specialties.length - visibleSpecialties);
+  // Reviews state (frontend only)
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const submitReview = (e) => {
+    e.preventDefault();
+    if (!newReview.name || !newReview.comment) return;
+    
+    setReviews([{ ...newReview, id: Date.now(), date: new Date().toLocaleDateString() }, ...reviews]);
+    setNewReview({ name: '', rating: 5, comment: '' });
+  };
+
+  const virtualFacilities = [
+    { title: 'Cardiovascular Health', desc: 'Leading cause of concern; evaluate heart risks through vitals screening and BP analysis.', icon: HeartPulse, color: 'text-rose-500' },
+    { title: 'Blood Report Analyzer', desc: 'Scan Complete Blood Counts (CBC), glucose, and lipid profiles for instant AI medical insights.', icon: TestTubes, color: 'text-orange-500' },
+    { title: 'Tuberculosis & Lungs', desc: 'Detect TB, COPD, and other pulmonary anomalies through automated chest X-Ray analysis.', icon: Scan, color: 'text-blue-600' },
+    { title: 'Retinal & Eye Disease', desc: 'Early detection for glaucoma, cataracts, and diabetic retinopathy via optical scan analysis.', icon: Eye, color: 'text-teal-500' },
+    { title: 'Bone Health & Density', desc: 'Screen for osteoporosis and skeletal fractures using deep learning on X-Ray imaging.', icon: Bone, color: 'text-slate-600' },
+    { title: 'Skin Disease Detection', desc: 'Assess risks for melanoma and common infectious skin conditions from dermatological images.', icon: Microscope, color: 'text-purple-500' },
+    { title: 'Brain & Neurology', desc: 'Screening for neurological anomalies, stroke risks, and tumors in CT/MRI scan data.', icon: Brain, color: 'text-indigo-600' },
+    { title: 'General Pathology', desc: 'A broad AI evaluation for common pathology symptoms and digital preliminary diagnosis.', icon: Activity, color: 'text-yellow-600' },
+  ];
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden bg-background">
       {/* Hero Section */}
       <section 
         className="relative min-h-screen bg-cover bg-center bg-no-repeat text-white overflow-hidden flex items-center pt-24 pb-16"
         style={{ backgroundImage: `url('/home_page.png')` }}
       >
-        {/* Bottom transparent-to-white fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 md:h-20 bg-gradient-to-b from-transparent to-white pointer-events-none z-0" />
         
         <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-center">
           <div className="max-w-3xl text-center relative z-10 flex flex-col items-center">
@@ -44,7 +55,7 @@ export default function HomePage() {
                 className="font-heading font-black leading-tight mb-8"
               >
                 <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">AMRITH</span>
-                <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-white/90 font-bold tracking-widest pl-2">
+                <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-[#5b3b98] font-bold tracking-widest pl-2">
                   THE ELIXIR OF MODERN HEALING
                 </span>
               </motion.h1>
@@ -53,11 +64,11 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="text-base sm:text-lg text-white/90 mb-12 leading-relaxed max-w-xl mx-auto"
+                className="text-base sm:text-lg text-[#5b3b98] mb-12 leading-relaxed max-w-xl mx-auto font-medium"
               >
-                Book lab tests, health packages, and doctor consultations,<br className="hidden sm:block" /> 
-                all from the comfort of your home. Quality diagnostics at<br className="hidden sm:block" /> 
-                transparent prices.
+                Access a complete AI-powered virtual hospital and doctor consultations,<br className="hidden sm:block" /> 
+                all from the comfort of your home. Quality, instantaneous healthcare<br className="hidden sm:block" /> 
+                completely free of cost.
               </motion.p>
 
               {/* Role Buttons */}
@@ -70,7 +81,7 @@ export default function HomePage() {
                 <Button
                   variant="outline"
                   onClick={() => navigate('/signup?role=patient')}
-                  className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
+                  className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
                 >
                   <UserCheck className="w-4 h-4 mr-2" />
                   I'm a Patient
@@ -79,7 +90,7 @@ export default function HomePage() {
                 <Button
                   variant="outline"
                   onClick={() => navigate('/signup?role=doctor')}
-                  className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
+                  className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
                 >
                   <Stethoscope className="w-4 h-4 mr-2" />
                   I'm a Doctor
@@ -90,52 +101,13 @@ export default function HomePage() {
           </div>
       </section>
 
-      {/* Featured Specialties Carousel */}
-      <section className="py-20 bg-white">
+      {/* AI Virtual Facilities Listing */}
+      <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">Explore Specialties</h2>
-            <p className="text-text-muted text-lg">Browse healthcare services across medical disciplines</p>
-          </div>
-
-          <div className="relative w-full overflow-hidden py-4 px-4 -mx-4 sm:px-0 sm:mx-0" style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
-            <motion.div
-              className="flex gap-6 w-max"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ ease: "linear", duration: 30, repeat: Infinity }}
-            >
-              {[...specialties, ...specialties].map((spec, i) => {
-                const Icon = iconMap[spec.icon] || Heart;
-                return (
-                  <motion.div
-                    key={i}
-                    whileHover={{ y: -8, scale: 1.03 }}
-                    className={`flex-shrink-0 w-52 bg-gradient-to-br ${spec.gradient} rounded-2xl p-6 text-white cursor-pointer shadow-lg`}
-                    onClick={() => navigate('/departments')}
-                  >
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <h3 className="font-heading font-semibold text-sm leading-tight">{spec.name}</h3>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Tests */}
-      <section className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">Popular Tests</h2>
-              <p className="text-text-muted text-lg">Most booked health tests by our patients</p>
-            </div>
-            <Link to="/departments" className="hidden sm:flex items-center gap-2 text-primary font-semibold text-sm hover:gap-3 transition-all">
-              View All <ArrowRight className="w-4 h-4" />
-            </Link>
+          <div className="text-center mb-16">
+            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">Free Virtual Facilities</Badge>
+            <h2 className="text-4xl lg:text-5xl font-heading font-black text-text mb-4">Explore Our Amrith Services</h2>
+            <p className="text-text-muted text-xl max-w-2xl mx-auto">Discover a vast array of specialized detection models. Login to securely upload scans and receive instantaneous results.</p>
           </div>
 
           <motion.div
@@ -143,49 +115,33 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {popularTests.slice(0, 8).map(test => (
-              <motion.div key={test.id} variants={item}>
-                <Card className="p-6 h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge variant={test.homeCollection ? 'secondary' : 'primary'}>
-                      {test.homeCollection ? (
-                        <span className="flex items-center gap-1"><Home className="w-3.5 h-3.5" /> Home</span>
-                      ) : (
-                        <span className="flex items-center gap-1"><Building2 className="w-3.5 h-3.5" /> Lab</span>
-                      )}
-                    </Badge>
-                    {test.fasting && <Badge variant="warning">Fasting</Badge>}
-                  </div>
-                  <h3 className="font-heading font-semibold text-text mb-2 line-clamp-2">{test.name}</h3>
-                  <p className="text-text-muted text-xs mb-4 line-clamp-2 flex-1">{test.description}</p>
-                  <div className="flex items-end justify-between mt-auto">
-                    <div>
-                      <span className="text-xl font-heading font-bold text-primary">₹{test.price}</span>
-                      <span className="text-sm text-text-muted line-through ml-2">₹{test.originalPrice}</span>
+            {virtualFacilities.map((facility, i) => {
+              const Icon = facility.icon;
+              return (
+                <motion.div key={i} variants={item} className="h-full">
+                  <Card className="group p-8 h-full flex flex-col items-center text-center transform transition-all hover:scale-[1.05] hover:shadow-2xl cursor-pointer border-none bg-white shadow-lg" onClick={() => navigate('/signup?role=patient')}>
+                    <Icon className={`w-14 h-14 ${facility.color} mb-6 group-hover:scale-125 transition-all duration-300 drop-shadow-sm`} />
+                    <h3 className="text-xl font-heading font-bold text-text mb-3 line-clamp-2">{facility.title}</h3>
+                    <p className="text-text-muted text-sm flex-1 leading-relaxed">{facility.desc}</p>
+                    <div className="mt-6 flex items-center text-primary text-sm font-black opacity-0 group-hover:opacity-100 transition-all">
+                      Access Amrith Tool <ArrowRight className="w-4 h-4 ml-1" />
                     </div>
-                    <span className="text-xs text-secondary-dark font-semibold bg-secondary/10 px-2 py-1 rounded-lg">
-                      {Math.round((1 - test.price / test.originalPrice) * 100)}% OFF
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-3 text-xs text-text-muted">
-                    <Clock className="w-3.5 h-3.5" />
-                    Report in {test.reportTime}
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
+                  </Card>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
 
-      {/* Trust Badges / Why Amrith */}
-      <section className="py-20 bg-white">
+      {/* Trust Badges / Why Amrith Virtual Hospital */}
+      <section className="py-24 bg-gradient-to-br from-background to-background-alt border-y border-border-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">Why Choose Amrith?</h2>
-            <p className="text-text-muted text-lg">Setting new standards in healthcare quality</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">Why Choose Amrith?</h2>
+            <p className="text-text-muted text-xl">Pioneering accessible, digital-first healthcare for everyone.</p>
           </div>
 
           <motion.div
@@ -196,17 +152,17 @@ export default function HomePage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             {[
-              { icon: Shield, title: 'NABL Accredited Labs', desc: 'All tests processed in certified, quality-assured laboratories.', color: 'from-primary to-primary-light' },
-              { icon: Home, title: 'Free Home Collection', desc: 'Trained phlebotomists at your doorstep at your preferred time.', color: 'from-secondary to-secondary-dark' },
-              { icon: Zap, title: 'Quick Digital Reports', desc: 'Get accurate results delivered digitally within hours, not days.', color: 'from-accent to-accent-dark' },
-              { icon: Award, title: 'Best Price Guarantee', desc: 'Up to 60% savings on lab tests compared to direct walk-ins.', color: 'from-purple-500 to-indigo-600' },
+              { icon: Activity, title: 'Instant Inference', desc: 'No waiting for days. Get your preliminary analysis in seconds.', color: 'from-primary to-primary-light' },
+              { icon: Shield, title: 'Privacy First', desc: 'Your medical data is encrypted and immediately discarded after analysis.', color: 'from-secondary to-secondary-dark' },
+              { icon: Award, title: 'Completely Free', desc: 'Our AI programs are entirely free of cost for early adopters.', color: 'from-accent to-accent-dark' },
+              { icon: Home, title: 'Hospital at Home', desc: 'Get diagnostic insights without ever leaving your living room.', color: 'from-purple-500 to-indigo-600' },
             ].map(({ icon: Icon, title, desc, color }, i) => (
               <motion.div key={i} variants={item}>
-                <Card className="p-8 text-center h-full">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center mx-auto mb-5`}>
+                <Card className="p-8 text-center h-full border-none shadow-xl bg-white/50 backdrop-blur-xl">
+                  <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-heading font-bold text-text mb-2">{title}</h3>
+                  <h3 className="font-heading font-bold text-xl text-text mb-3">{title}</h3>
                   <p className="text-text-muted text-sm">{desc}</p>
                 </Card>
               </motion.div>
@@ -215,105 +171,134 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-gradient-to-br from-background to-background-alt">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">How It Works</h2>
-            <p className="text-text-muted text-lg">Simple, hassle-free healthcare in 4 easy steps</p>
+      {/* Interactive Community Feedback */}
+      <section className="py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">Community Feedback</h2>
+            <p className="text-text-muted text-xl">Help us improve by leaving your honest thoughts about our AI diagnostic tools.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            {/* Connector line */}
-            <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-primary via-secondary to-accent" />
-            
-            {[
-              { step: '01', title: 'Choose a Test', desc: 'Browse 200+ tests and health packages.', icon: <Search className="w-8 h-8 text-primary" /> },
-              { step: '02', title: 'Book & Pay', desc: 'Pick your slot and pay securely online.', icon: <CalendarDays className="w-8 h-8 text-secondary-dark" /> },
-              { step: '03', title: 'Sample Collection', desc: 'At home or visit our nearest center.', icon: <Home className="w-8 h-8 text-accent" /> },
-              { step: '04', title: 'Get Reports', desc: 'Digital reports with AI health insights.', icon: <FileOutput className="w-8 h-8 text-indigo-500" /> },
-            ].map(({ step, title, desc, icon }, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="text-center relative z-10"
-              >
-                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-5 border border-border-light">
-                  {icon}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+            {/* Feedback Form */}
+            <div className="md:col-span-5">
+              <Card className="p-8 shadow-2xl border-primary/20 bg-gradient-to-br from-white to-primary/5">
+                <h3 className="text-2xl font-bold font-heading mb-6 flex items-center gap-2">
+                  <Star className="w-6 h-6 text-accent fill-accent" /> Leave a Review
+                </h3>
+                <form onSubmit={submitReview} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Your Name</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="Jane Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                          className="focus:outline-none transition-transform hover:scale-110"
+                        >
+                          <Star 
+                            className={`w-8 h-8 transition-colors ${
+                              star <= (hoverRating || newReview.rating) 
+                                ? 'text-accent fill-accent' 
+                                : 'text-border group-hover:text-accent/50'
+                            }`} 
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Comment</label>
+                    <textarea 
+                      required
+                      value={newReview.comment}
+                      onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none h-32"
+                      placeholder="How accurate was the AI diagnosis? Did it help you?"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full py-4 rounded-xl text-lg flex items-center justify-center gap-2">
+                    <Send className="w-5 h-5" /> Submit Feedback
+                  </Button>
+                </form>
+              </Card>
+            </div>
+
+            {/* Display Reviews */}
+            <div className="md:col-span-7 flex flex-col gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              {reviews.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-background rounded-3xl border border-dashed border-border-light">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+                    <Send className="w-8 h-8 text-border-dark" />
+                  </div>
+                  <h4 className="text-xl font-bold text-text mb-2">No feedback yet</h4>
+                  <p className="text-text-muted">Be the first to share your experience with the Amrith Virtual Hospital beta!</p>
                 </div>
-                <span className="text-xs font-bold text-accent tracking-widest uppercase">Step {step}</span>
-                <h3 className="font-heading font-bold text-text mt-2 mb-2">{title}</h3>
-                <p className="text-text-muted text-sm">{desc}</p>
-              </motion.div>
-            ))}
+              ) : (
+                <AnimatePresence>
+                  {reviews.map((review) => (
+                    <motion.div 
+                      key={review.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="bg-white p-6 rounded-2xl shadow-sm border border-border-light flex gap-5"
+                    >
+                      <div className="w-12 h-12 shrink-0 rounded-full bg-gradient-to-br from-primary to-primary-light text-white font-bold flex items-center justify-center text-lg mt-1 shadow-inner">
+                        {review.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-bold text-text text-lg">{review.name}</h4>
+                          <span className="text-xs text-text-muted font-medium">{review.date}</span>
+                        </div>
+                        <div className="flex gap-1 mb-3">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-accent fill-accent' : 'text-gray-200'}`} />
+                          ))}
+                        </div>
+                        <p className="text-text-secondary leading-relaxed">{review.comment}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">What Our Users Say</h2>
-            <p className="text-text-muted text-lg">Real feedback from patients and doctors</p>
-          </div>
-
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {testimonials.map((t) => (
-              <motion.div key={t.id} variants={item}>
-                <Card className="p-6 h-full flex flex-col">
-                  <div className="flex gap-1 mb-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`w-4 h-4 ${i < t.rating ? 'text-accent fill-accent' : 'text-gray-200'}`} />
-                    ))}
-                  </div>
-                  <p className="text-text-secondary text-sm leading-relaxed flex-1 mb-4">"{t.text}"</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-border-light">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-light text-white text-xs font-semibold flex items-center justify-center">
-                      {t.avatar}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text">{t.name}</p>
-                      <p className="text-xs text-text-muted">{t.role}</p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-64 h-64 bg-accent rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-96 h-96 bg-secondary rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-heading font-bold mb-6">
-            Ready to Take Charge of Your Health?
+          <Shield className="w-16 h-16 text-white/50 mx-auto mb-6" />
+          <h2 className="text-4xl lg:text-5xl font-heading font-black mb-6">
+            Step Into the Future of Healing
           </h2>
-          <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
-            Join 50,000+ patients who trust Amrith for their healthcare needs. 
-            Book your first test today and experience premium healthcare reimagined.
+          <p className="text-white/80 text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+            The Amrith Virtual Hospital is accessible to everyone, anywhere, at zero cost. Join today and let our AI models give you peace of mind instantly.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="white" size="xl" onClick={() => navigate('/signup')}>
-              <CheckCircle2 className="w-5 h-5" />
-              Get Started Free
-            </Button>
-            <Button variant="outline" size="xl" className="!border-white/30 !text-white hover:!bg-white/10" onClick={() => navigate('/departments')}>
-              Browse Tests
+            <Button variant="white" size="xl" onClick={() => navigate('/signup')} className="rounded-full shadow-2xl px-8 flex items-center gap-2">
+              <UserCheck className="w-5 h-5" />
+              Sign Up For Free
             </Button>
           </div>
         </div>

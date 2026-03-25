@@ -13,7 +13,6 @@ import HomePage from './pages/HomePage';
 import DepartmentsPage from './pages/DepartmentsPage';
 import DepartmentDetailPage from './pages/DepartmentDetailPage';
 import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
 import AboutPage from './pages/AboutPage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PackagesPage from './pages/PackagesPage';
@@ -52,7 +51,7 @@ function App() {
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/signup" element={<LoginPage />} />
             </Route>
 
             {/* Patient Protected Routes */}

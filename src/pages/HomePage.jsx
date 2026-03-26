@@ -2,13 +2,28 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Card, Badge } from '../components/ui';
+import { departments } from '../data/mockData';
 import {
   HeartPulse, Scan, Microscope, Activity, Star, Send, Shield, Zap, Award, CheckCircle2,
-  Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home
+  Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home,
+  Wind, Sparkles, Upload, FileText, ClipboardList
 } from 'lucide-react';
+
+const iconMap = { HeartPulse, Scan, Microscope, Activity, Bone, Eye, Brain, Stethoscope, Wind, Sparkles };
 
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+
+const departmentColors = {
+  1: 'text-amber-500',    // Dermatology
+  2: 'text-teal-500',     // Pulmonology
+  3: 'text-blue-500',     // Ophthalmology
+  4: 'text-rose-500',     // Oncology
+  5: 'text-orange-500',   // Orthopedics
+  6: 'text-emerald-600',  // General Medicine
+  7: 'text-red-500',      // Cardiovascular
+  8: 'text-purple-500',   // Neurology
+};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -25,17 +40,6 @@ export default function HomePage() {
     setReviews([{ ...newReview, id: Date.now(), date: new Date().toLocaleDateString() }, ...reviews]);
     setNewReview({ name: '', rating: 5, comment: '' });
   };
-
-  const virtualFacilities = [
-    { title: 'Cardiovascular Health', desc: 'Leading cause of concern; evaluate heart risks through vitals screening and BP analysis.', icon: HeartPulse, color: 'text-rose-500' },
-    { title: 'Blood Report Analyzer', desc: 'Scan Complete Blood Counts (CBC), glucose, and lipid profiles for instant AI medical insights.', icon: TestTubes, color: 'text-orange-500' },
-    { title: 'Tuberculosis & Lungs', desc: 'Detect TB, COPD, and other pulmonary anomalies through automated chest X-Ray analysis.', icon: Scan, color: 'text-blue-600' },
-    { title: 'Retinal & Eye Disease', desc: 'Early detection for glaucoma, cataracts, and diabetic retinopathy via optical scan analysis.', icon: Eye, color: 'text-teal-500' },
-    { title: 'Bone Health & Density', desc: 'Screen for osteoporosis and skeletal fractures using deep learning on X-Ray imaging.', icon: Bone, color: 'text-slate-600' },
-    { title: 'Skin Disease Detection', desc: 'Assess risks for melanoma and common infectious skin conditions from dermatological images.', icon: Microscope, color: 'text-purple-500' },
-    { title: 'Brain & Neurology', desc: 'Screening for neurological anomalies, stroke risks, and tumors in CT/MRI scan data.', icon: Brain, color: 'text-indigo-600' },
-    { title: 'General Pathology', desc: 'A broad AI evaluation for common pathology symptoms and digital preliminary diagnosis.', icon: Activity, color: 'text-yellow-600' },
-  ];
 
   return (
     <div className="overflow-hidden bg-background">
@@ -101,13 +105,13 @@ export default function HomePage() {
           </div>
       </section>
 
-      {/* AI Virtual Facilities Listing */}
+      {/* AI Virtual Facilities / Departments Listing */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">Free Virtual Facilities</Badge>
+            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">Free AI Diagnostics</Badge>
             <h2 className="text-4xl lg:text-5xl font-heading font-black text-text mb-4">Explore Our Amrith Services</h2>
-            <p className="text-text-muted text-xl max-w-2xl mx-auto">Discover a vast array of specialized detection models. Login to securely upload scans and receive instantaneous results.</p>
+            <p className="text-text-muted text-xl max-w-3xl mx-auto">Discover {departments.reduce((acc, d) => acc + d.diseases.length, 0)}+ specialized AI-powered disease detection tools across {departments.length} medical departments. Completely free for everyone.</p>
           </div>
 
           <motion.div
@@ -117,22 +121,84 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {virtualFacilities.map((facility, i) => {
-              const Icon = facility.icon;
+            {departments.map((dept) => {
+              const Icon = iconMap[dept.icon] || Stethoscope;
+              const colorClass = departmentColors[dept.id] || 'text-primary';
               return (
-                <motion.div key={i} variants={item} className="h-full">
-                  <Card className="group p-8 h-full flex flex-col items-center text-center transform transition-all hover:scale-[1.05] hover:shadow-2xl cursor-pointer border-none bg-white shadow-lg" onClick={() => navigate('/signup?role=patient')}>
-                    <Icon className={`w-14 h-14 ${facility.color} mb-6 group-hover:scale-125 transition-all duration-300 drop-shadow-sm`} />
-                    <h3 className="text-xl font-heading font-bold text-text mb-3 line-clamp-2">{facility.title}</h3>
-                    <p className="text-text-muted text-sm flex-1 leading-relaxed">{facility.desc}</p>
-                    <div className="mt-6 flex items-center text-primary text-sm font-black opacity-0 group-hover:opacity-100 transition-all">
-                      Access Amrith Tool <ArrowRight className="w-4 h-4 ml-1" />
+                <motion.div key={dept.id} variants={item} className="h-full">
+                  <Card className="group p-8 h-full flex flex-col items-center text-center transform transition-all hover:scale-[1.05] hover:shadow-2xl cursor-pointer border-none bg-white shadow-lg" onClick={() => navigate(`/departments/${dept.id}`)}>
+                    <Icon className={`w-14 h-14 ${colorClass} mb-6 group-hover:scale-125 transition-all duration-300 drop-shadow-sm`} />
+                    <h3 className="text-xl font-heading font-bold text-text mb-3 line-clamp-2">{dept.name}</h3>
+                    <p className="text-text-muted text-sm flex-1 leading-relaxed mb-3">{dept.description}</p>
+                    
+                    {/* Disease count & input types */}
+                    <div className="flex flex-wrap gap-1.5 justify-center mb-4">
+                      <Badge variant="neutral" className="text-xs">{dept.diseases.length} conditions</Badge>
+                      {dept.inputTypes.map(type => (
+                        <Badge key={type} variant="secondary" className="text-xs capitalize">{type === 'xray' ? 'X-Ray' : type}</Badge>
+                      ))}
+                    </div>
+
+                    {/* Disease list preview */}
+                    <div className="w-full text-left space-y-1 mb-4">
+                      {dept.diseases.slice(0, 3).map(disease => (
+                        <div key={disease.id} className="flex items-center gap-2 text-xs text-text-secondary">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span className="truncate">{disease.name}</span>
+                        </div>
+                      ))}
+                      {dept.diseases.length > 3 && (
+                        <p className="text-xs text-primary font-medium pl-5.5">+{dept.diseases.length - 3} more</p>
+                      )}
+                    </div>
+
+                    <div className="mt-auto flex items-center text-primary text-sm font-black opacity-0 group-hover:opacity-100 transition-all">
+                      Get Free AI Analysis <ArrowRight className="w-4 h-4 ml-1" />
                     </div>
                   </Card>
                 </motion.div>
               );
             })}
           </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 bg-gradient-to-br from-primary/5 to-primary/10 border-y border-border-light">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">How Amrith AI Works</h2>
+            <p className="text-text-muted text-xl">Three simple steps to get your AI-powered health analysis</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: '01', icon: ClipboardList, title: 'Answer Symptoms', desc: 'Select your condition and answer a tailored questionnaire about your symptoms, medical history, and current readings.', color: 'from-purple-500 to-indigo-600' },
+              { step: '02', icon: Upload, title: 'Upload Your Data', desc: 'Upload relevant images, X-rays, medical reports, or readings as required by the specific disease screening.', color: 'from-blue-500 to-cyan-500' },
+              { step: '03', icon: FileText, title: 'Get AI Analysis', desc: 'Our trained ML models analyze your inputs and provide detailed predictions, risk assessments, and recommendations — all for free.', color: 'from-emerald-500 to-teal-500' },
+            ].map(({ step, icon: Icon, title, desc, color }, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+              >
+                <Card className="p-8 text-center h-full border-none shadow-xl bg-white/80 backdrop-blur-xl relative overflow-visible">
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg text-white font-bold text-lg`}>
+                      {step}
+                    </div>
+                  </div>
+                  <div className="pt-6">
+                    <Icon className="w-10 h-10 text-primary mx-auto mb-4 opacity-80" />
+                    <h3 className="font-heading font-bold text-xl text-text mb-3">{title}</h3>
+                    <p className="text-text-muted text-sm leading-relaxed">{desc}</p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -152,16 +218,14 @@ export default function HomePage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             {[
-              { icon: Activity, title: 'Instant Inference', desc: 'No waiting for days. Get your preliminary analysis in seconds.', color: 'from-primary to-primary-light' },
-              { icon: Shield, title: 'Privacy First', desc: 'Your medical data is encrypted and immediately discarded after analysis.', color: 'from-secondary to-secondary-dark' },
-              { icon: Award, title: 'Completely Free', desc: 'Our AI programs are entirely free of cost for early adopters.', color: 'from-accent to-accent-dark' },
-              { icon: Home, title: 'Hospital at Home', desc: 'Get diagnostic insights without ever leaving your living room.', color: 'from-purple-500 to-indigo-600' },
-            ].map(({ icon: Icon, title, desc, color }, i) => (
+              { icon: Activity, title: 'Instant Inference', desc: 'No waiting for days. Get your preliminary analysis in seconds.', iconColor: 'text-purple-500' },
+              { icon: Shield, title: 'Privacy First', desc: 'Your medical data is encrypted and immediately discarded after analysis.', iconColor: 'text-blue-500' },
+              { icon: Award, title: 'Completely Free', desc: 'All our AI diagnostic tools are entirely free of cost. No hidden charges.', iconColor: 'text-amber-500' },
+              { icon: Home, title: 'Hospital at Home', desc: 'Get diagnostic insights without ever leaving your living room.', iconColor: 'text-indigo-500' },
+            ].map(({ icon: Icon, title, desc, iconColor }, i) => (
               <motion.div key={i} variants={item}>
                 <Card className="p-8 text-center h-full border-none shadow-xl bg-white/50 backdrop-blur-xl">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
+                  <Icon className={`w-14 h-14 ${iconColor} mx-auto mb-6 drop-shadow-sm`} />
                   <h3 className="font-heading font-bold text-xl text-text mb-3">{title}</h3>
                   <p className="text-text-muted text-sm">{desc}</p>
                 </Card>
@@ -282,23 +346,38 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden">
+      <section className="py-16 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-accent rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-96 h-96 bg-secondary rounded-full blur-3xl" />
+          <div className="absolute top-10 right-10 w-56 h-56 bg-accent rounded-full blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-secondary rounded-full blur-3xl" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Shield className="w-16 h-16 text-white/50 mx-auto mb-6" />
-          <h2 className="text-4xl lg:text-5xl font-heading font-black mb-6">
+          <h2 className="text-3xl lg:text-4xl font-heading font-black mb-4 uppercase tracking-wider">
             Step Into the Future of Healing
           </h2>
-          <p className="text-white/80 text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-            The Amrith Virtual Hospital is accessible to everyone, anywhere, at zero cost. Join today and let our AI models give you peace of mind instantly.
+          <p className="text-white/80 text-base lg:text-lg mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
+            The Amrith Virtual Hospital is accessible to everyone, anywhere, at zero cost. Sign up today and let our AI models give you peace of mind instantly.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="white" size="xl" onClick={() => navigate('/signup')} className="rounded-full shadow-2xl px-8 flex items-center gap-2">
-              <UserCheck className="w-5 h-5" />
-              Sign Up For Free
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/signup?role=patient')}
+              className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 shadow-xl flex items-center text-sm font-semibold tracking-wide"
+            >
+              <UserCheck className="w-4.5 h-4.5 mr-2" />
+              I'm a Patient
+              <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-all ml-2" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/signup?role=doctor')}
+              className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 shadow-xl flex items-center text-sm font-semibold tracking-wide"
+            >
+              <Stethoscope className="w-4.5 h-4.5 mr-2" />
+              I'm a Doctor
+              <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-all ml-2" />
             </Button>
           </div>
         </div>

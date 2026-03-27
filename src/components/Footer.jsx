@@ -26,7 +26,7 @@ export default function Footer() {
               <img src="/logo.png" alt="Amrith Logo" className="h-10 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
-              The Elixir of Modern Healing. A premium AI-powered virtual hospital making quality diagnostics accessible, 
+              The Elixir of Modern Healing. A premium AI-powered virtual hospital making quality diagnostics accessible,
               free, and convenient for everyone.
             </p>
           </div>
@@ -67,22 +67,22 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-300">Toll Free</p>
-                  <p className="text-sm text-white font-medium">1800-123-AMRITH</p>
+                  <p className="text-sm text-gray-300">Call at</p>
+                  <p className="text-sm text-white font-medium">+91 7983595318</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-gray-300">Email</p>
-                  <p className="text-sm text-white font-medium">hello@amrith.health</p>
+                  <p className="text-sm text-white font-medium">azhaanalisiddiqui15@gmail.com</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-gray-300">Head Office</p>
-                  <p className="text-sm text-white font-medium">Bangalore, India</p>
+                  <p className="text-sm text-white font-medium">India</p>
                 </div>
               </li>
             </ul>

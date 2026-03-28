@@ -15,13 +15,24 @@ export default function ContactPage() {
   };
 
   return (
-    <div>
-      <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl lg:text-5xl font-heading font-bold mb-4">
+    <div className="pt-24 min-h-screen bg-bg">
+      <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-24 relative overflow-hidden">
+        {/* Animated Background Elements for consistency */}
+        <motion.div 
+          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+          animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 5, repeat: Infinity }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-4xl lg:text-6xl font-heading font-bold mb-6 drop-shadow-lg">
             Contact Us
           </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-xl text-white/80 max-w-2xl mx-auto">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-white/90 max-w-2xl mx-auto font-light">
             Have questions? We'd love to hear from you. Our team is here to help.
           </motion.p>
         </div>

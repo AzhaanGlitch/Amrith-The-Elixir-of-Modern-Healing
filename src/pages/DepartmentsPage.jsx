@@ -35,17 +35,33 @@ export default function DepartmentsPage() {
   }, [search]);
 
   return (
-    <div className="py-12 lg:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">100% Free</Badge>
-          <h1 className="text-3xl lg:text-4xl font-heading font-bold text-text mb-3">AI-Powered Medical Departments</h1>
-          <p className="text-text-muted text-lg max-w-2xl mx-auto">
-            Browse our comprehensive range of AI diagnostic specialties. Upload your scans, answer symptom questions, and get instant AI analysis — all for free.
-          </p>
+    <div className="pt-24 min-h-screen bg-bg">
+      <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-20 relative overflow-hidden">
+        {/* Animated Background Elements for consistency */}
+        <motion.div 
+          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+          animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 5, repeat: Infinity }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Badge variant="primary" className="mb-6 text-xs font-bold uppercase tracking-widest px-4 py-1.5 bg-white/20 text-white border-0 shadow-sm backdrop-blur-md">100% Free</Badge>
+            <h1 className="text-4xl lg:text-5xl font-heading font-extrabold mb-5 drop-shadow-md">
+              AI-Powered Medical Departments
+            </h1>
+            <p className="text-lg lg:text-xl text-white/90 max-w-3xl mx-auto font-medium leading-relaxed">
+              Browse our comprehensive range of AI diagnostic specialties. Upload your scans, answer symptom questions, and get instant AI analysis — all for free.
+            </p>
+          </motion.div>
         </div>
+      </section>
 
+      <div className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search */}
         <div className="max-w-xl mx-auto mb-12">
           <SearchBar

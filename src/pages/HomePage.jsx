@@ -8,6 +8,7 @@ import {
   Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home,
   Wind, Sparkles, Upload, FileText, ClipboardList
 } from 'lucide-react';
+import NewsSection from '../components/NewsSection';
 
 const iconMap = { HeartPulse, Scan, Microscope, Activity, Bone, Eye, Brain, Stethoscope, Wind, Sparkles };
 
@@ -36,7 +37,7 @@ export default function HomePage() {
   const submitReview = (e) => {
     e.preventDefault();
     if (!newReview.name || !newReview.comment) return;
-    
+
     setReviews([{ ...newReview, id: Date.now(), date: new Date().toLocaleDateString() }, ...reviews]);
     setNewReview({ name: '', rating: 5, comment: '' });
   };
@@ -44,66 +45,69 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden bg-background">
       {/* Hero Section */}
-      <section 
+      <section
         className="relative min-h-screen bg-cover bg-center bg-no-repeat text-white overflow-hidden flex items-center pt-24 pb-16"
         style={{ backgroundImage: `url('/home_page.png')` }}
       >
-        
+
         <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-center">
           <div className="max-w-3xl text-center relative z-10 flex flex-col items-center">
 
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                className="font-heading font-black leading-tight mb-8"
-              >
-                <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">AMRITH</span>
-                <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-[#5b3b98] font-bold tracking-widest pl-2">
-                  THE ELIXIR OF MODERN HEALING
-                </span>
-              </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="font-heading font-black leading-tight mb-8"
+            >
+              <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">AMRITH</span>
+              <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-[#5b3b98] font-bold tracking-widest pl-2">
+                THE ELIXIR OF MODERN HEALING
+              </span>
+            </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="text-base sm:text-lg text-[#5b3b98] mb-12 leading-relaxed max-w-xl mx-auto font-medium"
-              >
-                Access a complete AI-powered virtual hospital and doctor consultations,<br className="hidden sm:block" /> 
-                all from the comfort of your home. Quality, instantaneous healthcare<br className="hidden sm:block" /> 
-                completely free of cost.
-              </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-base sm:text-lg text-[#5b3b98] mb-12 leading-relaxed max-w-xl mx-auto font-medium"
+            >
+              Access a complete AI-powered virtual hospital and doctor consultations,<br className="hidden sm:block" />
+              all from the comfort of your home. Quality, instantaneous healthcare<br className="hidden sm:block" />
+              completely free of cost.
+            </motion.p>
 
-              {/* Role Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+            {/* Role Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Button
+                variant="outline"
+                onClick={() => navigate('/signup?role=patient')}
+                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
               >
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/signup?role=patient')}
-                  className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
-                >
-                  <UserCheck className="w-4 h-4 mr-2" />
-                  I'm a Patient
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-all ml-2" />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/signup?role=doctor')}
-                  className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
-                >
-                  <Stethoscope className="w-4 h-4 mr-2" />
-                  I'm a Doctor
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-2" />
-                </Button>
-              </motion.div>
-            </div>
+                <UserCheck className="w-4 h-4 mr-2" />
+                I'm a Patient
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-all ml-2" />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/signup?role=doctor')}
+                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
+              >
+                <Stethoscope className="w-4 h-4 mr-2" />
+                I'm a Doctor
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-2" />
+              </Button>
+            </motion.div>
           </div>
+        </div>
       </section>
+
+      {/* Latest News Section */}
+      <NewsSection />
 
       {/* AI Virtual Facilities / Departments Listing */}
       <section className="py-24 bg-white relative">
@@ -130,7 +134,7 @@ export default function HomePage() {
                     <Icon className={`w-14 h-14 ${colorClass} mb-6 group-hover:scale-125 transition-all duration-300 drop-shadow-sm`} />
                     <h3 className="text-xl font-heading font-bold text-text mb-3 line-clamp-2">{dept.name}</h3>
                     <p className="text-text-muted text-sm flex-1 leading-relaxed mb-3">{dept.description}</p>
-                    
+
                     {/* Disease count & input types */}
                     <div className="flex flex-wrap gap-1.5 justify-center mb-4">
                       <Badge variant="neutral" className="text-xs">{dept.diseases.length} conditions</Badge>
@@ -253,13 +257,13 @@ export default function HomePage() {
                 <form onSubmit={submitReview} className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-2">Your Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={newReview.name}
                       onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                      placeholder="Jane Doe"
+                      placeholder="Amrit User"
                     />
                   </div>
                   <div>
@@ -274,12 +278,11 @@ export default function HomePage() {
                           onClick={() => setNewReview({ ...newReview, rating: star })}
                           className="focus:outline-none transition-transform hover:scale-110"
                         >
-                          <Star 
-                            className={`w-8 h-8 transition-colors ${
-                              star <= (hoverRating || newReview.rating) 
-                                ? 'text-accent fill-accent' 
+                          <Star
+                            className={`w-8 h-8 transition-colors ${star <= (hoverRating || newReview.rating)
+                                ? 'text-accent fill-accent'
                                 : 'text-border group-hover:text-accent/50'
-                            }`} 
+                              }`}
                           />
                         </button>
                       ))}
@@ -287,7 +290,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-text-secondary mb-2">Comment</label>
-                    <textarea 
+                    <textarea
                       required
                       value={newReview.comment}
                       onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
@@ -315,7 +318,7 @@ export default function HomePage() {
               ) : (
                 <AnimatePresence>
                   {reviews.map((review) => (
-                    <motion.div 
+                    <motion.div
                       key={review.id}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -341,44 +344,6 @@ export default function HomePage() {
                 </AnimatePresence>
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-primary to-primary-dark text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-56 h-56 bg-accent rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-80 h-80 bg-secondary rounded-full blur-3xl" />
-        </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-heading font-black mb-4 uppercase tracking-wider">
-            Step Into the Future of Healing
-          </h2>
-          <p className="text-white/80 text-base lg:text-lg mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
-            The Amrith Virtual Hospital is accessible to everyone, anywhere, at zero cost. Sign up today and let our AI models give you peace of mind instantly.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate('/signup?role=patient')}
-              className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 shadow-xl flex items-center text-sm font-semibold tracking-wide"
-            >
-              <UserCheck className="w-4.5 h-4.5 mr-2" />
-              I'm a Patient
-              <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-all ml-2" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate('/signup?role=doctor')}
-              className="!border-white/40 !text-white hover:!bg-white/10 group bg-black/20 backdrop-blur-sm rounded-full px-8 shadow-xl flex items-center text-sm font-semibold tracking-wide"
-            >
-              <Stethoscope className="w-4.5 h-4.5 mr-2" />
-              I'm a Doctor
-              <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-all ml-2" />
-            </Button>
           </div>
         </div>
       </section>

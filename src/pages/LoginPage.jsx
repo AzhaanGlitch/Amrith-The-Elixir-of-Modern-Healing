@@ -31,12 +31,14 @@ export default function LoginPage() {
     specialization: '', license: '', experience: ''
   });
 
+  const redirectPath = searchParams.get('redirect');
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
       const user = await login(role);
       addToast(`Welcome back, ${user.name}!`, 'success');
-      navigate(role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard');
+      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'));
     } catch {
       addToast('Login failed. Please try again.', 'error');
     }
@@ -47,7 +49,7 @@ export default function LoginPage() {
     try {
       const user = await signup(role, signupForm);
       addToast(`Welcome to Amrith, ${user.name}! 🎉`, 'success');
-      navigate(role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard');
+      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'));
     } catch {
       addToast('Signup failed. Please try again.', 'error');
     }

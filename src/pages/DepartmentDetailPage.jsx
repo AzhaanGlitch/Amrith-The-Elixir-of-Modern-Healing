@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Badge, Button } from '../components/ui';
+import { useAuth } from '../context/AuthContext';
 import { departments } from '../data/mockData';
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Upload, X, FileImage, Camera,
@@ -22,13 +23,15 @@ export default function DepartmentDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedDiseases, setExpandedDiseases] = useState({});
 
+  const { isAuthenticated } = useAuth();
   const department = departments.find(d => d.id === parseInt(id));
 
   const handleDiseaseSelect = (disease) => {
-    setSelectedDisease(disease);
-    setAnswers({});
-    setUploadedFiles([]);
-    setCurrentStep(1);
+    if (!isAuthenticated) {
+      navigate(`/login?redirect=/patient/book?testId=` + disease.id);
+    } else {
+      navigate(`/patient/book?testId=` + disease.id);
+    }
   };
 
   const handleAnswerChange = (questionId, value, isCheckbox = false, option = null) => {

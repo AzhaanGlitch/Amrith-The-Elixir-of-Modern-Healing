@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
-import { departments, tests, timeSlots } from '../../data/mockData';
+import { departments, timeSlots } from '../../data/mockData';
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Clock, Home, Building2,
   User, MapPin, CreditCard, QrCode, Calendar
@@ -12,8 +13,11 @@ const STEPS = ['Select Test', 'Date & Time', 'Patient Details', 'Payment'];
 
 export default function BookingPage() {
   const [step, setStep] = useState(0);
-  const [selectedDept, setSelectedDept] = useState(null);
-  const [selectedTests, setSelectedTests] = useState([]);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialTestId = searchParams.get('testId');
+
+  const [selectedTests, setSelectedTests] = useState(initialTestId ? [initialTestId] : []);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [collectionType, setCollectionType] = useState('home');
@@ -21,9 +25,21 @@ export default function BookingPage() {
   const [confirmed, setConfirmed] = useState(false);
   const { addToast } = useToast();
 
-  const deptTests = selectedDept ? tests.filter(t => t.departmentId === selectedDept) : [];
+  // Combine all diseases into tests, giving them properties so they work like tests
+  const allTests = departments.flatMap(d => 
+    d.diseases.map(disease => ({
+      ...disease,
+      departmentId: d.id,
+      departmentName: d.name,
+      price: 0,
+      originalPrice: 1500, // mock value to show savings
+      homeCollection: disease.inputs.includes('images') || disease.inputs.includes('report'),
+      reportTime: 'Instant AI'
+    }))
+  );
+
   const totalPrice = selectedTests.reduce((sum, id) => {
-    const t = tests.find(x => x.id === id);
+    const t = allTests.find(x => x.id === id);
     return sum + (t?.price || 0);
   }, 0);
 
@@ -80,7 +96,7 @@ export default function BookingPage() {
           </div>
         </div>
         <p className="text-xs text-text-muted mb-6">Booking ID: AMR-2026-{Math.floor(Math.random() * 9000 + 1000)}</p>
-        <Button onClick={() => { setConfirmed(false); setStep(0); setSelectedTests([]); setSelectedDept(null); }}>
+        <Button onClick={() => { setConfirmed(false); setStep(0); setSelectedTests([]); }}>
           Book Another Test
         </Button>
       </motion.div>
@@ -109,69 +125,46 @@ export default function BookingPage() {
       {/* Step 1: Select Tests */}
       {step === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          {!selectedDept ? (
-            <>
-              <h2 className="text-lg font-heading font-semibold text-text mb-4">Choose a Department</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {departments.map(dept => (
-                  <Card key={dept.id} className="p-5 cursor-pointer" onClick={() => setSelectedDept(dept.id)}>
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: dept.color + '15' }}>
-                      <Building2 className="w-5 h-5 opacity-80" style={{ color: dept.color }} />
-                    </div>
-                    <h3 className="font-semibold text-text text-sm">{dept.name}</h3>
-                    <p className="text-text-muted text-xs mt-1">{dept.testsCount} tests</p>
-                  </Card>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-3 mb-6">
-                <button onClick={() => setSelectedDept(null)} className="text-primary text-sm font-medium flex items-center gap-1">
-                  <ArrowLeft className="w-4 h-4" /> Back
-                </button>
-                <h2 className="text-lg font-heading font-semibold text-text">
-                  Select Tests — {departments.find(d => d.id === selectedDept)?.name}
-                </h2>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                {deptTests.map(test => {
-                  const isSelected = selectedTests.includes(test.id);
-                  return (
-                    <Card
-                      key={test.id}
-                      className={`p-5 cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary bg-primary/5' : ''}`}
-                      onClick={() => toggleTest(test.id)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-text text-sm">{test.name}</h3>
-                          <p className="text-text-muted text-xs mt-1 mb-2">{test.description}</p>
-                          <div className="flex gap-2">
-                            <Badge variant={test.homeCollection ? 'secondary' : 'neutral'}>
-                              {test.homeCollection ? 'Home' : 'Lab'}
-                            </Badge>
-                            <span className="text-xs text-text-muted flex items-center gap-1"><Clock className="w-3 h-3" /> {test.reportTime}</span>
-                          </div>
-                        </div>
-                        <div className="text-right ml-4">
-                          <p className="font-bold text-primary">₹{test.price}</p>
-                          <p className="text-xs text-text-muted line-through">₹{test.originalPrice}</p>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-primary mt-2 ml-auto" />}
-                        </div>
+          <h2 className="text-lg font-heading font-semibold text-text mb-4">Select Tests</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {allTests.map(test => {
+              const isSelected = selectedTests.includes(test.id);
+              return (
+                <Card
+                  key={test.id}
+                  className={`p-5 cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+                  onClick={() => toggleTest(test.id)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 pr-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-text text-sm">{test.name}</h3>
+                        <Badge variant="primary" className="text-[10px] py-0 px-1.5">{test.departmentName}</Badge>
                       </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            </>
-          )}
+                      <p className="text-text-muted text-xs mb-2 line-clamp-2">{test.description}</p>
+                      <div className="flex gap-2">
+                        <Badge variant={test.homeCollection ? 'secondary' : 'neutral'}>
+                          {test.homeCollection ? 'Virtual' : 'Lab'}
+                        </Badge>
+                        <span className="text-xs text-text-muted flex items-center gap-1"><Clock className="w-3 h-3" /> {test.reportTime}</span>
+                      </div>
+                    </div>
+                    <div className="text-right ml-2 shrink-0">
+                      <p className="font-bold text-primary">{test.price === 0 ? 'Free' : `₹${test.price}`}</p>
+                      {test.originalPrice > 0 && <p className="text-xs text-text-muted line-through">₹{test.originalPrice}</p>}
+                      {isSelected && <CheckCircle2 className="w-5 h-5 text-primary mt-2 ml-auto" />}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
 
           {selectedTests.length > 0 && (
             <div className="mt-6 p-4 bg-white rounded-xl border border-border-light flex items-center justify-between sticky bottom-4 shadow-lg">
               <div>
                 <span className="text-sm text-text-muted">{selectedTests.length} test(s) selected</span>
-                <span className="ml-3 font-bold text-primary text-lg">₹{totalPrice}</span>
+                <span className="ml-3 font-bold text-primary text-lg">{totalPrice === 0 ? 'Free' : `₹${totalPrice}`}</span>
               </div>
               <Button onClick={() => setStep(1)}>
                 Continue <ArrowRight className="w-4 h-4" />
@@ -340,20 +333,20 @@ export default function BookingPage() {
           <Card className="p-6 mb-6">
             <div className="space-y-3">
               {selectedTests.map(id => {
-                const test = tests.find(t => t.id === id);
+                const test = allTests.find(t => t.id === id);
                 return (
                   <div key={id} className="flex justify-between items-center py-2 border-b border-border-light last:border-0">
                     <span className="text-sm text-text">{test?.name}</span>
                     <div className="text-right">
-                      <span className="font-semibold text-text">₹{test?.price}</span>
-                      <span className="text-xs text-text-muted line-through ml-2">₹{test?.originalPrice}</span>
+                      <span className="font-semibold text-text">{test?.price === 0 ? 'Free' : `₹${test?.price}`}</span>
+                      {test?.originalPrice > 0 && <span className="text-xs text-text-muted line-through ml-2">₹{test?.originalPrice}</span>}
                     </div>
                   </div>
                 );
               })}
               <div className="flex justify-between pt-3 border-t-2 border-border">
                 <span className="font-bold text-text">Total</span>
-                <span className="font-bold text-primary text-xl">₹{totalPrice}</span>
+                <span className="font-bold text-primary text-xl">{totalPrice === 0 ? 'Free' : `₹${totalPrice}`}</span>
               </div>
             </div>
           </Card>
@@ -387,7 +380,7 @@ export default function BookingPage() {
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
             <Button size="lg" onClick={handleConfirm}>
-              Pay ₹{totalPrice} & Confirm
+              {totalPrice === 0 ? 'Confirm Booking' : `Pay ₹${totalPrice} & Confirm`}
             </Button>
           </div>
         </motion.div>

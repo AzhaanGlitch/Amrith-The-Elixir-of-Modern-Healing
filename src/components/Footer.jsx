@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, Github, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -19,9 +19,9 @@ export default function Footer() {
       </div>
       {/* Main Footer */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Brand */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
               <img src="/logo.png" alt="Amrith Logo" className="h-10 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
@@ -48,17 +48,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Services */}
-          <div>
-            <h4 className="font-heading font-semibold text-purple-300 mb-4">Services</h4>
-            <ul className="space-y-3">
-              {['Tuberculosis AI', 'Skin Cancer AI', 'Heart Health AI', 'Virtual Consultations', 'Digital Reports'].map(item => (
-                <li key={item}>
-                  <span className="text-gray300 text-sm">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+
 
           {/* Contact */}
           <div>
@@ -75,14 +65,18 @@ export default function Footer() {
                 <Mail className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-gray-300">Email</p>
-                  <p className="text-sm text-white font-medium">azhaanalisiddiqui15@gmail.com</p>
+                  <a href="mailto:azhaanalisiddiqui15@gmail.com" className="text-sm text-white font-medium hover:text-accent transition-colors">azhaanalisiddiqui15@gmail.com</a>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-300">Head Office</p>
-                  <p className="text-sm text-white font-medium">India</p>
+              <li className="pt-2">
+                <p className="text-sm text-gray-300 mb-3">Follow Us</p>
+                <div className="flex items-center gap-3">
+                  <a href="https://github.com/AzhaanGlitch" target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2.5 rounded-full hover:bg-accent hover:text-white transition-all duration-300 group">
+                    <Github className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
+                  </a>
+                  <a href="https://www.linkedin.com/in/azhaanalisiddiqui/" target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2.5 rounded-full hover:bg-accent hover:text-white transition-all duration-300 group">
+                    <Linkedin className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
+                  </a>
                 </div>
               </li>
             </ul>
@@ -96,11 +90,6 @@ export default function Footer() {
           <p className="text-white text-xs">
             © 2026 Amrith Healthcare Pvt. Ltd. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-            <Link to="#" className="text-white text-xs hover:text-gray-300 transition-colors">Privacy Policy</Link>
-            <Link to="#" className="text-white text-xs hover:text-gray-300 transition-colors">Terms of Service</Link>
-            <Link to="#" className="text-white text-xs hover:text-gray-300 transition-colors">Refund Policy</Link>
-          </div>
         </div>
       </div>
     </footer>

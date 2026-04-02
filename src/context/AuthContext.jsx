@@ -5,8 +5,8 @@ const AuthContext = createContext(null);
 const mockUsers = {
   patient: {
     id: 'P001',
-    name: 'Aditya Rajan',
-    email: 'aditya@example.com',
+    name: 'Amrith User',
+    email: 'user@amrith.com',
     phone: '+91 98765 43210',
     role: 'patient',
     avatar: 'AR',
@@ -17,8 +17,8 @@ const mockUsers = {
   },
   doctor: {
     id: 'D001',
-    name: 'Dr. Meera Iyer',
-    email: 'meera.iyer@amrith.com',
+    name: 'Amrith Dr.',
+    email: 'doctor@amrith.com',
     phone: '+91 87654 32109',
     role: 'doctor',
     avatar: 'MI',

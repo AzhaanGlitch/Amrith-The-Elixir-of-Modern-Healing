@@ -110,60 +110,71 @@ export default function HomePage() {
       <NewsSection />
 
       {/* AI Virtual Facilities / Departments Listing */}
-      <section className="py-24 bg-white relative">
+      {/* AI Virtual Facilities / Departments Listing */}
+      <section className="py-24 bg-gradient-to-br from-background to-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">{t('home.badgeFree')}</Badge>
+          <div className="text-left mb-16">
             <h2 className="text-4xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.exploreTitle')}</h2>
-            <p className="text-text-muted text-xl max-w-3xl mx-auto">{t('home.exploreDesc1')} {departments.reduce((acc, d) => acc + d.diseases.length, 0)}+ {t('home.exploreDesc2')} {departments.length} {t('home.exploreDesc3')}</p>
+            <p className="text-text-muted text-xl max-w-3xl">{t('home.exploreDesc1')} {departments.reduce((acc, d) => acc + d.diseases.length, 0)}+ {t('home.exploreDesc2')} {departments.length} {t('home.exploreDesc3')}</p>
           </div>
 
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {departments.map((dept) => {
-              const Icon = iconMap[dept.icon] || Stethoscope;
-              const colorClass = departmentColors[dept.id] || 'text-primary';
-              return (
-                <motion.div key={dept.id} variants={item} className="h-full">
-                  <Card className="group p-8 h-full flex flex-col items-center text-center transform transition-all hover:scale-[1.05] hover:shadow-2xl cursor-pointer border-none bg-white shadow-lg" onClick={() => navigate(`/departments/${dept.id}`)}>
-                    <Icon className={`w-14 h-14 ${colorClass} mb-6 group-hover:scale-125 transition-all duration-300 drop-shadow-sm`} />
-                    <h3 className="text-xl font-heading font-bold text-text mb-3 line-clamp-2">{dept.name}</h3>
-                    <p className="text-text-muted text-sm flex-1 leading-relaxed mb-3">{dept.description}</p>
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+            {/* Left side: Space for 3-4 images */}
+            <div className="lg:col-span-5 grid grid-cols-2 gap-4 h-[600px]">
+              <div className="space-y-4 h-full">
+                <div className="h-[55%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                  <img src="/services/1.jpg" alt="Amrith Service 1" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div className="h-[45%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                  <img src="/services/2.jpg" alt="Amrith Service 2" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+              </div>
+              <div className="space-y-4 h-full pt-12">
+                <div className="h-[45%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                  <img src="/services/3.jpg" alt="Amrith Service 3" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div className="h-[55%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                  <img src="/services/4.webp" alt="Amrith Service 4" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+              </div>
+            </div>
 
-                    {/* Disease count & input types */}
-                    <div className="flex flex-wrap gap-1.5 justify-center mb-4">
-                      <Badge variant="neutral" className="text-xs">{dept.diseases.length} {t('home.conditions')}</Badge>
-                      {dept.inputTypes.map(type => (
-                        <Badge key={type} variant="secondary" className="text-xs capitalize">{type === 'xray' ? 'X-Ray' : type}</Badge>
-                      ))}
-                    </div>
-
-                    {/* Disease list preview */}
-                    <div className="w-full text-left space-y-1 mb-4">
-                      {dept.diseases.slice(0, 3).map(disease => (
-                        <div key={disease.id} className="flex items-center gap-2 text-xs text-text-secondary">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                          <span className="truncate">{disease.name}</span>
+            {/* Right side: Elongated tiles of services */}
+            <div className="lg:col-span-7">
+              <motion.div
+                variants={container}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-50px' }}
+                className="flex flex-col gap-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar"
+              >
+                {departments.map((dept) => {
+                  const Icon = iconMap[dept.icon] || Stethoscope;
+                  const colorClass = departmentColors[dept.id] || 'text-primary';
+                  return (
+                    <motion.div key={dept.id} variants={item}>
+                      <Card className="group p-5 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer border border-border-light bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all" onClick={() => navigate(`/departments/${dept.id}`)}>
+                        <div className={`shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                          <Icon className={`w-10 h-10 ${colorClass} drop-shadow-sm`} />
                         </div>
-                      ))}
-                      {dept.diseases.length > 3 && (
-                        <p className="text-xs text-primary font-medium pl-5.5">+{dept.diseases.length - 3} {t('home.more')}</p>
-                      )}
-                    </div>
-
-                    <div className="mt-auto flex items-center text-primary text-sm font-black opacity-0 group-hover:opacity-100 transition-all">
-                      {t('home.getFreeAnalysis')} <ArrowRight className="w-4 h-4 ml-1" />
-                    </div>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-heading font-bold text-text mb-1.5 group-hover:text-primary transition-colors">{dept.name}</h3>
+                          <p className="text-text-secondary text-sm leading-relaxed line-clamp-2">{dept.description}</p>
+                        </div>
+                        <div className="hidden sm:flex shrink-0 w-10 h-10 rounded-full bg-gray-50 items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 transition-all duration-300">
+                          <ArrowRight className="w-5 h-5 text-primary translate-x-[-5px] group-hover:translate-x-0 transition-transform" />
+                        </div>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 

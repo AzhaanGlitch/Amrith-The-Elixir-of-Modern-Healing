@@ -120,23 +120,23 @@ export default function HomePage() {
 
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-start">
             {/* Left side: Space for 3-4 images */}
-            <div className="lg:col-span-5 grid grid-cols-2 gap-4 h-[600px]">
-              <div className="space-y-4 h-full">
-                <div className="h-[55%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+            <div className="lg:col-span-5 grid grid-cols-2 gap-4 mb-12 lg:mb-0 pb-16">
+              <div className="flex flex-col gap-4">
+                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/1.jpg" alt="Amrith Service 1" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div className="h-[45%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-square rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/2.jpg" alt="Amrith Service 2" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
               </div>
-              <div className="space-y-4 h-full pt-12">
-                <div className="h-[45%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+              <div className="flex flex-col gap-4 pt-12">
+                <div className="aspect-square rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/3.jpg" alt="Amrith Service 3" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div className="h-[55%] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/4.webp" alt="Amrith Service 4" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
@@ -182,37 +182,63 @@ export default function HomePage() {
       <section className="py-24 bg-gradient-to-br from-primary/5 to-primary/10 border-y border-border-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.howTitle')}</h2>
-            <p className="text-text-muted text-xl">{t('home.howSubtitle')}</p>
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">How Amrith AI Works</h2>
+            <p className="text-text-muted text-xl">Follow these simple steps to get your AI-powered health analysis</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: t('home.step01'), icon: ClipboardList, title: t('home.stepTitle1'), desc: t('home.stepDesc1'), color: 'from-purple-500 to-indigo-600' },
-              { step: t('home.step02'), icon: Upload, title: t('home.stepTitle2'), desc: t('home.stepDesc2'), color: 'from-blue-500 to-cyan-500' },
-              { step: t('home.step03'), icon: FileText, title: t('home.stepTitle3'), desc: t('home.stepDesc3'), color: 'from-emerald-500 to-teal-500' },
-            ].map(({ step, icon: Icon, title, desc, color }, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-              >
-                <Card className="p-8 text-center h-full border-none shadow-xl bg-white/80 backdrop-blur-xl relative overflow-visible">
-                  <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg text-white font-bold text-lg`}>
-                      {step}
-                    </div>
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start mb-24">
+            {/* Left side: Steps */}
+            <div>
+              <h3 className="text-2xl font-heading font-bold text-text mb-6">Steps</h3>
+              <div className="flex flex-col gap-3">
+                {[
+                  'Visit the website',
+                  'Search or choose which disease you want to check',
+                  'Login as patient to proceed further',
+                  'Give some basic answers of the questions asked on symptoms',
+                  'Upload your respected data in the form of images or reports',
+                  'Wait for our trained ml model to analyze',
+                  'Get your results in few miniutes',
+                  'If you logged in as a doctor, monitor all your patients and deal accordingly with our doctors dashboard'
+                ].map((stepText, i) => (
+                  <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-border-light rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+                    <span className="font-heading font-black text-primary/40 text-xl w-6 shrink-0">{i + 1}.</span>
+                    <p className="text-text-secondary text-sm font-medium">{stepText}</p>
                   </div>
-                  <div className="pt-6">
-                    <Icon className="w-10 h-10 text-primary mx-auto mb-4 opacity-80" />
-                    <h3 className="font-heading font-bold text-xl text-text mb-3">{title}</h3>
-                    <p className="text-text-muted text-sm leading-relaxed">{desc}</p>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Right side: Video placeholder */}
+            <div className="w-full aspect-video bg-black/5 rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-text-muted relative overflow-hidden group">
+              <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                 <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                   <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
+                 </div>
+              </div>
+              <p className="font-semibold text-lg z-10 group-hover:opacity-0 transition-opacity">Video Demo Area</p>
+              <p className="text-sm z-10 group-hover:opacity-0 transition-opacity">(Video will be added here later)</p>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left side: Text Description for PDF */}
+            <div>
+              <h3 className="text-2xl font-heading font-bold text-text mb-4">Comprehensive Demo Report</h3>
+              <p className="text-text-muted text-lg leading-relaxed mb-6">
+                After the machine learning model analyzes your uploaded symptoms, images, and reports, you receive a highly detailed, instantly generated health analysis report.
+              </p>
+              <p className="text-text-muted text-lg leading-relaxed">
+                This comprehensive document includes risk assessments, precise breakdowns of detected anomalies, and actionable medical recommendations. You can download and share this with your primary care physician for a seamless transition to physical care.
+              </p>
+            </div>
+
+            {/* Right side: PDF placeholder */}
+            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-primary/5 rounded-3xl border-2 border-dashed border-primary/30 flex flex-col items-center justify-center text-primary/60 relative overflow-hidden group">
+              <FileText className="w-12 h-12 mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <p className="font-semibold text-lg">Sample PDF Report</p>
+              <p className="text-sm">(PDF document will be embedded here)</p>
+            </div>
           </div>
         </div>
       </section>

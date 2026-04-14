@@ -46,10 +46,8 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="space-y-6">
               {[
-                { icon: Phone, title: t('contact.tollFree'), value: '1800-123-AMRITH', subtitle: t('contact.tollFreeTime') },
-                { icon: Mail, title: t('contact.email'), value: 'hello@amrith.health', subtitle: t('contact.emailReply') },
-                { icon: MapPin, title: t('contact.headOffice'), value: 'Bangalore, India', subtitle: t('contact.headOfficeAddr') },
-                { icon: Clock, title: t('contact.workingHours'), value: t('contact.workingHoursVal'), subtitle: t('contact.workingHoursTime') },
+                { icon: Phone, title: t('contact.tollFree'), value: '+91 7983595318', subtitle: t('contact.tollFreeTime') },
+                { icon: Mail, title: t('contact.email'), value: 'azhaanalisiddiqui15@gmail.com', subtitle: t('contact.emailReply') },
               ].map(({ icon: Icon, title, value, subtitle }, i) => (
                 <Card key={i} className="p-6">
                   <div className="flex items-start gap-4">
@@ -89,7 +87,7 @@ export default function ContactPage() {
                         type="email"
                         value={form.email}
                         onChange={e => setForm({ ...form, email: e.target.value })}
-                        placeholder={t('contact.emailPlaceholder')}
+                        placeholder="amrith_user@email.com"
                         className="w-full py-3 px-4 bg-background border border-border rounded-xl text-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
                         required
                       />

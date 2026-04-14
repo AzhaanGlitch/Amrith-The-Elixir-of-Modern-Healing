@@ -119,7 +119,7 @@ export default function NewsSection() {
             <p className="text-text-secondary">{t('news.loading')}</p>
           </div>
         ) : error ? (
-          <div className="text-center py-16 bg-red-50/50 rounded-3xl border border-red-100 max-w-7xl mx-auto">
+          <div className="text-center py-16 bg-red-50/50 rounded-md border border-red-100 max-w-7xl mx-auto">
             <p className="text-red-500 mb-4">{error}</p>
             <Button onClick={fetchNewsAndEmergencies} variant="outline" size="sm" className="gap-2 mx-auto bg-white">
               <RefreshCw className="w-4 h-4" /> {t('news.tryAgain')}

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 export function Button({ children, variant = 'primary', size = 'md', className = '', disabled = false, onClick, type = 'button', ...props }) {
-  const base = 'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:cursor-not-allowed';
+  const base = 'inline-flex items-center justify-center gap-2 font-semibold rounded-md transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
     primary: 'bg-primary text-white hover:bg-primary-light hover:shadow-lg active:bg-primary-dark',
@@ -39,7 +39,7 @@ export function Card({ children, className = '', hover = true, onClick }) {
   return (
     <motion.div
       whileHover={hover ? { y: -4, boxShadow: '0 8px 24px rgba(0,109,119,0.1)' } : {}}
-      className={`bg-surface rounded-2xl shadow-[var(--shadow-card)] overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`bg-surface rounded-md shadow-[var(--shadow-card)] overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
       onClick={onClick}
     >
       {children}
@@ -58,7 +58,7 @@ export function Badge({ children, variant = 'primary', className = '' }) {
   };
 
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${variants[variant]} ${className}`}>
+    <span className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold ${variants[variant]} ${className}`}>
       {children}
     </span>
   );
@@ -116,7 +116,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={e => e.stopPropagation()}
-        className={`relative bg-surface rounded-2xl shadow-[var(--shadow-modal)] w-full ${sizes[size]} max-h-[90vh] overflow-y-auto`}
+        className={`relative bg-surface rounded-md shadow-[var(--shadow-modal)] w-full ${sizes[size]} max-h-[90vh] overflow-y-auto`}
       >
         <div className="sticky top-0 bg-surface flex items-center justify-between p-6 pb-4 border-b border-border-light">
           <h2 className="text-xl font-heading font-bold text-text">{title}</h2>
@@ -167,7 +167,7 @@ export function StatCard({ label, value, icon: Icon, trend, color = 'primary' })
           )}
         </div>
         {Icon && (
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center`}>
+          <div className={`w-12 h-12 rounded-md bg-gradient-to-br ${colors[color]} flex items-center justify-center`}>
             <Icon className="w-6 h-6 text-white" />
           </div>
         )}
@@ -187,7 +187,7 @@ export function SearchBar({ placeholder = 'Search...', value, onChange, classNam
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full py-3 pl-12 pr-4 bg-white border border-border rounded-xl text-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+        className="w-full py-3 pl-12 pr-4 bg-white border border-border rounded-md text-text placeholder:text-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
         aria-label={placeholder}
       />
     </div>

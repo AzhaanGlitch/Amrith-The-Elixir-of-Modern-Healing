@@ -86,7 +86,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 onClick={() => navigate('/signup?role=patient')}
-                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
+                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-md px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
               >
                 <UserCheck className="w-4 h-4 mr-2" />
                 {t('home.imPatient')}
@@ -95,7 +95,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 onClick={() => navigate('/signup?role=doctor')}
-                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
+                className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-md px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
               >
                 <Stethoscope className="w-4 h-4 mr-2" />
                 {t('home.imDoctor')}
@@ -122,21 +122,21 @@ export default function HomePage() {
             {/* Left side: Space for 3-4 images */}
             <div className="lg:col-span-5 grid grid-cols-2 gap-4 mb-12 lg:mb-0 pb-16">
               <div className="flex flex-col gap-4">
-                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-[4/5] rounded-md overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/1.jpg" alt="Amrith Service 1" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div className="aspect-square rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-square rounded-md overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/2.jpg" alt="Amrith Service 2" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
               </div>
               <div className="flex flex-col gap-4 pt-12">
-                <div className="aspect-square rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-square rounded-md overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/3.jpg" alt="Amrith Service 3" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
+                <div className="aspect-[4/5] rounded-md overflow-hidden shadow-lg border border-border-light bg-gray-100 relative group">
                   <img src="/services/4.webp" alt="Amrith Service 4" onError={(e) => { e.target.style.display = 'none'; }} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
                           <h3 className="text-xl font-heading font-bold text-text mb-1.5 group-hover:text-primary transition-colors">{dept.name}</h3>
                           <p className="text-text-secondary text-sm leading-relaxed line-clamp-2">{dept.description}</p>
                         </div>
-                        <div className="hidden sm:flex shrink-0 w-10 h-10 rounded-full bg-gray-50 items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 transition-all duration-300">
+                        <div className="hidden sm:flex shrink-0 w-10 h-10 rounded-md bg-gray-50 items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 transition-all duration-300">
                           <ArrowRight className="w-5 h-5 text-primary translate-x-[-5px] group-hover:translate-x-0 transition-transform" />
                         </div>
                       </Card>
@@ -201,7 +201,7 @@ export default function HomePage() {
                   'Get your results in few miniutes',
                   'If you logged in as a doctor, monitor all your patients and deal accordingly with our doctors dashboard'
                 ].map((stepText, i) => (
-                  <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-border-light rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+                  <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-border-light rounded-md p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
                     <span className="font-heading font-black text-primary/40 text-xl w-6 shrink-0">{i + 1}.</span>
                     <p className="text-text-secondary text-sm font-medium">{stepText}</p>
                   </div>
@@ -210,9 +210,9 @@ export default function HomePage() {
             </div>
 
             {/* Right side: Video placeholder */}
-            <div className="w-full aspect-video bg-black/5 rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-text-muted relative overflow-hidden group">
+            <div className="w-full aspect-video bg-black/5 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center text-text-muted relative overflow-hidden group">
               <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                 <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                 <div className="w-16 h-16 rounded-md bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
                    <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
                  </div>
               </div>
@@ -234,7 +234,7 @@ export default function HomePage() {
             </div>
 
             {/* Right side: PDF placeholder */}
-            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-primary/5 rounded-3xl border-2 border-dashed border-primary/30 flex flex-col items-center justify-center text-primary/60 relative overflow-hidden group">
+            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-primary/5 rounded-md border-2 border-dashed border-primary/30 flex flex-col items-center justify-center text-primary/60 relative overflow-hidden group">
               <FileText className="w-12 h-12 mb-3 group-hover:scale-110 transition-transform duration-300" />
               <p className="font-semibold text-lg">Sample PDF Report</p>
               <p className="text-sm">(PDF document will be embedded here)</p>

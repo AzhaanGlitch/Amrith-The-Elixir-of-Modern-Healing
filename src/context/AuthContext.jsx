@@ -27,6 +27,13 @@ const mockUsers = {
     qualification: 'MBBS, MD (Internal Medicine)',
     verified: true,
   },
+  admin: {
+    id: 'A001',
+    name: 'Amrith Admin',
+    email: 'admin@amrith.com',
+    role: 'admin',
+    avatar: 'AA',
+  },
 };
 
 export function AuthProvider({ children }) {

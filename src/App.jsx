@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import PublicLayout from './layouts/PublicLayout';
 import PatientLayout from './layouts/PatientLayout';
 import DoctorLayout from './layouts/DoctorLayout';
+import AdminLayout from './layouts/AdminLayout';
 
 // Public Pages
 import HomePage from './pages/HomePage';
@@ -34,6 +35,10 @@ import DoctorPatientsPage from './pages/doctor/DoctorPatientsPage';
 import DoctorSchedulePage from './pages/doctor/DoctorSchedulePage';
 import DoctorReportsPage from './pages/doctor/DoctorReportsPage';
 import DoctorProfilePage from './pages/doctor/DoctorProfilePage';
+
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminCodeGeneratorPage from './pages/admin/AdminCodeGeneratorPage';
 
 function App() {
   return (
@@ -81,6 +86,16 @@ function App() {
               <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
               <Route path="/doctor/reports" element={<DoctorReportsPage />} />
               <Route path="/doctor/profile" element={<DoctorProfilePage />} />
+            </Route>
+
+            {/* Admin Protected Routes */}
+            <Route element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/generator" element={<AdminCodeGeneratorPage />} />
             </Route>
 
             {/* Catch-all redirect */}

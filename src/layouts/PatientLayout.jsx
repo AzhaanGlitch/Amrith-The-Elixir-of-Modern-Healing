@@ -30,152 +30,140 @@ export default function PatientLayout() {
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Bar */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-border-light">
-        <div className="flex items-center justify-between h-16 px-4 lg:px-8">
+    <div className="min-h-screen bg-[#f4f7fe] flex">
+      {/* Desktop Sidebar (Doctor's style) */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-24 flex-col bg-primary-dark z-40 rounded-r-[40px] shadow-2xl overflow-hidden py-8 items-center">
+        <div className="mb-12">
+          <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
+        </div>
+
+        <nav className="flex-1 space-y-6 w-full flex flex-col items-center mt-12" aria-label="Patient navigation">
+          {patientLinks.map((link, i) => {
+            const Icon = link.icon;
+            const active = isActive(link.path);
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 ${
+                  active
+                    ? 'bg-white/20 text-white shadow-lg shadow-white/10'
+                    : 'text-white/50 hover:text-white hover:bg-white/10'
+                }`}
+                title={link.label}
+              >
+                <Icon className={`w-5 h-5 ${active ? 'text-white' : ''}`} />
+                {active && (
+                  <motion.div layoutId="activeDot" className="absolute -left-6 w-2 h-8 bg-white rounded-r-full" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto">
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center w-12 h-12 rounded-2xl text-white/50 hover:text-white hover:bg-white/10 transition-all"
+            title="Sign Out"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <motion.aside
+              initial={{ x: -300 }}
+              animate={{ x: 0 }}
+              exit={{ x: -300 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              className="fixed left-0 top-0 bottom-0 w-24 bg-primary-dark z-50 lg:hidden flex flex-col items-center py-8 rounded-r-[40px] shadow-2xl"
+            >
+              <div className="mb-12">
+                <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
+              </div>
+
+              <nav className="flex-1 space-y-6 w-full flex flex-col items-center mt-12">
+                {patientLinks.map((link) => {
+                  const Icon = link.icon;
+                  const active = isActive(link.path);
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 ${
+                        active
+                          ? 'bg-white/20 text-white shadow-lg shadow-white/10'
+                          : 'text-white/50 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-auto">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center w-12 h-12 rounded-2xl text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Area */}
+      <div className="flex-1 lg:ml-24 flex flex-col min-h-screen">
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 bg-[#f4f7fe]/90 backdrop-blur-md px-6 sm:px-10 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-text hover:bg-gray-50 transition-all"
-              aria-label="Toggle sidebar"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-white shadow-sm transition-all bg-white"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain" />
-            </Link>
+            <h2 className="text-2xl font-heading font-bold text-text hidden sm:block">Patient Portal</h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-primary/5 transition-all" aria-label="Notifications">
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-2 text-sm text-text-muted font-semibold">
+              <span>DENMED</span>
+              <ChevronLeft className="w-4 h-4 -rotate-90" />
+            </div>
+            <div className="hidden md:block w-px h-6 bg-border" />
+            <div className="text-sm font-semibold text-text-muted">EN</div>
+            <button className="relative text-text-muted hover:text-primary transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-[#f4f7fe]" />
             </button>
-            <Link to="/patient/profile" className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary-dark text-white text-xs font-semibold flex items-center justify-center">
-                {user?.avatar || 'U'}
+            <Link to="/patient/profile" className="flex items-center gap-2 pl-2">
+              <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-border flex items-center justify-center overflow-hidden">
+                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Kate'}&backgroundColor=e2e8f0`} alt="Avatar" className="w-full h-full object-cover" />
               </div>
-              <span className="hidden sm:block text-sm font-medium text-text">{user?.name?.split(' ')[0]}</span>
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="flex">
-        {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex fixed left-0 top-16 bottom-0 w-64 flex-col bg-white border-r border-border-light z-30 overflow-y-auto">
-          <nav className="flex-1 p-4 space-y-1" aria-label="Patient navigation">
-            {patientLinks.map(link => {
-              const Icon = link.icon;
-              const active = isActive(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    active
-                      ? 'text-primary bg-primary/8 shadow-sm'
-                      : 'text-text-secondary hover:text-primary hover:bg-primary/5'
-                  }`}
-                >
-                  <Icon className={`w-5 h-5 ${active ? 'text-primary' : ''}`} />
-                  {link.label}
-                  {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-secondary" />}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="p-4 border-t border-border-light">
-            <Link
-              to="/"
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-text-muted hover:text-primary hover:bg-primary/5 transition-all"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-error hover:bg-error/5 transition-all w-full text-left"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </button>
-          </div>
-        </aside>
-
-        {/* Mobile Sidebar Overlay */}
-        <AnimatePresence>
-          {sidebarOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
-                onClick={() => setSidebarOpen(false)}
-              />
-              <motion.aside
-                initial={{ x: -300 }}
-                animate={{ x: 0 }}
-                exit={{ x: -300 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-                className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 lg:hidden flex flex-col shadow-xl"
-              >
-                <div className="flex items-center justify-between p-4 border-b border-border-light">
-                  <div className="flex items-center gap-2">
-                    <img src="/logo.png" alt="Amrith Logo" className="h-8 w-auto object-contain" />
-                  </div>
-                  <button
-                    onClick={() => setSidebarOpen(false)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-text-muted hover:text-text hover:bg-gray-100 transition-all"
-                    aria-label="Close sidebar"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                  {patientLinks.map(link => {
-                    const Icon = link.icon;
-                    const active = isActive(link.path);
-                    return (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        onClick={() => setSidebarOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                          active
-                            ? 'text-primary bg-primary/8'
-                            : 'text-text-secondary hover:text-primary hover:bg-primary/5'
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
-                        {link.label}
-                      </Link>
-                    );
-                  })}
-                </nav>
-
-                <div className="p-4 border-t border-border-light">
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-error hover:bg-error/5 transition-all w-full text-left"
-                  >
-                    <LogOut className="w-4 h-4" /> Sign Out
-                  </button>
-                </div>
-              </motion.aside>
-            </>
-          )}
-        </AnimatePresence>
-
-        {/* Main Content */}
-        <main className="flex-1 lg:ml-64 min-h-[calc(100vh-4rem)]">
-          <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-            <Outlet />
-          </div>
+        {/* Page Content */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-10">
+          <Outlet />
         </main>
       </div>
     </div>

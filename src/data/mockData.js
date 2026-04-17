@@ -613,6 +613,43 @@ export const reports = [];
 export const doctorAppointments = [];
 export const doctorPatients = [];
 export const doctorReportsInbox = [];
+export const doctors = [
+  {
+    name: 'Dr. Sarah Johnson',
+    specialization: 'Cardiology',
+    education: 'MD, FACC',
+    experience: '15 Years',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
+  },
+  {
+    name: 'Dr. Michael Chen',
+    specialization: 'Neurology',
+    education: 'MD, PhD',
+    experience: '12 Years',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael'
+  },
+  {
+    name: 'Dr. Emily Williams',
+    specialization: 'Dermatology',
+    education: 'MD, FAAD',
+    experience: '8 Years',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily'
+  },
+  {
+    name: 'Dr. James Rodriguez',
+    specialization: 'Orthopedics',
+    education: 'MD, FAAOS',
+    experience: '20 Years',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=James'
+  },
+  {
+    name: 'Dr. Priya Sharma',
+    specialization: 'General Medicine',
+    education: 'MBBS, MD',
+    experience: '10 Years',
+    image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Priya'
+  }
+];
 
 export const blogPosts = [
   { id: 1, title: '10 Warning Signs Your Heart Needs Attention', category: 'Heart Health', readTime: '5 min', date: 'Mar 15, 2026', excerpt: 'Learn the critical warning signs that indicate your heart may need medical evaluation. Early detection saves lives.' },

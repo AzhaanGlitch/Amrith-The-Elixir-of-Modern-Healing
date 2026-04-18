@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/ui';
-import { User, Stethoscope } from 'lucide-react';
+import { User, Stethoscope, ShieldAlert } from 'lucide-react';
 
 export default function LoginPage() {
   const location = useLocation();
@@ -28,7 +28,8 @@ export default function LoginPage() {
   const [signupForm, setSignupForm] = useState({
     name: '', phone: '', email: '', password: '',
     address: '', dob: '', gender: '',
-    specialization: '', license: '', experience: ''
+    specialization: '', license: '', experience: '',
+    adminCode: ''
   });
 
   const redirectPath = searchParams.get('redirect');
@@ -37,8 +38,8 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const user = await login(role);
-      addToast(`Welcome back, ${user.name}!`, 'success');
-      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'));
+      addToast(`Welcome back, ${user.name || 'Admin'}!`, 'success');
+      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : role === 'admin' ? '/admin/dashboard' : '/patient/dashboard'));
     } catch {
       addToast('Login failed. Please try again.', 'error');
     }
@@ -48,8 +49,8 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const user = await signup(role, signupForm);
-      addToast(`Welcome to Amrith, ${user.name}! 🎉`, 'success');
-      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'));
+      addToast(`Welcome to Amrith, ${user.name || 'Admin'}! 🎉`, 'success');
+      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : role === 'admin' ? '/admin/dashboard' : '/patient/dashboard'));
     } catch {
       addToast('Signup failed. Please try again.', 'error');
     }
@@ -89,7 +90,7 @@ export default function LoginPage() {
             
             {/* Role Toggle */}
             <div className="flex w-full bg-black/40 rounded-xl p-1 border border-white/5">
-              {['patient', 'doctor'].map(r => (
+              {['patient', 'doctor', 'admin'].map(r => (
                 <button
                   key={`su-${r}`}
                   type="button"
@@ -98,8 +99,8 @@ export default function LoginPage() {
                     role === r ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  <span className="flex items-center justify-center gap-2">
-                    {r === 'patient' ? <User className="w-4 h-4" /> : <Stethoscope className="w-4 h-4" />}
+                  <span className="flex items-center justify-center gap-1 sm:gap-2">
+                    {r === 'patient' ? <User className="w-4 h-4" /> : r === 'doctor' ? <Stethoscope className="w-4 h-4" /> : <ShieldAlert className="w-4 h-4" />}
                     <span className="capitalize">{r}</span>
                   </span>
                 </button>
@@ -107,29 +108,39 @@ export default function LoginPage() {
             </div>
 
             <div className="w-full space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[300px]">
-              <input type="text" placeholder={role === 'doctor' ? "Dr. Full Name" : "Full Name"} className={inputClass} required value={signupForm.name} onChange={e => updateSignup('name', e.target.value)} />
-              <input type="email" placeholder="Email Address" className={inputClass} required value={signupForm.email} onChange={e => updateSignup('email', e.target.value)} />
-              <input type="tel" placeholder="Mobile Number (+91)" className={inputClass} required value={signupForm.phone} onChange={e => updateSignup('phone', e.target.value)} />
-              <input type="password" placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
-              
-              {role === 'patient' ? (
+              {role === 'admin' ? (
                 <>
-                  <input type="text" placeholder="House Address" className={inputClass} value={signupForm.address} onChange={e => updateSignup('address', e.target.value)} />
-                  <div className="flex gap-3">
-                    <input type="date" className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.dob} onChange={e => updateSignup('dob', e.target.value)} />
-                    <select className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.gender} onChange={e => updateSignup('gender', e.target.value)}>
-                      <option value="">Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
+                  <input type="email" placeholder="Admin Email" className={inputClass} required value={signupForm.email} onChange={e => updateSignup('email', e.target.value)} />
+                  <input type="password" placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
+                  <input type="text" placeholder="Admin Code" className={inputClass} required value={signupForm.adminCode} onChange={e => updateSignup('adminCode', e.target.value)} />
                 </>
               ) : (
                 <>
-                  <input type="text" placeholder="Specialization (e.g. Cardiology)" className={inputClass} required value={signupForm.specialization} onChange={e => updateSignup('specialization', e.target.value)} />
-                  <input type="text" placeholder="Medical License (MCI-1234)" className={inputClass} required value={signupForm.license} onChange={e => updateSignup('license', e.target.value)} />
-                  <input type="number" placeholder="Years of Experience" className={inputClass} required value={signupForm.experience} onChange={e => updateSignup('experience', e.target.value)} />
+                  <input type="text" placeholder={role === 'doctor' ? "Dr. Full Name" : "Full Name"} className={inputClass} required value={signupForm.name} onChange={e => updateSignup('name', e.target.value)} />
+                  <input type="email" placeholder="Email Address" className={inputClass} required value={signupForm.email} onChange={e => updateSignup('email', e.target.value)} />
+                  <input type="tel" placeholder="Mobile Number (+91)" className={inputClass} required value={signupForm.phone} onChange={e => updateSignup('phone', e.target.value)} />
+                  <input type="password" placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
+                  
+                  {role === 'patient' ? (
+                    <>
+                      <input type="text" placeholder="House Address" className={inputClass} value={signupForm.address} onChange={e => updateSignup('address', e.target.value)} />
+                      <div className="flex gap-3">
+                        <input type="date" className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.dob} onChange={e => updateSignup('dob', e.target.value)} />
+                        <select className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.gender} onChange={e => updateSignup('gender', e.target.value)}>
+                          <option value="">Gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <input type="text" placeholder="Specialization (e.g. Cardiology)" className={inputClass} required value={signupForm.specialization} onChange={e => updateSignup('specialization', e.target.value)} />
+                      <input type="text" placeholder="Medical License (MCI-1234)" className={inputClass} required value={signupForm.license} onChange={e => updateSignup('license', e.target.value)} />
+                      <input type="number" placeholder="Years of Experience" className={inputClass} required value={signupForm.experience} onChange={e => updateSignup('experience', e.target.value)} />
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -152,7 +163,7 @@ export default function LoginPage() {
             
             {/* Role Toggle */}
             <div className="flex w-full bg-black/40 rounded-xl p-1 border border-white/5">
-              {['patient', 'doctor'].map(r => (
+              {['patient', 'doctor', 'admin'].map(r => (
                 <button
                   key={`si-${r}`}
                   type="button"
@@ -161,8 +172,8 @@ export default function LoginPage() {
                     role === r ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  <span className="flex items-center justify-center gap-2">
-                    {r === 'patient' ? <User className="w-4 h-4" /> : <Stethoscope className="w-4 h-4" />}
+                  <span className="flex items-center justify-center gap-1 sm:gap-2">
+                    {r === 'patient' ? <User className="w-4 h-4" /> : r === 'doctor' ? <Stethoscope className="w-4 h-4" /> : <ShieldAlert className="w-4 h-4" />}
                     <span className="capitalize">{r}</span>
                   </span>
                 </button>

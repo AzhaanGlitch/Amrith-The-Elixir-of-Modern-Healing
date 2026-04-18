@@ -39,6 +39,7 @@ import DoctorProfilePage from './pages/doctor/DoctorProfilePage';
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCodeGeneratorPage from './pages/admin/AdminCodeGeneratorPage';
+import AdminProfilePage from './pages/admin/AdminProfilePage';
 
 function App() {
   return (
@@ -96,6 +97,7 @@ function App() {
             }>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/generator" element={<AdminCodeGeneratorPage />} />
+              <Route path="/admin/profile" element={<AdminProfilePage />} />
             </Route>
 
             {/* Catch-all redirect */}

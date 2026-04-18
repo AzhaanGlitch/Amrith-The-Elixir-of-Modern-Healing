@@ -46,9 +46,9 @@ export default function AdminCodeGeneratorPage() {
         <p className="text-gray-400">Generate secure SHA-256 access codes for new doctor and admin registrations.</p>
       </div>
 
-      <div className="bg-[#1a1a1a] p-8 rounded-3xl border border-white/5 shadow-xl">
+      <div className="bg-[#000000] p-8 rounded-md border border-white/5 shadow-xl">
         <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/5">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+          <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20">
             <Key className="w-6 h-6 text-primary" />
           </div>
           <div>
@@ -66,7 +66,7 @@ export default function AdminCodeGeneratorPage() {
               value={formData.email}
               onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
               placeholder="e.g. doctor@amrith.com"
-              className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full bg-[#000000] border border-white/10 rounded-md px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default function AdminCodeGeneratorPage() {
               value={formData.sourceSentence}
               onChange={(e) => setFormData(p => ({ ...p, sourceSentence: e.target.value }))}
               placeholder="Enter a secure phrase..."
-              className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full bg-[#000000] border border-white/10 rounded-md px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
             />
             <p className="text-xs text-gray-500 ml-1 flex items-center gap-1 mt-1">
               <ShieldAlert className="w-3 h-3" />
@@ -89,14 +89,14 @@ export default function AdminCodeGeneratorPage() {
           <button 
             type="submit" 
             disabled={isGenerating || !formData.email || !formData.sourceSentence}
-            className="w-full bg-white text-[#111] font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-white/5"
+            className="w-full bg-white text-[#000000] font-bold py-4 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-white/5"
           >
             {isGenerating ? 'Generating...' : 'Generate 64-bit Code'}
           </button>
         </form>
 
         {generatedCode && (
-          <div className="mt-8 p-6 bg-[#111] rounded-2xl border border-white/10 relative overflow-hidden group">
+          <div className="mt-8 p-6 bg-[#000000] rounded-md border border-white/10 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -105,7 +105,7 @@ export default function AdminCodeGeneratorPage() {
               </div>
               <button 
                 onClick={handleCopy}
-                className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-[#222] hover:bg-[#333] text-white rounded-lg transition-colors border border-white/5"
+                className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-[#111111] hover:bg-white/10 text-white rounded-lg transition-colors border border-white/5"
               >
                 {copied ? <><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
               </button>

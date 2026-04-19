@@ -2,22 +2,25 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import PortalActions from '../components/PortalActions';
 import {
-  LayoutDashboard, Users, CalendarClock, FileCheck, UserCog,
+  LayoutDashboard, Users, Calendar, ClipboardList, User,
   Menu, X, LogOut, ChevronLeft, Bell, ShieldCheck
 } from 'lucide-react';
-
-const doctorLinks = [
-  { label: 'Dashboard', path: '/doctor/dashboard', icon: LayoutDashboard },
-  { label: 'My Patients', path: '/doctor/patients', icon: Users },
-  { label: 'Schedule', path: '/doctor/schedule', icon: CalendarClock },
-  { label: 'Reports Inbox', path: '/doctor/reports', icon: FileCheck },
-  { label: 'Profile', path: '/doctor/profile', icon: UserCog },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function DoctorLayout() {
+  const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
+  
+  const doctorLinks = [
+    { label: t('portal.dashboard'), path: '/doctor/dashboard', icon: LayoutDashboard },
+    { label: t('portal.appointments'), path: '/doctor/appointments', icon: Calendar },
+    { label: t('portal.reports'), path: '/doctor/reports', icon: ClipboardList },
+    { label: t('portal.profile'), path: '/doctor/profile', icon: User },
+  ];
+  
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -31,7 +34,7 @@ export default function DoctorLayout() {
   return (
     <div className="min-h-screen bg-[#f4f7fe] flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-24 flex-col bg-primary-dark z-40 rounded-r-[40px] shadow-2xl overflow-hidden py-8 items-center">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-24 flex-col bg-primary-dark z-40 rounded-r-md shadow-2xl overflow-hidden py-8 items-center">
         <div className="mb-12">
           <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
         </div>
@@ -44,7 +47,7 @@ export default function DoctorLayout() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 ${
+                className={`relative flex items-center justify-center w-12 h-12 rounded-md transition-all duration-300 ${
                   active
                     ? 'bg-white/20 text-white shadow-lg shadow-white/10'
                     : 'text-white/50 hover:text-white hover:bg-white/10'
@@ -63,7 +66,7 @@ export default function DoctorLayout() {
         <div className="mt-auto">
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center w-12 h-12 rounded-2xl text-white/50 hover:text-white hover:bg-white/10 transition-all"
+            className="flex items-center justify-center w-12 h-12 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all"
             title="Sign Out"
           >
             <LogOut className="w-5 h-5" />
@@ -87,7 +90,7 @@ export default function DoctorLayout() {
               animate={{ x: 0 }}
               exit={{ x: -300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-              className="fixed left-0 top-0 bottom-0 w-24 bg-primary-dark z-50 lg:hidden flex flex-col items-center py-8 rounded-r-[40px] shadow-2xl"
+              className="fixed left-0 top-0 bottom-0 w-24 bg-primary-dark z-50 lg:hidden flex flex-col items-center py-8 rounded-r-md shadow-2xl"
             >
               <div className="mb-12">
                 <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
@@ -102,7 +105,7 @@ export default function DoctorLayout() {
                       key={link.path}
                       to={link.path}
                       onClick={() => setSidebarOpen(false)}
-                      className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 ${
+                      className={`relative flex items-center justify-center w-12 h-12 rounded-md transition-all duration-300 ${
                         active
                           ? 'bg-white/20 text-white shadow-lg shadow-white/10'
                           : 'text-white/50 hover:text-white hover:bg-white/10'
@@ -117,7 +120,7 @@ export default function DoctorLayout() {
               <div className="mt-auto">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center w-12 h-12 rounded-2xl text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                  className="flex items-center justify-center w-12 h-12 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
@@ -134,24 +137,23 @@ export default function DoctorLayout() {
           <div className="flex items-center gap-4 w-full max-w-xl">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-white shadow-sm transition-all bg-white"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md text-text-muted hover:bg-white shadow-sm transition-all bg-white"
             >
               <Menu className="w-5 h-5" />
             </button>
             {/* Title */}
             <div className="relative w-full hidden sm:block">
-              <h2 className="text-2xl font-heading font-bold text-text">Doctors Portal</h2>
+              <h2 className="text-2xl font-heading font-bold text-text">{t('portal.doctorPortal')}</h2>
             </div>
           </div>
 
           <div className="flex items-center gap-4 ml-auto">
-            <button className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-primary relative hover:bg-primary/5 transition-all">
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white" />
-            </button>
-            <button className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-primary hover:bg-primary/5 transition-all">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            </button>
+            <PortalActions />
+            <Link to="/doctor/profile" className="flex items-center gap-2 pl-2">
+              <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-border flex items-center justify-center overflow-hidden">
+                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Doctor'}&backgroundColor=e2e8f0`} alt="Avatar" className="w-full h-full object-cover" />
+              </div>
+            </Link>
           </div>
         </header>
 

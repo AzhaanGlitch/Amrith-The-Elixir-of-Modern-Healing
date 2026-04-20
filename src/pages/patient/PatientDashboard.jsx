@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { Badge } from '../../components/ui';
 import { Edit2, Download, FileText, CheckCircle2, ChevronDown, DownloadCloud } from 'lucide-react';
 
 export default function PatientDashboard() {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('future');
 
@@ -26,13 +28,13 @@ export default function PatientDashboard() {
   ];
 
   return (
-    <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 min-h-[calc(100vh-8rem)]">
+    <div className="bg-white rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 min-h-[calc(100vh-8rem)]">
       
       {/* Top Section - Profile Cards */}
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         
         {/* Profile Info */}
-        <div className="bg-white rounded-2xl border border-border-light p-6 shadow-sm flex flex-col items-center justify-center">
+        <div className="bg-white rounded-md border border-border-light p-6 shadow-sm flex flex-col items-center justify-center">
           <div className="w-24 h-24 rounded-full p-1 border-2 border-primary/20 mb-4 overflow-hidden bg-gray-50">
              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Kate'}&backgroundColor=e2e8f0`} alt="Avatar" className="w-full h-full object-cover rounded-full" />
           </div>
@@ -42,9 +44,9 @@ export default function PatientDashboard() {
         </div>
 
         {/* General Information */}
-        <div className="bg-white rounded-2xl border border-border-light p-6 shadow-sm">
+        <div className="bg-white rounded-md border border-border-light p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-base font-bold text-text">General information</h3>
+            <h3 className="text-base font-bold text-text">{t('portal.profile')}</h3>
             <button className="text-primary hover:text-primary-dark transition-colors"><Edit2 className="w-4 h-4" /></button>
           </div>
           <div className="space-y-4">
@@ -64,7 +66,7 @@ export default function PatientDashboard() {
         </div>
 
         {/* Anamnesis */}
-        <div className="bg-white rounded-2xl border border-border-light p-6 shadow-sm">
+        <div className="bg-white rounded-md border border-border-light p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold text-text">Anamnesis</h3>
             <button className="text-primary hover:text-primary-dark transition-colors"><Edit2 className="w-4 h-4" /></button>
@@ -95,7 +97,7 @@ export default function PatientDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         
         {/* Visits & Treatments */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-border-light p-6 shadow-sm">
+        <div className="lg:col-span-2 bg-white rounded-md border border-border-light p-6 shadow-sm">
           <div className="flex items-center gap-6 border-b border-border-light mb-6">
             <button 
               onClick={() => setActiveTab('future')}
@@ -119,7 +121,7 @@ export default function PatientDashboard() {
 
           <div className="space-y-4">
             {activeTab === 'future' && futureVisits.map((visit) => (
-              <div key={visit.id} className={`flex items-center justify-between p-4 rounded-xl ${visit.color}`}>
+              <div key={visit.id} className={`flex items-center justify-between p-4 rounded-md ${visit.color}`}>
                 <div className="w-1/4">
                   <p className="text-xs text-text-muted">{visit.time}</p>
                   <p className="text-sm font-bold text-text">{visit.date}</p>
@@ -147,7 +149,7 @@ export default function PatientDashboard() {
         {/* Files & Notes */}
         <div className="space-y-6">
           {/* Files */}
-          <div className="bg-white rounded-2xl border border-border-light p-6 shadow-sm">
+          <div className="bg-white rounded-md border border-border-light p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-text">Files</h3>
               <button className="flex items-center gap-1 border border-secondary text-secondary-dark px-3 py-1 rounded-full text-xs font-bold hover:bg-secondary hover:text-white transition-all">
@@ -176,7 +178,7 @@ export default function PatientDashboard() {
           </div>
 
           {/* Notes */}
-          <div className="bg-white rounded-2xl border border-border-light p-6 shadow-sm">
+          <div className="bg-white rounded-md border border-border-light p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-text">Notes</h3>
               <button className="flex items-center gap-1 border border-secondary text-secondary-dark px-3 py-1 rounded-full text-xs font-bold hover:bg-secondary hover:text-white transition-all">

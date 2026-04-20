@@ -1,8 +1,10 @@
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Edit2, ChevronDown, MoreHorizontal, Calendar, Activity, Pill, User, Users, ClipboardList } from 'lucide-react';
 
 export default function DoctorDashboard() {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const doctorName = user?.name?.split(' ')[0] || 'Nicholls';
 
@@ -21,12 +23,12 @@ export default function DoctorDashboard() {
       <div className="flex-1 flex flex-col gap-6 w-full xl:w-2/3">
         
         {/* Welcome Banner */}
-        <div className="bg-primary rounded-3xl p-8 text-white relative overflow-hidden shadow-sm flex items-center">
+        <div className="bg-primary rounded-md p-8 text-white relative overflow-hidden shadow-sm flex items-center">
           <div className="relative z-10 w-full sm:w-2/3">
-            <div className="inline-block bg-white/20 backdrop-blur-md rounded-xl px-3 py-1.5 mb-4 border border-white/20">
+            <div className="inline-block bg-white/20 backdrop-blur-md rounded-md px-3 py-1.5 mb-4 border border-white/20">
               <span className="text-xs font-semibold text-white/90">Apr 13, 2026 • 2:12 pm</span>
             </div>
-            <h1 className="text-3xl font-heading font-bold mb-2">Good Day, Dr. {doctorName}!</h1>
+            <h1 className="text-3xl font-heading font-bold mb-2">{t('portal.welcome')}, Dr. {doctorName}!</h1>
             <p className="text-white/80">Have a Nice Monday!</p>
           </div>
           {/* Decorative Elements */}
@@ -43,7 +45,7 @@ export default function DoctorDashboard() {
 
         {/* Stats Row */}
         <div className="grid sm:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-border-light relative overflow-hidden group">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-border-light relative overflow-hidden group">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">OFFLINE WORK</h3>
               <MoreHorizontal className="w-5 h-5 text-text-muted" />
@@ -63,7 +65,7 @@ export default function DoctorDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-border-light relative overflow-hidden">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-border-light relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">ONLINE WORK</h3>
               <MoreHorizontal className="w-5 h-5 text-text-muted" />
@@ -83,7 +85,7 @@ export default function DoctorDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-border-light relative overflow-hidden">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-border-light relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">LABORATORY WORK</h3>
               <MoreHorizontal className="w-5 h-5 text-text-muted" />
@@ -108,7 +110,7 @@ export default function DoctorDashboard() {
         {/* Bottom Row */}
         <div className="grid md:grid-cols-2 gap-6 flex-1">
           {/* Scheduled Events */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-border-light flex flex-col">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-border-light flex flex-col">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider">MY SCHEDULED EVENTS</h3>
               <button className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-lg text-xs font-bold">
@@ -147,7 +149,7 @@ export default function DoctorDashboard() {
           </div>
 
           {/* Plans Done */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-border-light flex flex-col">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-border-light flex flex-col">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider">MY PLANS DONE</h3>
               <button className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-lg text-xs font-bold">
@@ -185,7 +187,7 @@ export default function DoctorDashboard() {
               </div>
             </div>
 
-            <button className="w-full mt-6 py-3 border-2 border-dashed border-border text-primary font-bold rounded-2xl hover:bg-primary/5 hover:border-primary/50 transition-colors flex items-center justify-center gap-2">
+            <button className="w-full mt-6 py-3 border-2 border-dashed border-border text-primary font-bold rounded-md hover:bg-primary/5 hover:border-primary/50 transition-colors flex items-center justify-center gap-2">
               Add plan <span className="text-lg leading-none">+</span>
             </button>
           </div>
@@ -196,9 +198,9 @@ export default function DoctorDashboard() {
       <div className="w-full xl:w-1/3 flex flex-col gap-6">
         
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-border-light overflow-hidden">
+        <div className="bg-white rounded-md shadow-sm border border-border-light overflow-hidden">
           <div className="bg-primary p-4 flex items-center justify-between text-white">
-            <h3 className="font-bold tracking-wider text-sm">MY PROFILE</h3>
+            <h3 className="font-bold tracking-wider text-sm uppercase">{t('portal.profile')}</h3>
             <button className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
               <Edit2 className="w-4 h-4" />
             </button>
@@ -235,7 +237,7 @@ export default function DoctorDashboard() {
         </div>
 
         {/* My Calendar */}
-        <div className="bg-white rounded-3xl shadow-sm border border-border-light flex-1 flex flex-col overflow-hidden">
+        <div className="bg-white rounded-md shadow-sm border border-border-light flex-1 flex flex-col overflow-hidden">
           <div className="bg-primary p-4 flex items-center justify-between text-white">
             <h3 className="font-bold tracking-wider text-sm">MY CALENDAR</h3>
             <button className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-lg text-sm font-bold hover:bg-white/30 transition-colors">
@@ -247,7 +249,7 @@ export default function DoctorDashboard() {
             {/* Week view */}
             <div className="flex justify-between mb-8">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-                <div key={day} className={`flex flex-col items-center justify-center w-10 h-14 rounded-2xl ${i === 1 ? 'bg-primary text-white shadow-md' : 'text-text-muted'}`}>
+                <div key={day} className={`flex flex-col items-center justify-center w-10 h-14 rounded-md ${i === 1 ? 'bg-primary text-white shadow-md' : 'text-text-muted'}`}>
                   <span className="text-[10px] font-bold uppercase mb-1">{day}</span>
                   <span className={`text-sm font-bold ${i === 1 ? 'text-white' : 'text-text'}`}>{12 + i}</span>
                 </div>

@@ -17,7 +17,6 @@ export default function PatientLayout() {
   const patientLinks = [
     { label: t('portal.dashboard'), path: '/patient/dashboard', icon: LayoutDashboard },
     { label: t('home.getFreeAnalysis'), path: '/patient/book', icon: TestTubes },
-    { label: t('nav.departments'), path: '/patient/departments', icon: Building2 },
     { label: t('portal.appointments'), path: '/patient/appointments', icon: Calendar },
     { label: t('portal.reports'), path: '/patient/reports', icon: FileText },
     { label: t('portal.profile'), path: '/patient/profile', icon: User },

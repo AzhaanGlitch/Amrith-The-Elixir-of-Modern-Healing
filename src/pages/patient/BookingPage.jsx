@@ -6,10 +6,14 @@ import { useToast } from '../../context/ToastContext';
 import { departments, timeSlots } from '../../data/mockData';
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Clock, Home, Building2,
-  User, MapPin, CreditCard, QrCode, Calendar
+  User, MapPin, CreditCard, QrCode, Calendar, Search,
+  Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse,
+  Scan, Microscope, Activity, Wind
 } from 'lucide-react';
 
-const STEPS = ['Select Test', 'Date & Time', 'Patient Details', 'Payment'];
+const iconMap = { Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse, Scan, Microscope, Activity, Wind };
+
+const STEPS = ['Select Test', 'Date & Time', 'Patient Details', 'Confirmation'];
 
 export default function BookingPage() {
   const [step, setStep] = useState(0);
@@ -24,6 +28,7 @@ export default function BookingPage() {
   const [patientFor, setPatientFor] = useState('self');
   const [confirmed, setConfirmed] = useState(false);
   const { addToast } = useToast();
+  const [search, setSearch] = useState('');
 
   // Combine all diseases into tests, giving them properties so they work like tests
   const allTests = departments.flatMap(d => 
@@ -84,10 +89,7 @@ export default function BookingPage() {
               <span className="text-text-muted">Collection</span>
               <span className="font-medium text-text capitalize">{collectionType}</span>
             </div>
-            <div className="border-t border-border-light pt-3 flex justify-between">
-              <span className="font-semibold text-text">Total Paid</span>
-              <span className="font-bold text-primary text-lg">₹{totalPrice}</span>
-            </div>
+
           </div>
         </Card>
         <div className="flex items-center justify-center gap-3 mb-6">
@@ -125,37 +127,76 @@ export default function BookingPage() {
       {/* Step 1: Select Tests */}
       {step === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <h2 className="text-lg font-heading font-semibold text-text mb-4">Select Tests</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {allTests.map(test => {
-              const isSelected = selectedTests.includes(test.id);
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg font-heading font-semibold text-text">Select Tests</h2>
+            <div className="relative sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <input
+                type="text"
+                placeholder="Search for tests..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-white border border-border rounded-md text-sm focus:border-primary outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-10">
+            {departments.map((dept) => {
+              const Icon = iconMap[dept.icon] || Stethoscope;
+              const filteredDiseases = dept.diseases.filter(d => 
+                d.name.toLowerCase().includes(search.toLowerCase()) ||
+                dept.name.toLowerCase().includes(search.toLowerCase())
+              );
+
+              if (filteredDiseases.length === 0) return null;
+
               return (
-                <Card
-                  key={test.id}
-                  className={`p-5 cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary bg-primary/5' : ''}`}
-                  onClick={() => toggleTest(test.id)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 pr-2">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-text text-sm">{test.name}</h3>
-                        <Badge variant="primary" className="text-[10px] py-0 px-1.5">{test.departmentName}</Badge>
-                      </div>
-                      <p className="text-text-muted text-xs mb-2 line-clamp-2">{test.description}</p>
-                      <div className="flex gap-2">
-                        <Badge variant={test.homeCollection ? 'secondary' : 'neutral'}>
-                          {test.homeCollection ? 'Virtual' : 'Lab'}
-                        </Badge>
-                        <span className="text-xs text-text-muted flex items-center gap-1"><Clock className="w-3 h-3" /> {test.reportTime}</span>
-                      </div>
-                    </div>
-                    <div className="text-right ml-2 shrink-0">
-                      <p className="font-bold text-primary">{test.price === 0 ? 'Free' : `₹${test.price}`}</p>
-                      {test.originalPrice > 0 && <p className="text-xs text-text-muted line-through">₹{test.originalPrice}</p>}
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-primary mt-2 ml-auto" />}
+                <div key={dept.id}>
+                  <div className="flex items-center gap-3 mb-5">
+                    <div>
+                      <h3 className="font-heading font-bold text-text text-xl">{dept.name}</h3>
+                      <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{dept.diseases.length} Tests Available</p>
                     </div>
                   </div>
-                </Card>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {filteredDiseases.map(test => {
+                      const isSelected = selectedTests.includes(test.id);
+                      const testData = {
+                        ...test,
+                        price: 0,
+                        originalPrice: 1500,
+                        homeCollection: test.inputs.includes('images') || test.inputs.includes('report'),
+                        reportTime: 'Instant AI'
+                      };
+                      
+                      return (
+                        <Card
+                          key={test.id}
+                          className={`p-5 cursor-pointer transition-all border-border hover:border-primary/50 ${isSelected ? 'ring-2 ring-primary bg-primary/5 border-primary' : ''}`}
+                          onClick={() => toggleTest(test.id)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 pr-2">
+                              <h3 className="font-semibold text-text text-sm mb-1">{testData.name}</h3>
+                              <p className="text-text-muted text-xs mb-3 line-clamp-2">{testData.description}</p>
+                              <div className="flex gap-2">
+                                <Badge variant={testData.homeCollection ? 'secondary' : 'neutral'} className="rounded-md">
+                                  {testData.homeCollection ? 'Virtual' : 'Lab'}
+                                </Badge>
+                                <span className="text-xs text-text-muted flex items-center gap-1"><Clock className="w-3 h-3" /> {testData.reportTime}</span>
+                              </div>
+                            </div>
+                            <div className="text-right ml-2 shrink-0">
+                              {isSelected && <CheckCircle2 className="w-5 h-5 text-primary mt-2 ml-auto" />}
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -164,7 +205,6 @@ export default function BookingPage() {
             <div className="mt-6 p-4 bg-white rounded-xl border border-border-light flex items-center justify-between sticky bottom-4 shadow-lg">
               <div>
                 <span className="text-sm text-text-muted">{selectedTests.length} test(s) selected</span>
-                <span className="ml-3 font-bold text-primary text-lg">{totalPrice === 0 ? 'Free' : `₹${totalPrice}`}</span>
               </div>
               <Button onClick={() => setStep(1)}>
                 Continue <ArrowRight className="w-4 h-4" />
@@ -328,7 +368,7 @@ export default function BookingPage() {
       {/* Step 4: Payment */}
       {step === 3 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <h2 className="text-lg font-heading font-semibold text-text mb-6">Order Summary</h2>
+          <h2 className="text-lg font-heading font-semibold text-text mb-6">Booking Summary</h2>
 
           <Card className="p-6 mb-6">
             <div className="space-y-3">
@@ -336,18 +376,10 @@ export default function BookingPage() {
                 const test = allTests.find(t => t.id === id);
                 return (
                   <div key={id} className="flex justify-between items-center py-2 border-b border-border-light last:border-0">
-                    <span className="text-sm text-text">{test?.name}</span>
-                    <div className="text-right">
-                      <span className="font-semibold text-text">{test?.price === 0 ? 'Free' : `₹${test?.price}`}</span>
-                      {test?.originalPrice > 0 && <span className="text-xs text-text-muted line-through ml-2">₹{test?.originalPrice}</span>}
-                    </div>
+                    <span className="text-sm text-text font-medium">{test?.name}</span>
                   </div>
                 );
               })}
-              <div className="flex justify-between pt-3 border-t-2 border-border">
-                <span className="font-bold text-text">Total</span>
-                <span className="font-bold text-primary text-xl">{totalPrice === 0 ? 'Free' : `₹${totalPrice}`}</span>
-              </div>
             </div>
           </Card>
 
@@ -363,24 +395,12 @@ export default function BookingPage() {
             </div>
           </Card>
 
-          <Card className="p-6 mb-8 bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/10">
-            <h3 className="font-semibold text-text mb-4 flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" /> Payment Method
-            </h3>
-            <div className="grid sm:grid-cols-3 gap-3">
-              {['UPI / GPay', 'Credit Card', 'Net Banking'].map(method => (
-                <button key={method} className="py-3 px-4 bg-white rounded-xl border border-border text-sm font-medium text-text hover:border-primary transition-all">
-                  {method}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-text-muted mt-4">🔒 Payment secured by Razorpay. 100% safe & encrypted.</p>
-          </Card>
+
 
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
             <Button size="lg" onClick={handleConfirm}>
-              {totalPrice === 0 ? 'Confirm Booking' : `Pay ₹${totalPrice} & Confirm`}
+              Confirm Booking
             </Button>
           </div>
         </motion.div>

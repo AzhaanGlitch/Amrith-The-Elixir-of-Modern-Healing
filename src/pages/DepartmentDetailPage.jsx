@@ -126,15 +126,8 @@ export default function DepartmentDetailPage() {
 
         {/* Department Header */}
         <div className="mb-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ backgroundColor: department.color + '15' }}>
-              <DeptIcon className="w-8 h-8 opacity-80" style={{ color: department.color }} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-heading font-bold text-text">{department.name}</h1>
-              <p className="text-text-muted">{department.description} • {department.diseases.length} conditions available • <span className="text-primary font-semibold">Free</span></p>
-            </div>
-          </div>
+          <h1 className="text-4xl font-heading font-extrabold text-text mb-3">{department.name}</h1>
+          <p className="text-text-muted text-lg">{department.description} • {department.diseases.length} conditions available</p>
         </div>
 
         {/* Progress Steps */}

@@ -158,15 +158,9 @@ export default function HomePage() {
                   return (
                     <motion.div key={dept.id} variants={item}>
                       <Card className="group p-5 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer border border-border-light bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all" onClick={() => navigate(`/departments/${dept.id}`)}>
-                        <div className={`shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                          <Icon className={`w-10 h-10 ${colorClass} drop-shadow-sm`} />
-                        </div>
                         <div className="flex-1">
                           <h3 className="text-xl font-heading font-bold text-text mb-1.5 group-hover:text-primary transition-colors">{dept.name}</h3>
                           <p className="text-text-secondary text-sm leading-relaxed line-clamp-2">{dept.description}</p>
-                        </div>
-                        <div className="hidden sm:flex shrink-0 w-10 h-10 rounded-md bg-gray-50 items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-primary/10 transition-all duration-300">
-                          <ArrowRight className="w-5 h-5 text-primary translate-x-[-5px] group-hover:translate-x-0 transition-transform" />
                         </div>
                       </Card>
                     </motion.div>

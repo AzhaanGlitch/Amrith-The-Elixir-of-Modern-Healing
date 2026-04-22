@@ -19,14 +19,20 @@ export default function ContactPage() {
   return (
     <div className="pt-24 min-h-screen bg-bg">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-24 relative overflow-hidden">
+        {/* Background Image Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img src="/navbar_pages/contact_us.png" alt="Background" className="w-full h-full object-cover opacity-50 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/60 to-primary-dark/80" />
+        </div>
+
         {/* Animated Background Elements for consistency */}
         <motion.div 
-          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl z-0"
           animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
         />
         <motion.div 
-          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl z-0"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 5, repeat: Infinity }}
         />

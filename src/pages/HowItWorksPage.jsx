@@ -21,13 +21,19 @@ export default function HowItWorksPage() {
   return (
     <div className="pt-24 min-h-screen bg-bg">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-24 relative overflow-hidden">
+        {/* Background Image Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img src="/navbar_pages/how_it_works.jpg" alt="Background" className="w-full h-full object-cover opacity-50 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/60 to-primary-dark/80" />
+        </div>
+
         <motion.div 
-          className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
+          className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl z-0"
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
           transition={{ duration: 4, repeat: Infinity }}
         />
         <motion.div 
-          className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl z-0"
           animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 5, repeat: Infinity, delay: 1 }}
         />

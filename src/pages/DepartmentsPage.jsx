@@ -39,21 +39,26 @@ export default function DepartmentsPage() {
   return (
     <div className="pt-24 min-h-screen bg-bg">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-20 relative overflow-hidden">
+        {/* Background Image Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img src="/navbar_pages/departments.jpg" alt="Background" className="w-full h-full object-cover opacity-50 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/60 to-primary-dark/80" />
+        </div>
+
         {/* Animated Background Elements for consistency */}
         <motion.div 
-          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+          className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl z-0"
           animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
         />
         <motion.div 
-          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl"
+          className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/20 rounded-full blur-3xl z-0"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 5, repeat: Infinity }}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Badge variant="primary" className="mb-6 text-xs font-bold uppercase tracking-widest px-4 py-1.5 bg-white/20 text-white border-0 shadow-sm backdrop-blur-md">{t('depts.badge')}</Badge>
-            <h1 className="text-4xl lg:text-5xl font-heading font-extrabold mb-5 drop-shadow-md">
+            <h1 className="text-4xl lg:text-6xl font-heading font-extrabold mb-5 drop-shadow-md">
               {t('depts.title')}
             </h1>
             <p className="text-lg lg:text-xl text-white/90 max-w-3xl mx-auto font-medium leading-relaxed">
@@ -85,47 +90,14 @@ export default function DepartmentsPage() {
             return (
               <motion.div key={dept.id} variants={item}>
                 <Card
-                  className="p-6 h-full flex flex-col cursor-pointer group"
+                  className="p-8 h-full flex flex-col cursor-pointer group text-center justify-center items-center"
                   onClick={() => navigate(`/departments/${dept.id}`)}
                 >
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-                    style={{ backgroundColor: dept.color + '15' }}
-                  >
-                    <Icon className="w-7 h-7" style={{ color: dept.color }} />
-                  </div>
-                  <h3 className="font-heading font-bold text-text text-lg mb-1">{dept.name}</h3>
-                  <p className="text-text-muted text-sm mb-4">{dept.description}</p>
-                  
-                  {/* Disease list */}
-                  <div className="space-y-1.5 mb-4 flex-1">
-                    {dept.diseases.map(disease => (
-                      <div key={disease.id} className="flex items-center gap-2 text-xs text-text-secondary">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                        <span className="truncate">{disease.name}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Input types & footer */}
-                  <div className="flex items-center justify-between pt-3 border-t border-border-light">
-                    <div className="flex gap-1.5">
-                      {dept.inputTypes.map(type => {
-                        const input = inputIcons[type];
-                        if (!input) return null;
-                        const InputIcon = input.icon;
-                        return (
-                          <div key={type} className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/5 text-xs text-primary font-medium">
-                            <InputIcon className="w-3 h-3" />
-                            {input.label}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <span className="text-primary text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      {t('depts.explore')} <ArrowRight className="w-4 h-4" />
-                    </span>
-                  </div>
+                  <h3 className="font-heading font-bold text-text text-xl mb-3 group-hover:text-primary transition-colors underline decoration-primary/30 underline-offset-8">{dept.name}</h3>
+                  <p className="text-text-muted text-sm leading-relaxed mb-6">{dept.description}</p>
+                  <span className="text-primary text-sm font-semibold flex items-center justify-center transition-all mt-auto pt-4 border-t border-border-light w-full">
+                    {t('depts.explore')}
+                  </span>
                 </Card>
               </motion.div>
             );

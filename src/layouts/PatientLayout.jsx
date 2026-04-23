@@ -35,9 +35,9 @@ export default function PatientLayout() {
     <div className="min-h-screen bg-[#f4f7fe] flex">
       {/* Desktop Sidebar (Doctor's style) */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-24 flex-col bg-primary-dark z-40 rounded-r-md shadow-2xl overflow-hidden py-8 items-center">
-        <div className="mb-12">
-          <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
-        </div>
+        <Link to="/" className="mb-12 block group cursor-pointer">
+          <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap group-hover:scale-110 transition-transform">AMRITH.</h1>
+        </Link>
 
         <nav className="flex-1 space-y-6 w-full flex flex-col items-center mt-12" aria-label="Patient navigation">
           {patientLinks.map((link, i) => {
@@ -92,9 +92,9 @@ export default function PatientLayout() {
               transition={{ type: 'spring', damping: 25, stiffness: 250 }}
               className="fixed left-0 top-0 bottom-0 w-24 bg-primary-dark z-50 lg:hidden flex flex-col items-center py-8 rounded-r-md shadow-2xl"
             >
-              <div className="mb-12">
-                <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap">AMRITH.</h1>
-              </div>
+              <Link to="/" className="mb-12 block group cursor-pointer" onClick={() => setSidebarOpen(false)}>
+                <h1 className="text-white font-heading font-bold text-xl -rotate-90 tracking-widest mt-12 whitespace-nowrap group-hover:scale-110 transition-transform">AMRITH.</h1>
+              </Link>
 
               <nav className="flex-1 space-y-6 w-full flex flex-col items-center mt-12">
                 {patientLinks.map((link) => {

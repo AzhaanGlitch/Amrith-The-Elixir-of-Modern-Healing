@@ -3,7 +3,7 @@
 export const departments = [
   {
     id: 6,
-    name: 'General Medicine',
+    name: 'General Medicine (disease related to common ailments)',
     icon: 'Stethoscope',
     description: 'Common ailment diagnosis from symptoms, images & readings',
     color: '#006D77',
@@ -93,7 +93,7 @@ export const departments = [
   },
   {
     id: 7,
-    name: 'Cardiovascular',
+    name: 'Cardiovascular (disease related to heart)',
     icon: 'HeartPulse',
     description: 'Heart health analysis from symptoms, readings & reports',
     color: '#E53E3E',
@@ -154,7 +154,7 @@ export const departments = [
   },
   {
     id: 1,
-    name: 'Dermatology',
+    name: 'Dermatology (disease related to skin)',
     icon: 'Sparkles',
     description: 'AI-powered skin disease detection from images',
     color: '#D69E2E',
@@ -228,7 +228,7 @@ export const departments = [
   },
   {
     id: 5,
-    name: 'Orthopedics',
+    name: 'Orthopedics (disease related to bones & joints)',
     icon: 'Bone',
     description: 'X-ray based bone & joint condition analysis',
     color: '#DD6B20',
@@ -303,7 +303,7 @@ export const departments = [
   },
   {
     id: 8,
-    name: 'Neurology',
+    name: 'Neurology (disease related to brain & nerves)',
     icon: 'Brain',
     description: 'Brain & nervous system analysis from symptoms & medical data',
     color: '#805AD5',
@@ -381,7 +381,7 @@ export const departments = [
   },
   {
     id: 3,
-    name: 'Ophthalmology',
+    name: 'Ophthalmology (disease related to eyes)',
     icon: 'Eye',
     description: 'AI-based eye disease detection from retinal images',
     color: '#3182CE',
@@ -456,7 +456,7 @@ export const departments = [
   },
   {
     id: 2,
-    name: 'Pulmonology',
+    name: 'Pulmonology (disease related to lungs & breathing)',
     icon: 'Wind',
     description: 'Chest X-ray based lung disease detection & analysis',
     color: '#4FD1C5',
@@ -529,7 +529,7 @@ export const departments = [
   },
   {
     id: 4,
-    name: 'Oncology',
+    name: 'Oncology (disease related to cancer)',
     icon: 'Microscope',
     description: 'AI cancer screening from medical images and scans',
     color: '#E53E3E',

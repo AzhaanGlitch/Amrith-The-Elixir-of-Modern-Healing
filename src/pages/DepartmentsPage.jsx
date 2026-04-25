@@ -87,13 +87,20 @@ export default function DepartmentsPage() {
         >
           {filtered.map(dept => {
             const Icon = iconMap[dept.icon] || Stethoscope;
+            const match = dept.name.match(/^(.*?)\s*\((.*)\)$/);
+            const title = match ? match[1] : dept.name;
+            const desc = match ? `(${match[2]})` : null;
+
             return (
               <motion.div key={dept.id} variants={item}>
                 <Card
                   className="p-8 h-full flex flex-col cursor-pointer group text-center justify-center items-center"
                   onClick={() => navigate(`/departments/${dept.id}`)}
                 >
-                  <h3 className="font-heading font-bold text-text text-xl mb-3 group-hover:text-primary transition-colors underline decoration-primary/30 underline-offset-8">{dept.name}</h3>
+                  <h3 className="font-heading font-bold text-text text-xl mb-3 group-hover:text-primary transition-colors flex flex-col items-center">
+                    <span className="underline decoration-primary/30 underline-offset-8">{title}</span>
+                    {desc && <span className="block text-base font-bold text-text no-underline mt-2">{desc}</span>}
+                  </h3>
                   <p className="text-text-muted text-sm leading-relaxed mb-6">{dept.description}</p>
                   <span className="text-primary text-sm font-semibold flex items-center justify-center transition-all mt-auto pt-4 border-t border-border-light w-full">
                     {t('depts.explore')}

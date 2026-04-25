@@ -17,7 +17,7 @@ export default function DoctorDashboard() {
   ];
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 min-h-[calc(100vh-8rem)]">
+    <div className="flex flex-col xl:flex-row gap-6 h-full min-h-0">
       
       {/* Left Column - Main Dashboard Area */}
       <div className="flex-1 flex flex-col gap-6 w-full xl:w-2/3">

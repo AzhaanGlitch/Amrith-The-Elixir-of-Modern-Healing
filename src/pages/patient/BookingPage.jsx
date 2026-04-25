@@ -117,22 +117,39 @@ export default function BookingPage() {
         <p className="text-text-muted">Precision medical screening powered by advanced ML models.</p>
       </div>
 
-      {/* Modern Step Progress */}
-      <div className="flex items-center justify-between mb-12 bg-white p-4 rounded-xl shadow-sm border border-border-light overflow-x-auto">
-        {STEPS.map((s, i) => (
-          <div key={i} className="flex items-center gap-3 shrink-0 px-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-              i <= step ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-text-muted'
-            }`}>
-              {i < step ? '✓' : i + 1}
+      {/* Sleek Step Progress - Redesigned to fit without scrolling */}
+      <div className="relative mb-16 px-2 sm:px-6">
+        {/* Background Line */}
+        <div className="absolute top-5 left-10 right-10 h-[2px] bg-gray-100 z-0" />
+        
+        {/* Progress Line Animation */}
+        <motion.div 
+          className="absolute top-5 left-10 h-[2px] bg-primary z-0"
+          initial={{ width: '0%' }}
+          animate={{ width: `${(step / (STEPS.length - 1)) * 92}%` }} // Approx width to align with dots
+        />
+
+        <div className="flex justify-between relative z-10">
+          {STEPS.map((s, i) => (
+            <div key={i} className="flex flex-col items-center flex-1">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 border-2 ${
+                i <= step 
+                  ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20 scale-110' 
+                  : 'bg-white border-gray-100 text-text-muted'
+              }`}>
+                {i < step ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
+              </div>
+              <div className="mt-3 text-center">
+                <p className={`text-[9px] font-bold uppercase tracking-tighter mb-0.5 ${i <= step ? 'text-primary' : 'text-text-muted'}`}>
+                  Step {i + 1}
+                </p>
+                <p className={`text-[11px] font-bold sm:text-xs leading-tight max-w-[80px] mx-auto ${i <= step ? 'text-text' : 'text-text-muted opacity-40'}`}>
+                  {s}
+                </p>
+              </div>
             </div>
-            <div className="hidden sm:block">
-              <p className={`text-[10px] font-bold uppercase tracking-wider ${i <= step ? 'text-primary' : 'text-text-muted'}`}>Step {i + 1}</p>
-              <p className={`text-sm font-bold ${i <= step ? 'text-text' : 'text-text-muted'}`}>{s}</p>
-            </div>
-            {i < STEPS.length - 1 && <ChevronRight className="w-4 h-4 text-gray-300 mx-2 hidden lg:block" />}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">

@@ -131,9 +131,9 @@ export default function DoctorLayout() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-24 flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-24 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-[#f4f7fe]/90 backdrop-blur-md px-6 sm:px-10 h-24 flex items-center justify-between">
+        <header className="flex-shrink-0 bg-[#f4f7fe]/90 backdrop-blur-md px-6 sm:px-10 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4 w-full max-w-xl">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -158,7 +158,7 @@ export default function DoctorLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-10">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 custom-scrollbar">
           <Outlet />
         </main>
       </div>

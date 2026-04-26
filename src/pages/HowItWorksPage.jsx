@@ -49,44 +49,47 @@ export default function HowItWorksPage() {
 
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          {/* Vertical Timeline Line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary via-secondary to-accent hidden md:block opacity-20 rounded-full" />
           
-          <div className="space-y-24">
-            {steps.map(({ title, desc }, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className={`flex flex-col md:flex-row items-center gap-12 group ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''} relative`}
-              >
-                {/* Timeline Dot */}
-                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-primary z-10 shadow-lg group-hover:scale-125 group-hover:border-secondary transition-all duration-300" />
-                
-                {/* Huge Number instead of Icon */}
-                <div className="flex-1 flex justify-center md:justify-end md:group-even:justify-start w-full cursor-default">
-                   <motion.div 
-                     whileHover={{ rotate: 5, scale: 1.1 }}
-                     transition={{ type: "spring", stiffness: 300 }}
-                     className="relative z-10 bg-gradient-to-br from-primary/10 to-primary/5 w-32 h-32 rounded-full flex items-center justify-center border-4 border-white shadow-xl"
-                   >
-                     <span className="font-heading font-black text-6xl text-primary/40 group-hover:text-primary transition-colors duration-300">
-                       {i + 1}
-                     </span>
-                   </motion.div>
-                </div>
-                
-                {/* Step Content */}
-                <div className="flex-1 text-center md:text-left md:group-even:text-right bg-white/50 backdrop-blur-sm p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border-light hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2">
-                  <span className={`text-sm font-bold tracking-widest uppercase mb-2 block text-primary`}>Step {String(i + 1).padStart(2, '0')}</span>
-                  <h3 className="text-3xl font-heading font-bold text-text mb-4 group-hover:text-primary transition-colors">{title}</h3>
-                  <p className="text-text-secondary leading-relaxed text-lg">{desc}</p>
-                </div>
-              </motion.div>
-            ))}
+          <div className="relative">
+            {/* Vertical Timeline Line - Scoped to steps only */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-primary via-secondary to-accent hidden md:block opacity-10 rounded-full -z-0" />
+            
+            <div className="space-y-24 relative z-10">
+              {steps.map(({ title, desc }, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  className={`flex flex-col md:flex-row items-center gap-12 group ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''} relative`}
+                >
+                  {/* Timeline Dot */}
+                  <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-white border-4 border-primary z-10 shadow-lg group-hover:scale-125 group-hover:border-secondary transition-all duration-300" />
+                  
+                  {/* Huge Number instead of Icon */}
+                  <div className="flex-1 flex justify-center md:justify-end md:group-even:justify-start w-full cursor-default">
+                     <motion.div 
+                       whileHover={{ rotate: 5, scale: 1.1 }}
+                       transition={{ type: "spring", stiffness: 300 }}
+                       className="relative z-10 bg-gradient-to-br from-primary/10 to-primary/5 w-32 h-32 rounded-full flex items-center justify-center border-4 border-white shadow-xl"
+                     >
+                       <span className="font-heading font-black text-6xl text-primary/40 group-hover:text-primary transition-colors duration-300">
+                         {i + 1}
+                       </span>
+                     </motion.div>
+                  </div>
+                  
+                  {/* Step Content */}
+                  <div className="flex-1 text-center md:text-left md:group-even:text-right bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border-light hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-2">
+                    <span className={`text-sm font-bold tracking-widest uppercase mb-2 block text-primary`}>Step {String(i + 1).padStart(2, '0')}</span>
+                    <h3 className="text-3xl font-heading font-bold text-text mb-4 group-hover:text-primary transition-colors">{title}</h3>
+                    <p className="text-text-secondary leading-relaxed text-lg">{desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
           {/* Interactive Video & PDF section */}
@@ -94,7 +97,7 @@ export default function HowItWorksPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-32 pt-24 border-t border-border-light"
+            className="mt-32 pt-24 border-t border-border-light relative z-10"
           >
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-heading font-black text-text mb-4">See It In Action</h2>
@@ -138,7 +141,7 @@ export default function HowItWorksPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mt-32 bg-gradient-to-r from-primary/10 to-secondary/10 p-12 rounded-3xl border border-primary/20"
+            className="text-center mt-32 bg-gradient-to-r from-primary/10 to-secondary/10 p-12 rounded-3xl border border-primary/20 relative z-10"
           >
             <h3 className="text-3xl font-heading font-bold text-text mb-4">{t('howItWorks.ctaTitle')}</h3>
             <p className="text-text-secondary text-lg mb-8 max-w-2xl mx-auto">{t('howItWorks.ctaDesc')}</p>

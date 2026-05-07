@@ -149,7 +149,11 @@ export default function PatientLayout() {
             <div className="hidden md:block w-px h-6 bg-border mx-2" />
             <Link to="/patient/profile" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-border flex items-center justify-center overflow-hidden">
-                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Kate'}&backgroundColor=e2e8f0`} alt="Avatar" className="w-full h-full object-cover" />
+                {user?.profileImage ? (
+                  <img src={user.profileImage} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-5 h-5 text-primary/40" />
+                )}
               </div>
             </Link>
           </div>

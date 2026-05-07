@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/ui';
-import { User, Stethoscope, ShieldAlert } from 'lucide-react';
+import { User, Stethoscope, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const location = useLocation();
@@ -26,22 +26,22 @@ export default function LoginPage() {
 
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [signupForm, setSignupForm] = useState({
-    name: '', phone: '', email: '', password: '',
-    address: '', dob: '', gender: '',
-    specialization: '', license: '', experience: '',
-    adminCode: ''
+    name: '', email: '', password: '', adminCode: ''
   });
+
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   const redirectPath = searchParams.get('redirect');
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(role);
+      const user = await login(role, loginForm);
       addToast(`Welcome back, ${user.name || 'Admin'}!`, 'success');
       navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : role === 'admin' ? '/admin/dashboard' : '/patient/dashboard'));
-    } catch {
-      addToast('Login failed. Please try again.', 'error');
+    } catch (error) {
+      addToast(error.message || 'Login failed. Please try again.', 'error');
     }
   };
 
@@ -50,9 +50,9 @@ export default function LoginPage() {
     try {
       const user = await signup(role, signupForm);
       addToast(`Welcome to Amrith, ${user.name || 'Admin'}! 🎉`, 'success');
-      navigate(redirectPath || (role === 'doctor' ? '/doctor/dashboard' : role === 'admin' ? '/admin/dashboard' : '/patient/dashboard'));
-    } catch {
-      addToast('Signup failed. Please try again.', 'error');
+      navigate(role === 'admin' ? '/admin/dashboard' : '/onboarding');
+    } catch (error) {
+      addToast(error.message || 'Signup failed. Please try again.', 'error');
     }
   };
 
@@ -107,40 +107,28 @@ export default function LoginPage() {
               ))}
             </div>
 
-            <div className="w-full space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[300px]">
+            <div className="w-full space-y-3 mt-4">
               {role === 'admin' ? (
                 <>
                   <input type="email" placeholder="Admin Email" className={inputClass} required value={signupForm.email} onChange={e => updateSignup('email', e.target.value)} />
-                  <input type="password" placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
+                  <div className="relative">
+                    <input type={showSignupPassword ? "text" : "password"} placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
+                    <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                      {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                   <input type="text" placeholder="Admin Code" className={inputClass} required value={signupForm.adminCode} onChange={e => updateSignup('adminCode', e.target.value)} />
                 </>
               ) : (
                 <>
                   <input type="text" placeholder={role === 'doctor' ? "Dr. Full Name" : "Full Name"} className={inputClass} required value={signupForm.name} onChange={e => updateSignup('name', e.target.value)} />
                   <input type="email" placeholder="Email Address" className={inputClass} required value={signupForm.email} onChange={e => updateSignup('email', e.target.value)} />
-                  <input type="tel" placeholder="Mobile Number (+91)" className={inputClass} required value={signupForm.phone} onChange={e => updateSignup('phone', e.target.value)} />
-                  <input type="password" placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
-                  
-                  {role === 'patient' ? (
-                    <>
-                      <input type="text" placeholder="House Address" className={inputClass} value={signupForm.address} onChange={e => updateSignup('address', e.target.value)} />
-                      <div className="flex gap-3">
-                        <input type="date" className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.dob} onChange={e => updateSignup('dob', e.target.value)} />
-                        <select className={`${inputClass} [color-scheme:dark] flex-1`} value={signupForm.gender} onChange={e => updateSignup('gender', e.target.value)}>
-                          <option value="">Gender</option>
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <input type="text" placeholder="Specialization (e.g. Cardiology)" className={inputClass} required value={signupForm.specialization} onChange={e => updateSignup('specialization', e.target.value)} />
-                      <input type="text" placeholder="Medical License (MCI-1234)" className={inputClass} required value={signupForm.license} onChange={e => updateSignup('license', e.target.value)} />
-                      <input type="number" placeholder="Years of Experience" className={inputClass} required value={signupForm.experience} onChange={e => updateSignup('experience', e.target.value)} />
-                    </>
-                  )}
+                  <div className="relative">
+                    <input type={showSignupPassword ? "text" : "password"} placeholder="Password" className={inputClass} required value={signupForm.password} onChange={e => updateSignup('password', e.target.value)} />
+                    <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                      {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </>
               )}
             </div>
@@ -182,7 +170,12 @@ export default function LoginPage() {
 
             <div className="w-full space-y-3 mt-4">
               <input type="email" placeholder="Email Address" className={inputClass} required value={loginForm.email} onChange={e => updateLogin('email', e.target.value)} />
-              <input type="password" placeholder="Password" className={inputClass} required value={loginForm.password} onChange={e => updateLogin('password', e.target.value)} />
+              <div className="relative">
+                <input type={showLoginPassword ? "text" : "password"} placeholder="Password" className={inputClass} required value={loginForm.password} onChange={e => updateLogin('password', e.target.value)} />
+                <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                  {showLoginPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
             <div className="w-full text-right mt-1">

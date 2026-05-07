@@ -148,7 +148,11 @@ export default function AdminLayout() {
             <PortalActions dark />
             <Link to="/admin/profile" className="flex items-center gap-2 pl-2">
               <div className="w-10 h-10 rounded-full bg-[#000000] border border-white/10 flex items-center justify-center overflow-hidden">
-                <span className="text-sm font-bold text-gray-300">A</span>
+                {user?.profileImage ? (
+                  <img src={user.profileImage} alt="Admin" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-sm font-bold text-gray-300">{user?.name?.charAt(0) || 'A'}</span>
+                )}
               </div>
             </Link>
           </div>

@@ -1,70 +1,103 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const AuthContext = createContext(null);
-
-const mockUsers = {
-  patient: {
-    id: 'P001',
-    name: 'Amrith User',
-    email: 'user@amrith.com',
-    phone: '+91 98765 43210',
-    role: 'patient',
-    avatar: 'AR',
-    age: 28,
-    gender: 'Male',
-    bloodGroup: 'B+',
-    address: '42, 3rd Cross, HSR Layout, Bangalore - 560102',
-  },
-  doctor: {
-    id: 'D001',
-    name: 'Amrith Dr.',
-    email: 'doctor@amrith.com',
-    phone: '+91 87654 32109',
-    role: 'doctor',
-    avatar: 'MI',
-    specialization: 'Internal Medicine',
-    experience: '12 years',
-    qualification: 'MBBS, MD (Internal Medicine)',
-    verified: true,
-  },
-  admin: {
-    id: 'A001',
-    name: 'Amrith Admin',
-    email: 'admin@amrith.com',
-    role: 'admin',
-    avatar: 'AA',
-  },
-};
+const API_URL = 'http://localhost:5000/api';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  const login = useCallback(async (role) => {
+  // Check for existing token on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('amrith_token');
+      if (!token) {
+        setIsInitializing(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        } else {
+          localStorage.removeItem('amrith_token');
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const login = useCallback(async (role, credentials) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setUser(mockUsers[role]);
-    setIsLoading(false);
-    return mockUsers[role];
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...credentials, role })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      localStorage.setItem('amrith_token', data.token);
+      setUser(data.user);
+      return data.user;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const signup = useCallback(async (role, userData) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...userData, role })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Signup failed');
+      }
+
+      localStorage.setItem('amrith_token', data.token);
+      setUser(data.user);
+      return data.user;
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => {
+    localStorage.removeItem('amrith_token');
     setUser(null);
   }, []);
 
-  const signup = useCallback(async (role, data) => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const newUser = { ...mockUsers[role], ...data };
-    setUser(newUser);
-    setIsLoading(false);
-    return newUser;
+  const updateUserData = useCallback((newData) => {
+    setUser(prev => ({ ...prev, ...newData }));
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, signup, isAuthenticated: !!user }}>
-      {children}
+    <AuthContext.Provider value={{ user, isLoading, login, logout, signup, updateUserData, isAuthenticated: !!user }}>
+      {!isInitializing && children}
     </AuthContext.Provider>
   );
 }

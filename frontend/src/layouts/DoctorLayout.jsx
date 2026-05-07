@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import PortalActions from '../components/PortalActions';
 import {
   LayoutDashboard, Users, Calendar, ClipboardList, User,
-  Menu, X, LogOut, ChevronLeft, Bell, ShieldCheck
+  Menu, X, LogOut, ChevronLeft, Bell, ShieldCheck, Stethoscope
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -151,7 +151,11 @@ export default function DoctorLayout() {
             <PortalActions />
             <Link to="/doctor/profile" className="flex items-center gap-2 pl-2">
               <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-border flex items-center justify-center overflow-hidden">
-                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Doctor'}&backgroundColor=e2e8f0`} alt="Avatar" className="w-full h-full object-cover" />
+                {user?.profileImage ? (
+                  <img src={user.profileImage} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <Stethoscope className="w-5 h-5 text-primary/40" />
+                )}
               </div>
             </Link>
           </div>

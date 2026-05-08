@@ -6,14 +6,74 @@ import { Card, Button, Avatar, Badge } from '../../components/ui';
 import { User, Phone, Mail, MapPin, Heart, Shield, Bell, Edit3, Plus, Save } from 'lucide-react';
 
 export default function PatientProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUserData } = useAuth();
   const { addToast } = useToast();
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
+  const [formData, setFormData] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    setEditing(false);
-    addToast('Profile updated successfully!', 'success');
+  const calculateAge = (dob) => {
+    if (!dob) return 'Not set';
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Initialize form data when editing starts
+  const startEditing = () => {
+    setFormData({
+      name: user?.name || '',
+      phone: user?.phone || '',
+      email: user?.email || '', // Won't actually update email via this endpoint but keeps form happy
+      address: user?.address || '',
+      profileImage: user?.profileImage || ''
+    });
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('amrith_token')}`
+        },
+        body: JSON.stringify(formData)
+      });
+      if (!res.ok) throw new Error('Failed to update profile');
+      const data = await res.json();
+      updateUserData(data.user);
+      setEditing(false);
+      addToast('Profile updated successfully!', 'success');
+    } catch (err) {
+      addToast(err.message, 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate size (e.g., max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        addToast('Image must be less than 2MB', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -23,18 +83,40 @@ export default function PatientProfilePage() {
       {/* Profile Header */}
       <Card className="p-6 mb-6">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          <Avatar name={user?.name} size="xl" />
-          <div className="flex-1">
+          <div className="relative group">
+            {editing ? (
+              <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 bg-gray-50 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+                {formData.profileImage || user?.profileImage ? (
+                  <img src={formData.profileImage || user?.profileImage} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-10 h-10 text-primary/40" />
+                )}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Edit3 className="w-6 h-6 text-white" />
+                </div>
+                <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+              </div>
+            ) : (
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 bg-gray-50 flex items-center justify-center">
+                {user?.profileImage ? (
+                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <Avatar name={user?.name} size="xl" />
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex-1 mt-2 sm:mt-0">
             <h2 className="text-xl font-heading font-bold text-text">{user?.name}</h2>
             <p className="text-text-muted text-sm mt-1">{user?.email}</p>
             <div className="flex flex-wrap gap-3 mt-3">
-              <Badge variant="primary">Blood Group: {user?.bloodGroup || 'B+'}</Badge>
-              <Badge variant="secondary">Age: {user?.age || 28}</Badge>
-              <Badge variant="neutral">{user?.gender || 'Male'}</Badge>
+              <Badge variant="primary">Blood Group: {user?.bloodGroup || 'Not set'}</Badge>
+              <Badge variant="secondary">Age: {user?.age || calculateAge(user?.dob)}</Badge>
+              <Badge variant="neutral">{user?.gender || 'Not set'}</Badge>
             </div>
           </div>
-          <Button variant={editing ? 'primary' : 'outline'} size="sm" onClick={() => editing ? handleSave() : setEditing(true)}>
-            {editing ? <><Save className="w-4 h-4" /> Save</> : <><Edit3 className="w-4 h-4" /> Edit</>}
+          <Button variant={editing ? 'primary' : 'outline'} size="sm" onClick={() => editing ? handleSave() : startEditing()} disabled={isSaving}>
+            {isSaving ? 'Saving...' : editing ? <><Save className="w-4 h-4" /> Save</> : <><Edit3 className="w-4 h-4" /> Edit</>}
           </Button>
         </div>
       </Card>
@@ -61,19 +143,19 @@ export default function PatientProfilePage() {
             <h3 className="font-heading font-semibold text-text mb-4">Personal Information</h3>
             <div className="grid sm:grid-cols-2 gap-5">
               {[
-                { label: 'Full Name', value: user?.name, icon: User },
-                { label: 'Phone', value: user?.phone, icon: Phone },
-                { label: 'Email', value: user?.email, icon: Mail },
-                { label: 'Address', value: user?.address, icon: MapPin },
-              ].map(({ label, value, icon: Icon }, i) => (
-                <div key={i}>
+                { key: 'name', label: 'Full Name', value: user?.name, icon: User },
+                { key: 'phone', label: 'Phone', value: user?.phone, icon: Phone },
+                { key: 'address', label: 'Address', value: user?.address, icon: MapPin },
+              ].map(({ key, label, value, icon: Icon }) => (
+                <div key={key}>
                   <label className="block text-sm font-medium text-text-muted mb-1.5 flex items-center gap-1.5">
                     <Icon className="w-4 h-4" /> {label}
                   </label>
                   {editing ? (
                     <input
                       type="text"
-                      defaultValue={value}
+                      value={formData[key]}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
                       className="w-full py-3 px-4 bg-background border border-border rounded-xl text-text focus:border-primary"
                     />
                   ) : (
@@ -81,6 +163,12 @@ export default function PatientProfilePage() {
                   )}
                 </div>
               ))}
+              <div>
+                 <label className="block text-sm font-medium text-text-muted mb-1.5 flex items-center gap-1.5">
+                    <Mail className="w-4 h-4" /> Email
+                 </label>
+                 <p className="text-text font-medium py-3 px-4 bg-background rounded-xl opacity-70">{user?.email}</p>
+              </div>
             </div>
           </Card>
         )}
@@ -117,7 +205,7 @@ export default function PatientProfilePage() {
             <div className="grid sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm text-text-muted mb-1.5">Blood Group</label>
-                <p className="text-text font-medium py-3 px-4 bg-background rounded-xl">B+</p>
+                <p className="text-text font-medium py-3 px-4 bg-background rounded-xl">{user?.bloodGroup || 'Not set'}</p>
               </div>
               <div>
                 <label className="block text-sm text-text-muted mb-1.5">Allergies</label>

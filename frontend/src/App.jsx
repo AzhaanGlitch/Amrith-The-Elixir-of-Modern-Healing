@@ -20,6 +20,7 @@ import HowItWorksPage from './pages/HowItWorksPage';
 import PackagesPage from './pages/PackagesPage';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
+import OnboardingPage from './pages/OnboardingPage';
 
 // Patient Pages
 import PatientDashboard from './pages/patient/PatientDashboard';
@@ -60,6 +61,7 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<LoginPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
             </Route>
 
             {/* Patient Protected Routes */}

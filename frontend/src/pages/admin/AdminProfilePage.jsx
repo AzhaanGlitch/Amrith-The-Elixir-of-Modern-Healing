@@ -1,11 +1,56 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, Shield, Bell, Lock } from 'lucide-react';
+import { User, Mail, Shield, Bell, Lock, Edit3 } from 'lucide-react';
 import { Button } from '../../components/ui';
+import { useToast } from '../../context/ToastContext';
 
 export default function AdminProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUserData } = useAuth();
+  const { addToast } = useToast();
   const [activeTab, setActiveTab] = useState('profile');
+  
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    profileImage: user?.profileImage || ''
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('amrith_token')}`
+        },
+        body: JSON.stringify(formData)
+      });
+      if (!res.ok) throw new Error('Failed to update profile');
+      const data = await res.json();
+      updateUserData(data.user);
+      addToast('Profile updated successfully!', 'success');
+    } catch (err) {
+      addToast(err.message, 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        addToast('Image must be less than 2MB', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -46,13 +91,20 @@ export default function AdminProfilePage() {
             {activeTab === 'profile' && (
               <div className="space-y-8">
                 <div className="flex items-center gap-6 pb-8 border-b border-white/5">
-                  <div className="w-24 h-24 rounded-md bg-[#000000] border border-white/10 flex items-center justify-center text-3xl font-bold text-white">
-                    {user?.name?.charAt(0) || 'A'}
+                  <div className="relative group w-24 h-24 rounded-md bg-[#000000] border border-white/10 flex items-center justify-center text-3xl font-bold text-white overflow-hidden cursor-pointer hover:border-primary/50 transition-colors">
+                    {formData.profileImage || user?.profileImage ? (
+                      <img src={formData.profileImage || user?.profileImage} alt="Admin" className="w-full h-full object-cover" />
+                    ) : (
+                      user?.name?.charAt(0) || 'A'
+                    )}
+                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Edit3 className="w-5 h-5 text-white mb-1" />
+                    </div>
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-white mb-1">{user?.name || 'Administrator'}</h2>
-                    <p className="text-sm text-gray-400 mb-3">System Administrator • Since May 2026</p>
-                    <Button variant="outline" size="sm" className="rounded-md">Change Avatar</Button>
+                    <p className="text-sm text-gray-400 mb-3">System Administrator</p>
                   </div>
                 </div>
 
@@ -61,7 +113,8 @@ export default function AdminProfilePage() {
                     <label className="text-sm font-semibold text-gray-300">Full Name</label>
                     <input 
                       type="text" 
-                      defaultValue={user?.name || 'Amrith Admin'}
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full bg-[#000000] border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
@@ -69,8 +122,9 @@ export default function AdminProfilePage() {
                     <label className="text-sm font-semibold text-gray-300">Email Address</label>
                     <input 
                       type="email" 
-                      defaultValue={user?.email || 'admin@amrith.com'}
-                      className="w-full bg-[#000000] border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      value={user?.email || ''}
+                      readOnly
+                      className="w-full bg-[#000000] border border-white/10 rounded-md px-4 py-3 text-gray-500 cursor-not-allowed"
                     />
                   </div>
                   <div className="space-y-2">
@@ -83,7 +137,9 @@ export default function AdminProfilePage() {
                 </div>
 
                 <div className="pt-4">
-                  <Button className="rounded-md w-full sm:w-auto">Save Changes</Button>
+                  <Button className="rounded-md w-full sm:w-auto" onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </Button>
                 </div>
               </div>
             )}

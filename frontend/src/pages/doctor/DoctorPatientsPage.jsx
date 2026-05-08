@@ -23,7 +23,7 @@ export default function DoctorPatientsPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className={`${selectedPatient ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
           <div className="grid sm:grid-cols-2 gap-4">
-            {filtered.map((patient, i) => (
+            {filtered.length > 0 ? filtered.map((patient, i) => (
               <motion.div
                 key={patient.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -51,7 +51,12 @@ export default function DoctorPatientsPage() {
                   </div>
                 </Card>
               </motion.div>
-            ))}
+            )) : (
+              <div className="sm:col-span-2 text-center py-16 text-text-muted">
+                <User className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                <p>No patients assigned to you yet.</p>
+              </div>
+            )}
           </div>
         </div>
 

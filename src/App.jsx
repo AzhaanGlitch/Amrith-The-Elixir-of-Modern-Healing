@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Layouts
@@ -36,6 +37,7 @@ import DoctorProfilePage from './pages/doctor/DoctorProfilePage';
 
 function App() {
   return (
+    <LanguageProvider>
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
@@ -87,6 +89,7 @@ function App() {
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

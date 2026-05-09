@@ -1,7 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, Github, Linkedin } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const quickLinks = [
+    { label: t('footer.aboutUs'), path: '/about-us' },
+    { label: t('nav.howItWorks'), path: '/how-it-works' },
+    { label: t('nav.departments'), path: '/departments' },
+    { label: t('nav.blog'), path: '/blog' },
+    { label: t('nav.contact'), path: '/contact' },
+  ];
+
   return (
     <footer className="relative text-white overflow-hidden" role="contentinfo">
       {/* Background image with purple tint + blur */}
@@ -26,22 +37,21 @@ export default function Footer() {
               <img src="/logo.png" alt="Amrith Logo" className="h-10 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
-              The Elixir of Modern Healing. A premium AI-powered virtual hospital making quality diagnostics accessible,
-              free, and convenient for everyone.
+              {t('footer.brandDesc')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-heading font-semibold text-purple-300 mb-4">Quick Links</h4>
+            <h4 className="font-heading font-semibold text-purple-300 mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-3">
-              {['About Us', 'How It Works', 'Departments', 'Blog', 'Contact'].map(item => (
-                <li key={item}>
+              {quickLinks.map(item => (
+                <li key={item.path}>
                   <Link
-                    to={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
+                    to={item.path}
                     className="text-gray-300 text-sm hover:text-accent transition-colors duration-200"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -52,24 +62,24 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-heading font-semibold text-purple-300 mb-4">Contact Us</h4>
+            <h4 className="font-heading font-semibold text-purple-300 mb-4">{t('footer.contactUs')}</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-300">Call at</p>
+                  <p className="text-sm text-gray-300">{t('footer.callAt')}</p>
                   <p className="text-sm text-white font-medium">+91 7983595318</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm text-gray-300">Email</p>
+                  <p className="text-sm text-gray-300">{t('contact.email')}</p>
                   <a href="mailto:azhaanalisiddiqui15@gmail.com" className="text-sm text-white font-medium hover:text-accent transition-colors">azhaanalisiddiqui15@gmail.com</a>
                 </div>
               </li>
               <li className="pt-2">
-                <p className="text-sm text-gray-300 mb-3">Follow Us</p>
+                <p className="text-sm text-gray-300 mb-3">{t('footer.followUs')}</p>
                 <div className="flex items-center gap-3">
                   <a href="https://github.com/AzhaanGlitch" target="_blank" rel="noopener noreferrer" className="bg-white/10 p-2.5 rounded-full hover:bg-accent hover:text-white transition-all duration-300 group">
                     <Github className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
@@ -88,7 +98,7 @@ export default function Footer() {
       <div className="relative z-10 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white text-xs">
-            © 2026 Amrith Healthcare Pvt. Ltd. All rights reserved.
+            {t('footer.copyright')}
           </p>
         </div>
       </div>

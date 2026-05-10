@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card, Badge, SearchBar } from '../components/ui';
 import { departments } from '../data/mockData';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Heart, Brain, Bone, Sparkles, Eye, Baby, Stethoscope, HeartPulse,
   Scan, Microscope, Activity, Wind, ArrowRight, CheckCircle2, Upload,
@@ -24,6 +25,7 @@ const item = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, trans
 export default function DepartmentsPage() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const filtered = useMemo(() => {
     const term = search.toLowerCase();
@@ -50,12 +52,12 @@ export default function DepartmentsPage() {
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Badge variant="primary" className="mb-6 text-xs font-bold uppercase tracking-widest px-4 py-1.5 bg-white/20 text-white border-0 shadow-sm backdrop-blur-md">100% Free</Badge>
+            <Badge variant="primary" className="mb-6 text-xs font-bold uppercase tracking-widest px-4 py-1.5 bg-white/20 text-white border-0 shadow-sm backdrop-blur-md">{t('depts.badge')}</Badge>
             <h1 className="text-4xl lg:text-5xl font-heading font-extrabold mb-5 drop-shadow-md">
-              AI-Powered Medical Departments
+              {t('depts.title')}
             </h1>
             <p className="text-lg lg:text-xl text-white/90 max-w-3xl mx-auto font-medium leading-relaxed">
-              Browse our comprehensive range of AI diagnostic specialties. Upload your scans, answer symptom questions, and get instant AI analysis — all for free.
+              {t('depts.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -65,7 +67,7 @@ export default function DepartmentsPage() {
         {/* Search */}
         <div className="max-w-xl mx-auto mb-12">
           <SearchBar
-            placeholder="Search departments or diseases..."
+            placeholder={t('depts.searchPlaceholder')}
             value={search}
             onChange={setSearch}
           />
@@ -121,7 +123,7 @@ export default function DepartmentsPage() {
                       })}
                     </div>
                     <span className="text-primary text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Explore <ArrowRight className="w-4 h-4" />
+                      {t('depts.explore')} <ArrowRight className="w-4 h-4" />
                     </span>
                   </div>
                 </Card>
@@ -132,7 +134,7 @@ export default function DepartmentsPage() {
 
         {filtered.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-text-muted text-lg">No departments or diseases match "{search}"</p>
+            <p className="text-text-muted text-lg">{t('depts.noResults1')}{search}{t('depts.noResults2')}</p>
           </div>
         )}
       </div>

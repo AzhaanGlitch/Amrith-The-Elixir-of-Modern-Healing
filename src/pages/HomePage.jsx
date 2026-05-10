@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Card, Badge } from '../components/ui';
 import { departments } from '../data/mockData';
+import { useLanguage } from '../context/LanguageContext';
 import {
   HeartPulse, Scan, Microscope, Activity, Star, Send, Shield, Zap, Award, CheckCircle2,
   Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home,
@@ -28,6 +29,7 @@ const departmentColors = {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Reviews state (frontend only)
   const [reviews, setReviews] = useState([]);
@@ -59,9 +61,9 @@ export default function HomePage() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="font-heading font-black leading-tight mb-8"
             >
-              <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">AMRITH</span>
+              <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">{t('home.heroTitle')}</span>
               <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-[#5b3b98] font-bold tracking-widest pl-2">
-                THE ELIXIR OF MODERN HEALING
+                {t('home.heroSubtitle')}
               </span>
             </motion.h1>
 
@@ -71,9 +73,7 @@ export default function HomePage() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="text-base sm:text-lg text-[#5b3b98] mb-12 leading-relaxed max-w-xl mx-auto font-medium"
             >
-              Access a complete AI-powered virtual hospital and doctor consultations,<br className="hidden sm:block" />
-              all from the comfort of your home. Quality, instantaneous healthcare<br className="hidden sm:block" />
-              completely free of cost.
+              {t('home.heroDesc')}
             </motion.p>
 
             {/* Role Buttons */}
@@ -89,7 +89,7 @@ export default function HomePage() {
                 className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
               >
                 <UserCheck className="w-4 h-4 mr-2" />
-                I'm a Patient
+                {t('home.imPatient')}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-all ml-2" />
               </Button>
               <Button
@@ -98,7 +98,7 @@ export default function HomePage() {
                 className="!border-white/40 !text-white hover:!bg-purple-500/20 group bg-black/20 backdrop-blur-sm rounded-full px-8 py-3.5 shadow-md flex items-center text-sm font-semibold tracking-wide"
               >
                 <Stethoscope className="w-4 h-4 mr-2" />
-                I'm a Doctor
+                {t('home.imDoctor')}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-2" />
               </Button>
             </motion.div>
@@ -113,9 +113,9 @@ export default function HomePage() {
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">Free AI Diagnostics</Badge>
-            <h2 className="text-4xl lg:text-5xl font-heading font-black text-text mb-4">Explore Our Amrith Services</h2>
-            <p className="text-text-muted text-xl max-w-3xl mx-auto">Discover {departments.reduce((acc, d) => acc + d.diseases.length, 0)}+ specialized AI-powered disease detection tools across {departments.length} medical departments. Completely free for everyone.</p>
+            <Badge variant="primary" className="mb-4 text-sm font-bold uppercase tracking-wider px-4 py-1.5">{t('home.badgeFree')}</Badge>
+            <h2 className="text-4xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.exploreTitle')}</h2>
+            <p className="text-text-muted text-xl max-w-3xl mx-auto">{t('home.exploreDesc1')} {departments.reduce((acc, d) => acc + d.diseases.length, 0)}+ {t('home.exploreDesc2')} {departments.length} {t('home.exploreDesc3')}</p>
           </div>
 
           <motion.div
@@ -137,7 +137,7 @@ export default function HomePage() {
 
                     {/* Disease count & input types */}
                     <div className="flex flex-wrap gap-1.5 justify-center mb-4">
-                      <Badge variant="neutral" className="text-xs">{dept.diseases.length} conditions</Badge>
+                      <Badge variant="neutral" className="text-xs">{dept.diseases.length} {t('home.conditions')}</Badge>
                       {dept.inputTypes.map(type => (
                         <Badge key={type} variant="secondary" className="text-xs capitalize">{type === 'xray' ? 'X-Ray' : type}</Badge>
                       ))}
@@ -152,12 +152,12 @@ export default function HomePage() {
                         </div>
                       ))}
                       {dept.diseases.length > 3 && (
-                        <p className="text-xs text-primary font-medium pl-5.5">+{dept.diseases.length - 3} more</p>
+                        <p className="text-xs text-primary font-medium pl-5.5">+{dept.diseases.length - 3} {t('home.more')}</p>
                       )}
                     </div>
 
                     <div className="mt-auto flex items-center text-primary text-sm font-black opacity-0 group-hover:opacity-100 transition-all">
-                      Get Free AI Analysis <ArrowRight className="w-4 h-4 ml-1" />
+                      {t('home.getFreeAnalysis')} <ArrowRight className="w-4 h-4 ml-1" />
                     </div>
                   </Card>
                 </motion.div>
@@ -171,15 +171,15 @@ export default function HomePage() {
       <section className="py-24 bg-gradient-to-br from-primary/5 to-primary/10 border-y border-border-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">How Amrith AI Works</h2>
-            <p className="text-text-muted text-xl">Three simple steps to get your AI-powered health analysis</p>
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.howTitle')}</h2>
+            <p className="text-text-muted text-xl">{t('home.howSubtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { step: '01', icon: ClipboardList, title: 'Answer Symptoms', desc: 'Select your condition and answer a tailored questionnaire about your symptoms, medical history, and current readings.', color: 'from-purple-500 to-indigo-600' },
-              { step: '02', icon: Upload, title: 'Upload Your Data', desc: 'Upload relevant images, X-rays, medical reports, or readings as required by the specific disease screening.', color: 'from-blue-500 to-cyan-500' },
-              { step: '03', icon: FileText, title: 'Get AI Analysis', desc: 'Our trained ML models analyze your inputs and provide detailed predictions, risk assessments, and recommendations — all for free.', color: 'from-emerald-500 to-teal-500' },
+              { step: t('home.step01'), icon: ClipboardList, title: t('home.stepTitle1'), desc: t('home.stepDesc1'), color: 'from-purple-500 to-indigo-600' },
+              { step: t('home.step02'), icon: Upload, title: t('home.stepTitle2'), desc: t('home.stepDesc2'), color: 'from-blue-500 to-cyan-500' },
+              { step: t('home.step03'), icon: FileText, title: t('home.stepTitle3'), desc: t('home.stepDesc3'), color: 'from-emerald-500 to-teal-500' },
             ].map(({ step, icon: Icon, title, desc, color }, i) => (
               <motion.div
                 key={i}
@@ -210,8 +210,8 @@ export default function HomePage() {
       <section className="py-24 bg-gradient-to-br from-background to-background-alt border-y border-border-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">Why Choose Amrith?</h2>
-            <p className="text-text-muted text-xl">Pioneering accessible, digital-first healthcare for everyone.</p>
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.whyTitle')}</h2>
+            <p className="text-text-muted text-xl">{t('home.whySubtitle')}</p>
           </div>
 
           <motion.div
@@ -222,10 +222,10 @@ export default function HomePage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             {[
-              { icon: Activity, title: 'Instant Inference', desc: 'No waiting for days. Get your preliminary analysis in seconds.', iconColor: 'text-purple-500' },
-              { icon: Shield, title: 'Privacy First', desc: 'Your medical data is encrypted and immediately discarded after analysis.', iconColor: 'text-blue-500' },
-              { icon: Award, title: 'Completely Free', desc: 'All our AI diagnostic tools are entirely free of cost. No hidden charges.', iconColor: 'text-amber-500' },
-              { icon: Home, title: 'Hospital at Home', desc: 'Get diagnostic insights without ever leaving your living room.', iconColor: 'text-indigo-500' },
+              { icon: Activity, title: t('home.whyTitle1'), desc: t('home.whyDesc1'), iconColor: 'text-purple-500' },
+              { icon: Shield, title: t('home.whyTitle2'), desc: t('home.whyDesc2'), iconColor: 'text-blue-500' },
+              { icon: Award, title: t('home.whyTitle3'), desc: t('home.whyDesc3'), iconColor: 'text-amber-500' },
+              { icon: Home, title: t('home.whyTitle4'), desc: t('home.whyDesc4'), iconColor: 'text-indigo-500' },
             ].map(({ icon: Icon, title, desc, iconColor }, i) => (
               <motion.div key={i} variants={item}>
                 <Card className="p-8 text-center h-full border-none shadow-xl bg-white/50 backdrop-blur-xl">
@@ -243,8 +243,8 @@ export default function HomePage() {
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">Community Feedback</h2>
-            <p className="text-text-muted text-xl">Help us improve by leaving your honest thoughts about our AI diagnostic tools.</p>
+            <h2 className="text-3xl lg:text-5xl font-heading font-black text-text mb-4">{t('home.feedbackTitle')}</h2>
+            <p className="text-text-muted text-xl">{t('home.feedbackSubtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -252,22 +252,22 @@ export default function HomePage() {
             <div className="md:col-span-5">
               <Card className="p-8 shadow-2xl border-primary/20 bg-gradient-to-br from-white to-primary/5">
                 <h3 className="text-2xl font-bold font-heading mb-6 flex items-center gap-2">
-                  <Star className="w-6 h-6 text-accent fill-accent" /> Leave a Review
+                  <Star className="w-6 h-6 text-accent fill-accent" /> {t('home.leaveReview')}
                 </h3>
                 <form onSubmit={submitReview} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-2">Your Name</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">{t('home.yourName')}</label>
                     <input
                       type="text"
                       required
                       value={newReview.name}
                       onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                      placeholder="Amrit User"
+                      placeholder={t('home.namePlaceholder')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-2">Rating</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">{t('home.rating')}</label>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -289,17 +289,17 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-text-secondary mb-2">Comment</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">{t('home.comment')}</label>
                     <textarea
                       required
                       value={newReview.comment}
                       onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none h-32"
-                      placeholder="How accurate was the AI diagnosis? Did it help you?"
+                      placeholder={t('home.commentPlaceholder')}
                     />
                   </div>
                   <Button type="submit" className="w-full py-4 rounded-xl text-lg flex items-center justify-center gap-2">
-                    <Send className="w-5 h-5" /> Submit Feedback
+                    <Send className="w-5 h-5" /> {t('home.submitFeedback')}
                   </Button>
                 </form>
               </Card>
@@ -312,8 +312,8 @@ export default function HomePage() {
                   <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
                     <Send className="w-8 h-8 text-border-dark" />
                   </div>
-                  <h4 className="text-xl font-bold text-text mb-2">No feedback yet</h4>
-                  <p className="text-text-muted">Be the first to share your experience with the Amrith Virtual Hospital beta!</p>
+                  <h4 className="text-xl font-bold text-text mb-2">{t('home.noFeedback')}</h4>
+                  <p className="text-text-muted">{t('home.noFeedbackDesc')}</p>
                 </div>
               ) : (
                 <AnimatePresence>

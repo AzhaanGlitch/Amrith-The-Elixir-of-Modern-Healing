@@ -1,16 +1,19 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui';
+import { useLanguage } from '../context/LanguageContext';
 import { Search, CalendarCheck, Home, FileBarChart, ArrowRight } from 'lucide-react';
 
-const steps = [
-  { icon: Search, title: 'Browse & Choose', desc: 'Search from 200+ lab tests, health packages, or book a doctor consultation. Compare prices and read test details.', color: 'text-primary' },
-  { icon: CalendarCheck, title: 'Book & Schedule', desc: 'Pick a convenient date and time slot. Choose between home sample collection or lab visit. Secure online payment.', color: 'text-secondary' },
-  { icon: Home, title: 'Sample Collection', desc: 'Our certified phlebotomist visits your home, or visit any of our partner labs. Safe, hygienic, and professional.', color: 'text-accent' },
-  { icon: FileBarChart, title: 'Get Smart Reports', desc: 'Receive digital reports on your dashboard within hours. AI-powered health summaries help you understand results at a glance.', color: 'text-purple-500' },
-];
-
 export default function HowItWorksPage() {
+  const { t } = useLanguage();
+
+  const steps = [
+    { icon: Search, title: t('howItWorks.step1Title'), desc: t('howItWorks.step1Desc'), color: 'text-primary' },
+    { icon: CalendarCheck, title: t('howItWorks.step2Title'), desc: t('howItWorks.step2Desc'), color: 'text-secondary' },
+    { icon: Home, title: t('howItWorks.step3Title'), desc: t('howItWorks.step3Desc'), color: 'text-accent' },
+    { icon: FileBarChart, title: t('howItWorks.step4Title'), desc: t('howItWorks.step4Desc'), color: 'text-purple-500' },
+  ];
+
   return (
     <div className="pt-24 min-h-screen bg-bg">
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-24 relative overflow-hidden">
@@ -26,10 +29,10 @@ export default function HowItWorksPage() {
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-4xl lg:text-6xl font-heading font-bold mb-6 drop-shadow-lg">
-            How Amrith Works
+            {t('howItWorks.title')}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-white/90 max-w-2xl mx-auto font-light">
-            Simple, hassle-free healthcare designed around you. Your journey to better health in four simple steps.
+            {t('howItWorks.subtitle')}
           </motion.p>
         </div>
       </section>
@@ -78,11 +81,11 @@ export default function HowItWorksPage() {
             viewport={{ once: true }}
             className="text-center mt-32 bg-gradient-to-r from-primary/10 to-secondary/10 p-12 rounded-3xl border border-primary/20"
           >
-            <h3 className="text-3xl font-heading font-bold text-text mb-4">Ready to Prioritize Your Health?</h3>
-            <p className="text-text-secondary text-lg mb-8 max-w-2xl mx-auto">Join thousands of others who manage their healthcare effectively in under 2 minutes.</p>
+            <h3 className="text-3xl font-heading font-bold text-text mb-4">{t('howItWorks.ctaTitle')}</h3>
+            <p className="text-text-secondary text-lg mb-8 max-w-2xl mx-auto">{t('howItWorks.ctaDesc')}</p>
             <Link to="/signup">
               <Button size="lg" className="shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                Create Free Account <ArrowRight className="w-5 h-5 ml-2" />
+                {t('howItWorks.ctaBtn')} <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
           </motion.div>

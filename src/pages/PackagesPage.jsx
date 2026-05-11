@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, Badge, Button } from '../components/ui';
 import { departments } from '../data/mockData';
+import { useLanguage } from '../context/LanguageContext';
 import { CheckCircle2, ArrowRight, Shield, Sparkles, HeartPulse, Brain, Scan } from 'lucide-react';
 
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -44,16 +45,17 @@ const screeningBundles = [
 
 export default function PackagesPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div>
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl lg:text-5xl font-heading font-bold mb-4">
-            AI Screening Bundles
+            {t('packages.title')}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-xl text-white/80 max-w-2xl mx-auto">
-            Comprehensive multi-department health screenings powered by AI — completely free. Choose a bundle or screen individual conditions.
+            {t('packages.subtitle')}
           </motion.p>
         </div>
       </section>
@@ -102,13 +104,13 @@ export default function PackagesPage() {
 
                     <div className="border-t border-border-light pt-6 flex items-end justify-between">
                       <div>
-                        <span className="text-2xl font-heading font-bold text-primary">Free</span>
+                        <span className="text-2xl font-heading font-bold text-primary">{t('packages.free')}</span>
                         <p className="text-xs text-text-muted mt-1">
-                          {totalConditions} conditions • {bundleDepts.length} departments
+                          {totalConditions} {t('packages.conditions')} • {bundleDepts.length} {t('packages.departments')}
                         </p>
                       </div>
                       <Button onClick={() => navigate(`/departments/${bundle.deptIds[0]}`)}>
-                        Start Screening <ArrowRight className="w-4 h-4" />
+                        {t('packages.startScreening')} <ArrowRight className="w-4 h-4" />
                       </Button>
                     </div>
                   </Card>
@@ -128,8 +130,8 @@ export default function PackagesPage() {
               <div className="flex items-start gap-3">
                 <Shield className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-emerald-800 mb-1">100% Free & Secure</h4>
-                  <p className="text-sm text-emerald-700">All AI screenings are completely free. Your medical data is encrypted during transmission and automatically deleted after analysis. We never sell or share your health information.</p>
+                  <h4 className="font-semibold text-emerald-800 mb-1">{t('packages.privacyTitle')}</h4>
+                  <p className="text-sm text-emerald-700">{t('packages.privacyDesc')}</p>
                 </div>
               </div>
             </Card>

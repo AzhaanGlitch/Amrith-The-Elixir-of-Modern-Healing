@@ -22,3 +22,4 @@
 [2026-05-20T14:22:00] refactor: enhance error handling in user auth route
 [2026-05-20T15:48:00] chore: optimize data loading pipelines
 [2026-05-20T16:30:00] test: implement integration tests for booking system
+[2026-05-20T16:22:00] style: apply standard linting fixes to frontend views

@@ -12,3 +12,4 @@
 [2026-05-20T12:15:00] style: format backend code structure
 [2026-05-20T13:12:00] test: add unit tests for medical image preprocessing
 [2026-05-20T12:00:00] test: add unit tests for medical image preprocessing
+[2026-05-20T12:12:00] refactor: abstract common token verification logic

@@ -37,3 +37,4 @@
 [2026-05-21T11:00:00] test: add unit tests for medical image preprocessing
 [2026-05-21T11:23:00] chore: optimize data loading pipelines
 [2026-05-21T11:36:00] style: apply standard linting fixes to frontend views
+[2026-05-21T11:36:00] test: verify response schemas for medical reports API

@@ -46,3 +46,4 @@
 [2026-05-21T14:42:00] chore: clean up unused variables in training scripts
 [2026-05-21T13:20:00] style: apply standard linting fixes to frontend views
 [2026-05-21T14:57:00] style: format backend code structure
+[2026-05-21T14:52:00] docs: document patient dashboard state management

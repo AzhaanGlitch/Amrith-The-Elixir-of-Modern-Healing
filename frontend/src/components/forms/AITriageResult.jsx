@@ -1,96 +1,317 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight, HeartPulse, Activity, CheckCircle } from 'lucide-react';
 import { Card, Button } from '../ui';
 
-export default function AITriageResult({ onProceed, onReset }) {
+export default function AITriageResult({ testId, inputType, answers, uploadedFiles, onProceed, onReset }) {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
   useEffect(() => {
-    // Simulate AI Processing
-    const timer = setTimeout(() => {
-      setResult({
-        score: Math.floor(Math.random() * 40) + 30, // Random risk score 30-70
-        risk: 'Moderate',
-        color: 'text-amber-500',
-        bg: 'bg-amber-50',
-        border: 'border-amber-100',
-        message: 'Based on the AI triage, your symptoms indicate a moderate priority for medical consultation.'
-      });
-      setLoading(false);
-    }, 2500);
+    const fetchTriageResult = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const token = localStorage.getItem('amrith_token');
+        if (!token) {
+          throw new Error('User authentication token not found. Please log in.');
+        }
 
-    return () => clearTimeout(timer);
-  }, []);
+        // Build FormData payload
+        const formData = new FormData();
+        formData.append('testId', testId);
+        formData.append('inputType', inputType || 'TABULAR');
+        formData.append('answers', JSON.stringify(answers));
+
+        if (uploadedFiles && uploadedFiles.length > 0) {
+          uploadedFiles.forEach((fileObj) => {
+            if (fileObj.file) {
+              formData.append('files', fileObj.file);
+            }
+          });
+        }
+
+        const response = await fetch('http://localhost:5000/api/ml/predict', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to generate diagnostic prediction.');
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+          setResult(data);
+        } else {
+          throw new Error('Backend returned unsuccessful prediction.');
+        }
+      } catch (err) {
+        console.error('AI Triage Fetch Error:', err);
+        setError(err.message || 'An unexpected error occurred during prediction.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTriageResult();
+  }, [testId, inputType, answers, uploadedFiles]);
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <h3 className="text-xl font-heading font-bold text-text mb-2">Analyzing Your Data</h3>
-        <p className="text-text-muted max-w-xs mx-auto">Our ML models are processing your inputs to provide an immediate priority assessment.</p>
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="relative mb-6">
+          <Loader2 className="w-16 h-16 text-primary animate-spin" />
+          <HeartPulse className="w-6 h-6 text-primary absolute inset-0 m-auto animate-pulse" />
+        </div>
+        <h3 className="text-2xl font-heading font-bold text-slate-800 dark:text-white mb-2">Analyzing Clinical Data</h3>
+        <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto leading-relaxed">
+          Amrith's ML model is processing your medical indicators, checklist answers, and file attachments to generate a precision diagnostic result...
+        </p>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-xl mx-auto py-8 text-center"
+      >
+        <Card className="p-8 border-red-100 bg-red-50/50 dark:bg-red-950/20 dark:border-red-900/50 rounded-2xl">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-red-800 dark:text-red-400 mb-2">Triage Analysis Failed</h3>
+          <p className="text-red-700 dark:text-red-500 text-sm mb-6 leading-relaxed">
+            {error}
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button onClick={onReset} variant="outline" className="px-6 rounded-xl">
+              Go Back
+            </Button>
+            <Button onClick={() => window.location.reload()} className="px-6 rounded-xl">
+              Retry Connection
+            </Button>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  // Formatting risk visual states
+  const getRiskStyle = (risk) => {
+    switch (risk) {
+      case 'Critical':
+        return {
+          color: 'text-red-500 dark:text-red-400',
+          bg: 'bg-red-50 dark:bg-red-950/30',
+          border: 'border-red-100 dark:border-red-900/50',
+          circleColor: 'rgb(239, 68, 68)',
+        };
+      case 'High':
+        return {
+          color: 'text-orange-500 dark:text-orange-400',
+          bg: 'bg-orange-50 dark:bg-orange-950/30',
+          border: 'border-orange-100 dark:border-orange-900/50',
+          circleColor: 'rgb(249, 115, 22)',
+        };
+      case 'Moderate':
+        return {
+          color: 'text-amber-500 dark:text-amber-400',
+          bg: 'bg-amber-50 dark:bg-amber-950/30',
+          border: 'border-amber-100 dark:border-amber-900/50',
+          circleColor: 'rgb(245, 158, 11)',
+        };
+      default:
+        return {
+          color: 'text-emerald-500 dark:text-emerald-400',
+          bg: 'bg-emerald-50 dark:bg-emerald-950/30',
+          border: 'border-emerald-100 dark:border-emerald-900/50',
+          circleColor: 'rgb(16, 185, 129)',
+        };
+    }
+  };
+
+  const riskStyle = getRiskStyle(result.riskLevel);
+  const confidence = result.confidence || 50;
+
+  // Circular progress SVG values
+  const radius = 50;
+  const stroke = 8;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (confidence / 100) * circumference;
+
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="max-w-2xl mx-auto py-6"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto py-4"
     >
-      <Card className={`p-8 border-none shadow-xl relative overflow-hidden ${result.bg}`}>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${result.bg} border ${result.border}`}>
-              <ShieldCheck className={`w-6 h-6 ${result.color}`} />
+      <Card className={`p-8 border-none shadow-xl relative overflow-hidden rounded-2xl ${riskStyle.bg}`}>
+        <div className="relative z-10 space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border ${riskStyle.border}`}>
+                <ShieldCheck className={`w-5 h-5 ${riskStyle.color}`} />
+              </div>
+              <div>
+                <h3 className="text-lg font-heading font-black text-slate-800 dark:text-white">AI Clinical Diagnosis</h3>
+                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider">Precision Screening Completed</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-heading font-bold text-text">AI Triage Result</h3>
-              <p className="text-text-muted text-xs font-medium uppercase tracking-wider">Analysis Complete</p>
+            {result.fallback && (
+              <Badge variant="outline" className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400 animate-pulse">
+                Heuristic Fallback
+              </Badge>
+            )}
+          </div>
+
+          {/* Results Summary Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+            {/* Visual Risk Ring */}
+            <div className="col-span-1 flex flex-col items-center">
+              <div className="relative w-28 h-28">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle
+                    className="text-slate-200 dark:text-slate-700"
+                    strokeWidth={stroke}
+                    stroke="currentColor"
+                    fill="transparent"
+                    r={normalizedRadius}
+                    cx={radius}
+                    cy={radius}
+                  />
+                  <motion.circle
+                    className="transition-all duration-1000 ease-out"
+                    strokeWidth={stroke}
+                    strokeDasharray={circumference + ' ' + circumference}
+                    style={{ strokeDashoffset }}
+                    stroke={riskStyle.circleColor}
+                    fill="transparent"
+                    r={normalizedRadius}
+                    cx={radius}
+                    cy={radius}
+                    strokeLinecap="round"
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-black text-slate-800 dark:text-white leading-none">{confidence}%</span>
+                  <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mt-0.5">Confidence</span>
+                </div>
+              </div>
+              <span className={`mt-3 text-sm font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-slate-800 shadow-sm border ${riskStyle.border} ${riskStyle.color}`}>
+                {result.riskLevel} Risk
+              </span>
+            </div>
+
+            {/* AI Diagnosis Details */}
+            <div className="col-span-1 sm:col-span-2 space-y-2">
+              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Top Detected Condition</div>
+              <h4 className="text-xl font-black text-slate-800 dark:text-white leading-tight">
+                {result.prediction}
+              </h4>
+              <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed font-medium">
+                Our model indicates a {confidence}% probability match with the clinical symptoms submitted.
+              </p>
             </div>
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-end gap-2 mb-2">
-              <span className={`text-6xl font-heading font-black ${result.color}`}>{result.score}%</span>
-              <span className="text-text-muted text-lg mb-2 font-medium">Risk Score</span>
+          {/* Tabular Differential Diagnoses (General Medicine List) */}
+          {result.details && result.details.top_predictions && result.details.top_predictions.length > 0 && (
+            <div className="space-y-3 bg-white/40 dark:bg-slate-800/40 p-5 rounded-2xl border border-white/60 dark:border-slate-800/60 shadow-inner">
+              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Activity className="w-4 h-4 text-primary" />
+                Differential Diagnostic Distribution
+              </div>
+              <div className="space-y-2.5">
+                {result.details.top_predictions.slice(0, 3).map((pred, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      <span className="truncate pr-2">{pred.disease}</span>
+                      <span className="shrink-0">{pred.confidence}%</span>
+                    </div>
+                    <div className="w-full bg-slate-200/60 dark:bg-slate-700/60 h-2 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pred.confidence}%` }}
+                        transition={{ duration: 1, delay: i * 0.1 }}
+                        className="bg-primary h-full rounded-full"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-text-secondary leading-relaxed font-medium">
-              {result.message}
-            </p>
-          </div>
+          )}
 
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 mb-8 border border-white flex gap-3 items-start">
+          {/* Clinical Recommendations */}
+          {result.details && result.details.recommendations && result.details.recommendations.length > 0 && (
+            <div className="space-y-3">
+              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                Immediate Action Recommendations
+              </div>
+              <div className="grid gap-2">
+                {result.details.recommendations.map((rec, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + i * 0.05 }}
+                    className="flex gap-2.5 items-start p-3 bg-white/60 dark:bg-slate-800/60 border border-white/80 dark:border-slate-800/80 rounded-xl"
+                  >
+                    <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-normal">{rec}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Medical Disclaimer Banner */}
+          <div className="bg-slate-100/60 dark:bg-slate-900/60 rounded-xl p-4 border border-slate-200/50 dark:border-slate-800/50 flex gap-3 items-start">
             <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <p className="text-xs text-text-muted leading-relaxed">
-              <span className="font-bold text-text block mb-1">Medical Disclaimer:</span>
-              This is an AI-powered screening tool designed for triage and informational purposes only. It does not constitute a clinical diagnosis. Always consult a qualified physician for medical decisions.
-            </p>
+            <div className="space-y-0.5">
+              <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">AI Screening Disclaimer</span>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                This is an automated machine learning screening tool designed for initial triage and clinical routing. It is not an official clinical diagnosis or a replacement for emergency professional care. Please consult a registered physician to analyze these results.
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* Booking Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button 
               onClick={onProceed} 
-              className="flex-[2] h-14 rounded-xl text-lg group"
+              className="flex-[2] h-13 rounded-xl text-sm font-bold tracking-wide group bg-primary hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-lg transition-all"
             >
               Proceed to Booking
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button 
               variant="outline"
               onClick={onReset} 
-              className="flex-1 h-14 rounded-xl border-white/40 bg-white/20 hover:bg-white text-text transition-all"
+              className="flex-1 h-13 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-all"
             >
               Screen Another
             </Button>
           </div>
         </div>
 
-        {/* Decorative elements */}
-        <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-20%] left-[-10%] w-48 h-48 bg-white/40 rounded-full blur-3xl" />
+        {/* Premium blur decorations */}
+        <div className="absolute top-[-25%] right-[-15%] w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-25%] left-[-15%] w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl" />
       </Card>
     </motion.div>
   );

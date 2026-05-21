@@ -49,3 +49,4 @@
 [2026-05-21T14:52:00] docs: document patient dashboard state management
 [2026-05-21T15:00:00] chore: update package lock and check dependency tree
 [2026-05-21T14:00:00] docs: update API endpoints documentation
+[2026-05-21T15:04:00] refactor: enhance error handling in user auth route

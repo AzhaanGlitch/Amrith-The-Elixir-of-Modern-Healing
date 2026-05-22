@@ -60,3 +60,4 @@
 [2026-05-22T11:16:00] perf: improve inference speed of diagnostic models
 [2026-05-22T11:33:00] style: format backend code structure
 [2026-05-22T11:20:00] perf: improve inference speed of diagnostic models
+[2026-05-22T11:56:00] refactor: abstract common token verification logic

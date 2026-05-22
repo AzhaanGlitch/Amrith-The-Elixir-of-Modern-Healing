@@ -3,37 +3,38 @@
  * Categories: IMAGE, TABULAR, HYBRID
  */
 
-export const testConfigs = {
-  // General Medicine
-  'fever': {
-    inputType: 'TABULAR',
-    questions: [
-      { id: 'temp', label: 'Current body temperature (°F/°C)', type: 'number', placeholder: 'e.g. 101.5' },
-      { id: 'duration', label: 'How many days have you had symptoms?', type: 'number', placeholder: 'e.g. 3' },
-      { id: 'cough', label: 'Do you have a cough?', type: 'select', options: ['None', 'Dry', 'Productive'] },
-      { id: 'throat', label: 'Are you experiencing a sore or scratchy throat?', type: 'radio', options: ['Yes', 'No'] },
-      { id: 'nasal', label: 'Runny nose, stuffy nose, or sinus pressure?', type: 'radio', options: ['Yes', 'No'] },
-      { id: 'aches', label: 'Body aches or generalized pain? (1-5)', type: 'number', min: 1, max: 5 },
-      { id: 'chills', label: 'Sudden chills or night sweats?', type: 'radio', options: ['Yes', 'No'] },
-      { id: 'fatigue', label: 'Overall energy level (1-5: 1 normal, 5 bedridden)', type: 'number', min: 1, max: 5 }
-    ]
-  },
-  'cold': {
-    inputType: 'TABULAR',
-    questions: [
-      { id: 'temp', label: 'Current body temperature (°F/°C)', type: 'number', placeholder: 'e.g. 99.0' },
-      { id: 'duration', label: 'How many days have you had symptoms?', type: 'number' },
-      { id: 'cough', label: 'Do you have a cough?', type: 'select', options: ['None', 'Dry', 'Productive'] },
-      { id: 'throat', label: 'Are you experiencing a sore or scratchy throat?', type: 'radio', options: ['Yes', 'No'] },
-      { id: 'nasal', label: 'Runny/stuffy nose?', type: 'radio', options: ['Yes', 'No'] },
-      { id: 'aches', label: 'Body aches? (1-5)', type: 'number', min: 1, max: 5 },
-      { id: 'fatigue', label: 'Energy level (1-5)', type: 'number', min: 1, max: 5 }
-    ]
-  },
-  'sinus': { inputType: 'HYBRID', questions: [{ id: 'pressure', label: 'Facial pain or pressure?', type: 'radio', options: ['Yes', 'No'] }] },
-  'tonsillitis': { inputType: 'IMAGE' },
-  'allergies': { inputType: 'TABULAR', questions: [{ id: 'trigger', label: 'Known trigger?', type: 'text' }] },
+const generalMedicineConfig = {
+  inputType: 'TABULAR',
+  questions: [
+    {
+      id: 'q_symptoms',
+      label: 'Please select all symptoms you are experiencing:',
+      type: 'symptom_selector'
+    }
+  ]
+};
 
+export const testConfigs = {};
+
+// Register all General Medicine diseases to use the custom symptom selector
+const generalMedicineIds = [
+  'fever', 'cold', 'common-cold', 'sinus', 'tonsillitis', 'allergy-gm', 'headache',
+  'gerd', 'chronic-cholestasis', 'drug-reaction', 'peptic-ulcer', 'aids',
+  'diabetes', 'gastroenteritis', 'bronchial-asthma-gm', 'migraine',
+  'cervical-spondylosis', 'paralysis', 'jaundice', 'malaria', 'chicken-pox',
+  'dengue', 'typhoid', 'hepatitis-a', 'hepatitis-b', 'hepatitis-c',
+  'hepatitis-d', 'hepatitis-e', 'alcoholic-hepatitis', 'piles',
+  'heart-attack-gm', 'varicose-veins', 'hypothyroidism', 'hyperthyroidism',
+  'hypoglycemia', 'osteoarthritis', 'vertigo', 'acne',
+  'urinary-tract-infection', 'impetigo', 'fungal-infection-gm', 'psoriasis-gm',
+  'hypertension-gm', 'tuberculosis-gm', 'pneumonia-gm', 'arthritis-gm'
+];
+
+generalMedicineIds.forEach(id => {
+  testConfigs[id] = generalMedicineConfig;
+});
+
+Object.assign(testConfigs, {
   // Cardiovascular
   'hypertension': { inputType: 'TABULAR', questions: [{ id: 'bp', label: 'Blood Pressure', type: 'text' }] },
   'heart-failure': {
@@ -123,4 +124,4 @@ export const testConfigs = {
   'skin-cancer-onc': { inputType: 'IMAGE' },
   'lung-cancer': { inputType: 'HYBRID', questions: [{ id: 'smoker', label: 'Current smoker?', type: 'radio', options: ['Yes', 'No'] }] },
   'breast-cancer': { inputType: 'IMAGE' }
-};
+});

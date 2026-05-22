@@ -251,7 +251,14 @@ export default function BookingPage() {
         {/* Step 2: AI Result */}
         {step === 2 && (
           <motion.div key="step2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <AITriageResult onProceed={handleNext} onReset={handleReset} />
+            <AITriageResult 
+              testId={selectedTestId} 
+              inputType={selectedTest?.config?.inputType} 
+              answers={answers} 
+              uploadedFiles={uploadedFiles} 
+              onProceed={handleNext} 
+              onReset={handleReset} 
+            />
             <div className="text-center mt-4">
               <button onClick={handleBack} className="text-sm text-text-muted hover:text-primary transition-colors">
                 ← Re-evaluate Inputs

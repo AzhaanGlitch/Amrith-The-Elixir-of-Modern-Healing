@@ -99,3 +99,4 @@
 [2026-05-23T15:40:00] chore: clean up unused variables in training scripts
 [2026-05-23T16:48:00] chore: update package lock and check dependency tree
 [2026-05-23T17:06:00] refactor: modularize symptom classification logic
+[2026-05-23T17:24:00] refactor: enhance error handling in user auth route

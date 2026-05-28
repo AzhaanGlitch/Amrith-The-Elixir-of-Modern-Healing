@@ -114,3 +114,4 @@
 [2026-05-28T12:18:00] refactor: consolidate department data helper utilities
 [2026-05-28T12:24:00] style: apply standard linting fixes to frontend views
 [2026-05-28T12:54:00] test: add unit tests for medical image preprocessing
+[2026-05-28T12:02:00] style: format backend code structure

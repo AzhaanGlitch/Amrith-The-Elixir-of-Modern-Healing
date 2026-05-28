@@ -123,3 +123,4 @@
 [2026-05-28T13:20:00] refactor: abstract common token verification logic
 [2026-05-28T13:12:00] chore: optimize data loading pipelines
 [2026-05-28T14:30:00] refactor: consolidate department data helper utilities
+[2026-05-28T15:54:00] style: apply standard linting fixes to frontend views

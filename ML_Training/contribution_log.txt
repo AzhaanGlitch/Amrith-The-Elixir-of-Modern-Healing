@@ -110,3 +110,4 @@
 [2026-05-28T10:59:00] style: improve responsiveness of diagnostic UI layout
 [2026-05-28T11:08:00] refactor: enhance error handling in user auth route
 [2026-05-28T11:33:00] style: apply standard linting fixes to frontend views
+[2026-05-28T11:10:00] refactor: consolidate department data helper utilities

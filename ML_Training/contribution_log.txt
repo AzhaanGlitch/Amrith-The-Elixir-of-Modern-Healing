@@ -111,3 +111,4 @@
 [2026-05-28T11:08:00] refactor: enhance error handling in user auth route
 [2026-05-28T11:33:00] style: apply standard linting fixes to frontend views
 [2026-05-28T11:10:00] refactor: consolidate department data helper utilities
+[2026-05-28T12:18:00] refactor: consolidate department data helper utilities

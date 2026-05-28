@@ -105,3 +105,4 @@
 [2026-05-28T09:28:00] docs: document patient dashboard state management
 [2026-05-28T09:51:00] chore: update package lock and check dependency tree
 [2026-05-28T09:56:00] style: format backend code structure
+[2026-05-28T10:20:00] style: improve responsiveness of diagnostic UI layout

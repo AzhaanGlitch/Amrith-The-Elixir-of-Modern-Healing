@@ -130,3 +130,4 @@
 [2026-05-28T16:39:00] refactor: consolidate department data helper utilities
 [2026-05-28T15:32:00] style: format backend code structure
 [2026-05-28T17:13:00] style: apply standard linting fixes to frontend views
+[2026-05-29T09:00:00] test: verify response schemas for medical reports API

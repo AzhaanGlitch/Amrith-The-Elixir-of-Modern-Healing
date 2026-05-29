@@ -143,3 +143,4 @@
 [2026-05-29T11:20:00] style: format backend code structure
 [2026-05-29T11:12:00] chore: update package lock and check dependency tree
 [2026-05-29T12:12:00] chore: update package lock and check dependency tree
+[2026-05-29T12:02:00] docs: document patient dashboard state management

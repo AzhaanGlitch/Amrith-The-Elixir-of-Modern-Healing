@@ -150,3 +150,4 @@
 [2026-05-29T14:06:00] style: format backend code structure
 [2026-05-29T12:36:00] style: improve responsiveness of diagnostic UI layout
 [2026-05-29T13:26:00] chore: update package lock and check dependency tree
+[2026-05-29T13:40:00] style: apply standard linting fixes to frontend views

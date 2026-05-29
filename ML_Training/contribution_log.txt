@@ -133,3 +133,4 @@
 [2026-05-29T09:00:00] test: verify response schemas for medical reports API
 [2026-05-29T09:14:00] refactor: modularize symptom classification logic
 [2026-05-29T09:30:00] refactor: consolidate department data helper utilities
+[2026-05-29T09:36:00] docs: update API endpoints documentation

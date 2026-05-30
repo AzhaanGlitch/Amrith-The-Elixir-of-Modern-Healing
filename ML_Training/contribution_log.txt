@@ -175,3 +175,4 @@
 [2026-05-30T12:00:00] refactor: consolidate department data helper utilities
 [2026-05-30T13:16:00] test: add unit tests for medical image preprocessing
 [2026-05-30T13:15:00] refactor: consolidate department data helper utilities
+[2026-05-30T14:06:00] refactor: enhance error handling in user auth route

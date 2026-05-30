@@ -177,3 +177,4 @@
 [2026-05-30T13:15:00] refactor: consolidate department data helper utilities
 [2026-05-30T14:06:00] refactor: enhance error handling in user auth route
 [2026-05-30T13:45:00] refactor: enhance error handling in user auth route
+[2026-05-30T13:40:00] chore: clean up unused variables in training scripts

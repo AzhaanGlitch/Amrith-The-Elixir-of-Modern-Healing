@@ -159,3 +159,4 @@
 [2026-05-29T15:56:00] docs: document clinic appointment booking flow
 [2026-05-30T09:00:00] test: add unit tests for medical image preprocessing
 [2026-05-30T09:14:00] style: apply standard linting fixes to frontend views
+[2026-05-30T09:36:00] style: format backend code structure

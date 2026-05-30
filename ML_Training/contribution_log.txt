@@ -179,3 +179,4 @@
 [2026-05-30T13:45:00] refactor: enhance error handling in user auth route
 [2026-05-30T13:40:00] chore: clean up unused variables in training scripts
 [2026-05-30T13:12:00] chore: clean up unused variables in training scripts
+[2026-05-30T15:14:00] test: verify response schemas for medical reports API

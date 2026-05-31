@@ -209,3 +209,4 @@
 [2026-05-31T13:36:00] perf: improve inference speed of diagnostic models
 [2026-05-31T15:24:00] style: format backend code structure
 [2026-05-31T15:40:00] style: format backend code structure
+[2026-05-31T14:12:00] chore: clean up unused variables in training scripts

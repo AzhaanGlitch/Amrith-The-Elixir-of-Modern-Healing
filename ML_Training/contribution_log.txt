@@ -197,3 +197,4 @@
 [2026-05-31T11:23:00] chore: update package lock and check dependency tree
 [2026-05-31T11:36:00] refactor: enhance error handling in user auth route
 [2026-05-31T12:54:00] test: verify response schemas for medical reports API
+[2026-05-31T12:44:00] refactor: modularize symptom classification logic

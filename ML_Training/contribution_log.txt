@@ -188,3 +188,4 @@
 [2026-05-31T09:30:00] style: apply standard linting fixes to frontend views
 [2026-05-31T09:51:00] test: verify response schemas for medical reports API
 [2026-05-31T10:00:00] docs: document clinic appointment booking flow
+[2026-05-31T10:05:00] docs: document patient dashboard state management

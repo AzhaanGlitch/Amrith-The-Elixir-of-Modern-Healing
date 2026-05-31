@@ -194,3 +194,4 @@
 [2026-05-31T11:16:00] docs: document clinic appointment booking flow
 [2026-05-31T11:42:00] style: apply standard linting fixes to frontend views
 [2026-05-31T11:50:00] docs: document patient dashboard state management
+[2026-05-31T11:23:00] chore: update package lock and check dependency tree

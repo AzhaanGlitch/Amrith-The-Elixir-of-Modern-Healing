@@ -191,3 +191,4 @@
 [2026-05-31T10:05:00] docs: document patient dashboard state management
 [2026-05-31T10:24:00] test: add unit tests for medical image preprocessing
 [2026-05-31T10:38:00] chore: update package lock and check dependency tree
+[2026-05-31T11:16:00] docs: document clinic appointment booking flow

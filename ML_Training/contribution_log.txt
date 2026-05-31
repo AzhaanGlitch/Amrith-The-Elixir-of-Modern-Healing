@@ -195,3 +195,4 @@
 [2026-05-31T11:42:00] style: apply standard linting fixes to frontend views
 [2026-05-31T11:50:00] docs: document patient dashboard state management
 [2026-05-31T11:23:00] chore: update package lock and check dependency tree
+[2026-05-31T11:36:00] refactor: enhance error handling in user auth route

@@ -10,6 +10,27 @@ router.get('/profile', (req, res) => {
   res.json({ success: true, user: req.user });
 });
 
+// GET /api/users/doctors — List active doctors, optionally filtered by specialization
+router.get('/doctors', async (req, res, next) => {
+  try {
+    const { specialization } = req.query;
+    const query = { role: 'doctor', isActive: true };
+    
+    if (specialization) {
+      // Support comma-separated specializations (e.g. Dermatology,Oncology) by converting to a regex union pattern
+      const specPattern = specialization.split(',').map(s => s.trim()).filter(Boolean).join('|');
+      if (specPattern) {
+        query.specialization = { $regex: new RegExp(specPattern, 'i') };
+      }
+    }
+
+    const doctors = await User.find(query).select('name email phone avatar specialization experience qualification');
+    res.json({ success: true, count: doctors.length, doctors });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // PATCH /api/users/profile — Update profile
 router.patch('/profile', async (req, res, next) => {
   try {

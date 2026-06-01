@@ -211,3 +211,4 @@
 [2026-05-31T15:40:00] style: format backend code structure
 [2026-05-31T14:12:00] chore: clean up unused variables in training scripts
 [2026-05-31T16:12:00] style: apply standard linting fixes to frontend views
+[2026-06-01T09:00:00] Enhance validation for medical report uploads

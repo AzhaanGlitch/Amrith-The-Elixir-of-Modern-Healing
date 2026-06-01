@@ -18,10 +18,12 @@ router.post('/', upload.array('files', 10), async (req, res, next) => {
       answers, scheduledDate, scheduledTime,
       collectionType, address, patientFor,
       familyMemberName, familyMemberAge, familyMemberGender, familyMemberRelation,
+      doctorId, triageResult,
     } = req.body;
 
     const appointmentData = {
       patient: req.user._id,
+      doctor: doctorId || null,
       testId,
       testName,
       departmentName,
@@ -33,6 +35,17 @@ router.post('/', upload.array('files', 10), async (req, res, next) => {
       address,
       patientFor: patientFor || 'self',
     };
+
+    if (triageResult) {
+      const parsedTriage = typeof triageResult === 'string' ? JSON.parse(triageResult) : triageResult;
+      appointmentData.triageResult = {
+        score: parsedTriage.score || parsedTriage.confidence || null,
+        risk: parsedTriage.risk || parsedTriage.riskLevel || null,
+        message: parsedTriage.message || parsedTriage.prediction || '',
+        mlModelUsed: parsedTriage.mlModelUsed || testId || '',
+        processedAt: parsedTriage.processedAt || new Date(),
+      };
+    }
 
     // Family member data
     if (patientFor === 'family') {
@@ -57,15 +70,31 @@ router.post('/', upload.array('files', 10), async (req, res, next) => {
 
     const appointment = await Appointment.create(appointmentData);
 
-    // Auto-create a report entry in "processing" state
-    await Report.create({
+    // Auto-create a report entry
+    const reportData = {
       appointment: appointment._id,
       patient: req.user._id,
+      doctor: doctorId || null,
       testId,
       testName,
       departmentName,
       status: 'processing',
-    });
+    };
+
+    if (triageResult) {
+      const parsedTriage = typeof triageResult === 'string' ? JSON.parse(triageResult) : triageResult;
+      reportData.aiAnalysis = {
+        prediction: parsedTriage.message || parsedTriage.prediction || '',
+        confidence: parsedTriage.score || parsedTriage.confidence || null,
+        riskLevel: parsedTriage.risk || parsedTriage.riskLevel || null,
+        details: parsedTriage.details || {},
+        modelVersion: parsedTriage.modelVersion || 'v1.0',
+        processedAt: parsedTriage.processedAt || new Date(),
+      };
+      reportData.status = 'ai-complete';
+    }
+
+    await Report.create(reportData);
 
     res.status(201).json({
       success: true,

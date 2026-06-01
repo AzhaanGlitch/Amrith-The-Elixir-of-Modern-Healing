@@ -5,6 +5,7 @@ Gracefully degrades when deep-learning frameworks are unavailable.
 """
 
 import os
+import sys
 import json
 import glob
 import traceback
@@ -13,6 +14,12 @@ import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+
+# Force UTF-8 output on Windows to prevent cp1252 emoji crashes
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 load_dotenv()
 
@@ -42,14 +49,416 @@ try:
 except Exception:
     print("⚠️  Pillow not available — image processing disabled")
 
+# ─── Hugging Face Integration ─────────────────────────────────
+HAS_HF = False
+hf_model = None
+hf_tokenizer = None
+
+try:
+    from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+    HAS_HF = True
+    print("✅ Hugging Face transformers loaded successfully")
+except Exception as e:
+    print(f"⚠️  Hugging Face transformers not available: {e}")
+
+
+# --- Hugging Face pipeline configuration ---
+MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
+HF_MODEL_DIR = os.path.join(MODELS_DIR, 'huggingface_model')
+
+
+STATIC_CLINICAL_GUIDANCE = {
+    'skin_cancer': {
+        'precautions': [
+            'Avoid direct sunlight exposure between 10 AM and 4 PM.',
+            'Apply broad-spectrum sunscreen with SPF 30+ daily, even on cloudy days.',
+            'Conduct monthly skin self-examinations to check for new or changing moles.'
+        ],
+        'medications': [
+            'Topical 5-Fluorouracil (Efudex) for pre-cancerous lesions (if prescribed by oncologist).',
+            'Imiquimod cream (Aldara) to stimulate local immune response (under medical supervision).'
+        ]
+    },
+    'skin_cancer_onc': {
+        'precautions': [
+            'Protect the affected skin area from friction, chemical irritants, and UV rays.',
+            'Keep skin clean, dry, and hydrated with fragrance-free moisturizers.',
+            'Monitor for symptoms like localized bleeding, rapid growth, or color change.'
+        ],
+        'medications': [
+            'Targeted oncology therapies (e.g., Vismodegib for advanced basal cell carcinoma).',
+            'Surgical excision planning (consult with a surgical oncologist).'
+        ]
+    },
+    'eczema': {
+        'precautions': [
+            'Moisturize skin at least twice daily with thick, fragrance-free ointments or creams.',
+            'Take short, lukewarm showers (5-10 minutes) and avoid hot baths.',
+            'Identify and avoid triggers such as harsh soaps, detergents, and wool clothing.'
+        ],
+        'medications': [
+            'Topical Corticosteroids (e.g., Hydrocortisone or Triamcinolone) to reduce inflammation.',
+            'Oral Antihistamines (e.g., Cetirizine or Diphenhydramine) to manage intense itching.'
+        ]
+    },
+    'psoriasis': {
+        'precautions': [
+            'Keep skin well-moisturized to reduce scaling and itching.',
+            'Avoid skin injuries, cuts, or sunburns, which can trigger a psoriasis flare (Koebner phenomenon).',
+            'Manage stress through mindfulness, as stress is a well-documented psoriasis trigger.'
+        ],
+        'medications': [
+            'Topical Calcipotriene (Vitamin D analogue) to slow skin cell growth.',
+            'Coal Tar preparations or topical corticosteroids for localized plaque treatment.'
+        ]
+    },
+    'fungal_infection': {
+        'precautions': [
+            'Keep the affected skin clean, dry, and well-ventilated.',
+            'Wear loose-fitting, breathable cotton clothing and change damp socks/underwear promptly.',
+            'Do not share personal items like towels, combs, or shoes to prevent spreading the infection.'
+        ],
+        'medications': [
+            'Topical Antifungals (e.g., Clotrimazole, Miconazole, or Terbinafine cream) applied twice daily.',
+            'Oral Antifungals (e.g., Fluconazole) for persistent or widespread infections (prescribed by doctor).'
+        ]
+    },
+    'pneumonia': {
+        'precautions': [
+            'Get plenty of rest and avoid strenuous physical activities.',
+            'Practice deep breathing exercises and use a humidifier to help clear lung secretions.',
+            'Avoid exposure to secondhand smoke, dust, and chemical fumes.'
+        ],
+        'medications': [
+            'Empiric Antibiotics (e.g., Amoxicillin or Azithromycin) if bacterial origin is suspected.',
+            'Expectorants and mucolytics (e.g., Guaifenesin) to help loosen and expel mucus.'
+        ]
+    },
+    'tuberculosis': {
+        'precautions': [
+            'Wear a high-filtration mask (N95) in public spaces to prevent droplet transmission.',
+            'Ensure the patient room is well-ventilated with fresh air.',
+            'Maintain strict adherence to the complete medication timeline to prevent drug resistance.'
+        ],
+        'medications': [
+            'First-line Antitubercular Therapy (HRZE regimen: Isoniazid, Rifampin, Pyrazinamide, Ethambutol).',
+            'Vitamin B6 (Pyridoxine) supplementation to prevent drug-induced peripheral neuropathy.'
+        ]
+    },
+    'asthma': {
+        'precautions': [
+            'Identify and avoid personal triggers such as pollen, pet dander, mold, and cold air.',
+            'Always carry a quick-relief rescue inhaler wherever you go.',
+            'Monitor peak expiratory flow rates daily to track lung function trends.'
+        ],
+        'medications': [
+            'Short-Acting Beta-Agonists (SABA: e.g., Albuterol/Salbutamol inhaler) for acute relief.',
+            'Inhaled Corticosteroids (ICS: e.g., Fluticasone or Budesonide) for daily long-term control.'
+        ]
+    },
+    'copd': {
+        'precautions': [
+            'Stop smoking completely and avoid all exposure to secondhand smoke.',
+            'Receive annual influenza and pneumococcal vaccinations to prevent lung infections.',
+            'Perform pursed-lip breathing exercises to improve oxygenation and ventilation.'
+        ],
+        'medications': [
+            'Long-Acting Bronchodilators (LABA/LAMA: e.g., Salmeterol, Tiotropium inhalers).',
+            'Phosphodiesterase-4 inhibitors (e.g., Roflumilast) to reduce severe exacerbation risk.'
+        ]
+    },
+    'heart_failure': {
+        'precautions': [
+            'Limit daily fluid intake as advised by your cardiologist (typically under 1.5 - 2 liters).',
+            'Weigh yourself every morning; report a weight gain of >3 lbs in a day or >5 lbs in a week.',
+            'Restrict dietary sodium intake to less than 1,500 - 2,000 mg per day.'
+        ],
+        'medications': [
+            'Loop Diuretics (e.g., Furosemide) to reduce fluid retention and pulmonary congestion.',
+            'ACE Inhibitors (e.g., Lisinopril) or ARBs/ARNIs (e.g., Sacubitril/Valsartan) to support heart function.'
+        ]
+    },
+    'hypertension': {
+        'precautions': [
+            'Check and record blood pressure daily at home, preferably at the same time each morning.',
+            'Limit table salt intake and consume a DASH (Dietary Approaches to Stop Hypertension) diet.',
+            'Engage in at least 150 minutes of moderate cardiovascular exercise per week.'
+        ],
+        'medications': [
+            'Calcium Channel Blockers (e.g., Amlodipine) or Beta-Blockers (e.g., Metoprolol).',
+            'Thiazide Diuretics (e.g., Hydrochlorothiazide) to manage systemic vascular volume.'
+        ]
+    },
+    'arrhythmia': {
+        'precautions': [
+            'Avoid stimulants including caffeine, energy drinks, nicotine, and certain decongestants.',
+            'Manage stress through biofeedback, meditation, or light yoga.',
+            'Learn how to check your pulse manually to identify irregular heartbeats.'
+        ],
+        'medications': [
+            'Beta-Blockers (e.g., Atenolol) or Calcium Channel Blockers to control ventricular rate.',
+            'Antiarrhythmic agents (e.g., Amiodarone or Flecainide) under strict cardiological monitoring.'
+        ]
+    },
+    'stroke': {
+        'precautions': [
+            'Familiarize yourself and family with BE FAST (Balance, Eyes, Face, Arm, Speech, Time) symptoms.',
+            'Maintain strict control of blood pressure, blood glucose, and cholesterol levels.',
+            'Avoid sudden posture changes if experiencing dizziness or orthostatic changes.'
+        ],
+        'medications': [
+            'Antiplatelet therapy (e.g., Aspirin or Clopidogrel) to prevent secondary ischemic events.',
+            'Statins (e.g., Atorvastatin) for high-intensity lipid management and plaque stabilization.'
+        ]
+    },
+    'parkinsons': {
+        'precautions': [
+            'Modify home environment (remove rug hazards, install grab bars) to prevent falls.',
+            'Engage in regular physical therapy focusing on balance, gait training, and stretching.',
+            'Take medications at exact scheduled times to prevent "off" periods of motor dysfunction.'
+        ],
+        'medications': [
+            'Dopamine precursors (e.g., Carbidopa-Levodopa) to manage tremors and rigidity.',
+            'Dopamine agonists (e.g., Pramipexole) or MAO-B inhibitors to preserve brain dopamine.'
+        ]
+    },
+    'seizure': {
+        'precautions': [
+            'Avoid known triggers such as sleep deprivation, flashing lights, and high stress.',
+            'Do not swim, bathe in deep water, or drive unless cleared by a neurologist.',
+            'Ensure coworkers or family members know seizure first aid (do not restrain, turn on side).'
+        ],
+        'medications': [
+            'Antiepileptic Drugs (AEDs: e.g., Levetiracetam/Keppra, Lamotrigine, or Valproate).',
+            'Rescue Benzodiazepines (e.g., Lorazepam or Diazepam rectal/nasal spray) for status epilepticus.'
+        ]
+    },
+    'fracture': {
+        'precautions': [
+            'Keep the splint, cast, or brace completely dry and clean.',
+            'Elevate the injured limb above heart level frequently to minimize localized swelling.',
+            'Avoid bearing weight or using the injured area until cleared by an orthopedic surgeon.'
+        ],
+        'medications': [
+            'Analgesics (e.g., Acetaminophen or NSAIDs like Ibuprofen) for pain and inflammation control.',
+            'Calcium and Vitamin D3 supplements to support rapid bone remodeling and healing.'
+        ]
+    },
+    'osteoporosis': {
+        'precautions': [
+            'Perform weight-bearing exercises (e.g., walking, resistance training) to stimulate bone density.',
+            'Install bright lighting and handrails at home to prevent accidental falls and fractures.',
+            'Avoid smoking and limit alcohol, as they accelerate bone mineral loss.'
+        ],
+        'medications': [
+            'Bisphosphonates (e.g., Alendronate or Risedronate) to slow down bone resorption.',
+            'Calcium Carbonate/Citrate (1200mg daily) and Vitamin D3 (800-1000 IU daily) supplementation.'
+        ]
+    },
+    'myopia': {
+        'precautions': [
+            'Follow the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds.',
+            'Ensure adequate ambient lighting when reading or using electronic displays.',
+            'Schedule annual comprehensive dilated eye exams to check for retinal thinning.'
+        ],
+        'medications': [
+            'Low-dose Atropine ophthalmic drops (0.01%) to slow down myopia progression in children.',
+            'Prescription corrective lenses (glasses or contact lenses) for daily visual correction.'
+        ]
+    },
+    'diabetic_retinopathy': {
+        'precautions': [
+            'Maintain strict control over HbA1c blood sugar levels to prevent microvascular damage.',
+            'Monitor blood pressure and cholesterol, as hypertension accelerates retinopathy.',
+            'Schedule a dilated retinal exam immediately if you notice sudden floaters or blurry spots.'
+        ],
+        'medications': [
+            'Intravitreal Anti-VEGF injections (e.g., Ranibizumab or Aflibercept) to check abnormal blood vessel growth.',
+            'Systemic glycemic and cardiovascular control agents (metformin, insulin, statins).'
+        ]
+    },
+    'glaucoma': {
+        'precautions': [
+            'Use prescribed intraocular pressure-lowering drops daily without missing doses.',
+            'Avoid sleeping with your face down or pressing against the eyes, which spikes ocular pressure.',
+            'Avoid heavy lifting or inverted yoga positions that increase thoracic and ocular pressure.'
+        ],
+        'medications': [
+            'Prostaglandin analogues (e.g., Latanoprost) or Beta-blocker drops (e.g., Timolol) to lower eye pressure.',
+            'Carbonic anhydrase inhibitors (e.g., Brinzolamide drops or oral Acetazolamide) to reduce fluid output.'
+        ]
+    },
+    'cataracts': {
+        'precautions': [
+            'Wear UV-blocking sunglasses outdoors to protect lenses from accelerated clouding.',
+            'Optimize indoor lighting with brighter, direct task lamps for reading.',
+            'Limit night driving if glare, halos, or starbursts around headlights impede safety.'
+        ],
+        'medications': [
+            'Lubricating artificial tears for general eye comfort and mild dry eye symptoms.',
+            'Pre-operative planning for laser or micro-incision cataract surgery with intraocular lens (IOL) implant.'
+        ]
+    },
+    'default': {
+        'precautions': [
+            'Monitor your symptoms closely and keep a detailed log for your doctor.',
+            'Ensure proper rest, balanced nutrition, and adequate hydration.',
+            'Avoid self-medicating or changing existing drug dosages without direct guidance.'
+        ],
+        'medications': [
+            'Symptomatic relief medications (e.g., Acetaminophen for fever/pain) under pharmacist guidance.',
+            'Schedule a routine clinical consultation to review symptoms and establish a treatment plan.'
+        ]
+    }
+}
+
+def _normalize_key(key):
+    return str(key).lower().replace('-', '_').replace(' ', '_').strip()
+
+def init_huggingface_model():
+    global hf_model, hf_tokenizer, HAS_HF
+    if not HAS_HF:
+        return
+    
+    model_name = "google/flan-t5-small"
+    print(f"\n⏳ Initializing Hugging Face model: {model_name} ...")
+    try:
+        print(f"  👉 Loading tokenizer for {model_name} (will auto-download and cache)...")
+        hf_tokenizer = AutoTokenizer.from_pretrained(model_name)
+        
+        print(f"  👉 Loading model for {model_name} (will auto-download and cache)...")
+        hf_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+        
+        print("  ✅ Model and tokenizer loaded successfully!")
+    except Exception as e:
+        print(f"  ❌ Failed to load model '{model_name}': {e}")
+        traceback.print_exc()
+        hf_model = None
+        hf_tokenizer = None
+
+
+def generate_hf_guidelines(condition, diagnosis, confidence, risk_level):
+    """
+    Generate precautions and medications using a local/hub Hugging Face model.
+    Falls back to STATIC_CLINICAL_GUIDANCE on error or if HF is disabled.
+    """
+    normalized_key = _normalize_key(condition)
+    diagnosis_norm = _normalize_key(diagnosis)
+
+    fallback = STATIC_CLINICAL_GUIDANCE.get(normalized_key)
+    if not fallback:
+        fallback = STATIC_CLINICAL_GUIDANCE.get(diagnosis_norm)
+    if not fallback:
+        for key in STATIC_CLINICAL_GUIDANCE:
+            if key in normalized_key or normalized_key in key or key in diagnosis_norm or diagnosis_norm in key:
+                fallback = STATIC_CLINICAL_GUIDANCE[key]
+                break
+    if not fallback:
+        fallback = STATIC_CLINICAL_GUIDANCE['default']
+
+    if not HAS_HF or not hf_model or not hf_tokenizer:
+        return {
+            'ai_precautions': fallback['precautions'],
+            'ai_medications': fallback['medications'],
+            'ai_enhanced': False
+        }
+
+    try:
+        prompt = (
+            f"Context: Patient diagnosed with {diagnosis} ({condition}) by a screening tool. "
+            f"Risk Level: {risk_level}. Confidence: {confidence}%. "
+            f"Task: Provide exactly 3 specific clinical precautions (labeled P1:, P2:, P3:) "
+            f"and exactly 2 mandatory medications or next-step treatments (labeled M1:, M2:) for this patient.\n"
+            f"Precautions:\nP1: \nP2: \nP3: \nMedications:\nM1: \nM2: "
+        )
+
+        print(f"  👉 Prompting HF Model with condition: {condition}, diagnosis: {diagnosis}...")
+        
+        inputs = hf_tokenizer(prompt, return_tensors="pt")
+        outputs = hf_model.generate(**inputs, max_length=256, num_return_sequences=1)
+        generated_text = hf_tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        print(f"  👉 HF Model Output: {generated_text}")
+
+        precautions = []
+        medications = []
+
+        lines = generated_text.split('\n')
+        for line in lines:
+            line_str = line.strip()
+            if not line_str:
+                continue
+            
+            if any(p_lbl in line_str for p_lbl in ('P1:', 'P2:', 'P3:', 'Precaution', '- ')):
+                cleaned = line_str.replace('P1:', '').replace('P2:', '').replace('P3:', '').strip('- ').strip()
+                if cleaned and len(cleaned) > 5 and 'precautions' not in cleaned.lower():
+                    precautions.append(cleaned)
+            elif any(m_lbl in line_str for m_lbl in ('M1:', 'M2:', 'Medication', 'Treatment')):
+                cleaned = line_str.replace('M1:', '').replace('M2:', '').strip('- ').strip()
+                if cleaned and len(cleaned) > 5 and 'medications' not in cleaned.lower():
+                    medications.append(cleaned)
+
+        if len(precautions) < 2:
+            precautions = fallback['precautions']
+        if len(medications) < 1:
+            medications = fallback['medications']
+
+        precautions = precautions[:3]
+        medications = medications[:2]
+
+        return {
+            'ai_precautions': precautions,
+            'ai_medications': medications,
+            'ai_enhanced': True
+        }
+    except Exception as e:
+        print(f"  ⚠️ Error executing Hugging Face model: {e}")
+        traceback.print_exc()
+        return {
+            'ai_precautions': fallback['precautions'],
+            'ai_medications': fallback['medications'],
+            'ai_enhanced': False
+        }
+
+
 app = Flask(__name__)
 CORS(app)
+
+@app.after_request
+def add_hf_guidelines(response):
+    if request.path == '/predict' and response.status_code == 200:
+        try:
+            data = response.get_json()
+            if data and 'prediction' in data:
+                req_json = request.get_json(silent=True) or {}
+                test_id = req_json.get('testId', '')
+                prediction = data.get('prediction', '')
+                confidence = data.get('confidence', 50.0)
+                risk_level = data.get('risk_level', 'Low')
+                
+                # Generate HF guidelines
+                guidelines = generate_hf_guidelines(test_id, prediction, confidence, risk_level)
+                
+                if 'details' not in data or data['details'] is None:
+                    data['details'] = {}
+                
+                data['details']['ai_precautions'] = guidelines['ai_precautions']
+                data['details']['ai_medications'] = guidelines['ai_medications']
+                data['details']['ai_enhanced'] = guidelines['ai_enhanced']
+                
+                response.set_data(json.dumps(data))
+        except Exception as e:
+            print(f"⚠️ Error in after_request hf guidelines injection: {e}")
+            traceback.print_exc()
+    return response
+
 
 # ─── Configuration ────────────────────────────────────────────
 MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-loaded_models = {}  # Cache loaded models in memory
+available_models = {}  # Map model_key -> { 'path': path, 'type': type, 'loader': loader_func }
+loaded_models = {}     # Cache loaded models in memory
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -104,35 +513,77 @@ def load_pytorch_model(path):
         return None
 
 
-def discover_and_load_models():
-    """Scan the models/ directory and load all supported model files."""
-    print("\n🔍 Scanning for ML models...")
+def discover_models():
+    """Scan the models/ directory and register available model files without loading them."""
+    print("\n🔍 Scanning for ML models on disk...")
 
     extensions = {
-        '*.pkl': load_sklearn_model,
-        '*.h5': load_keras_model,
-        '*.keras': load_keras_model,
-        '*.pth': load_pytorch_model,
+        '*.pkl': ('sklearn', load_sklearn_model),
+        '*.h5': ('keras', load_keras_model),
+        '*.keras': ('keras', load_keras_model),
+        '*.pth': ('pytorch', load_pytorch_model),
     }
 
     found_any = False
-    for pattern, loader in extensions.items():
+    for pattern, (m_type, loader) in extensions.items():
         files = glob.glob(os.path.join(MODELS_DIR, pattern))
-        if files:
-            found_any = True
         for path in files:
+            found_any = True
             name = os.path.splitext(os.path.basename(path))[0]
-            result = loader(path)
-            if result:
-                loaded_models[name] = result
+            available_models[name] = {
+                'path': path,
+                'type': m_type,
+                'loader': loader
+            }
+            print(f"  👉 Registered model: {name} (type: {m_type})")
 
     if not found_any:
         print("  ⚠️  No models found in ml_service/models/")
         print("     Place your model files there to enable predictions.\n")
         return
 
-    print(f"\n📦 Total models loaded: {len(loaded_models)}")
-    print(f"   Names: {list(loaded_models.keys())}\n")
+    print(f"\n📦 Total models registered on disk: {len(available_models)}")
+    print(f"   Names: {list(available_models.keys())}\n")
+
+
+def get_or_load_model(model_key):
+    """Get the model from memory cache or load it dynamically if registered. Returns (model_info, matched_key)"""
+    if model_key in loaded_models:
+        return loaded_models[model_key], model_key
+
+    # Try exact match first
+    model_entry = available_models.get(model_key)
+    matched_key = model_key
+
+    # Try partial match if not found exactly
+    if not model_entry:
+        for key in available_models:
+            if model_key in key or key in model_key:
+                model_entry = available_models[key]
+                matched_key = key
+                break
+
+    if not model_entry:
+        print(f"  ❌ Model '{model_key}' is not registered on disk.")
+        return None, model_key
+
+    # Load the model now
+    path = model_entry['path']
+    loader = model_entry['loader']
+    print(f"\n⏳ Lazy-loading model '{matched_key}' from: {path} ...")
+    try:
+        result = loader(path)
+        if result:
+            loaded_models[matched_key] = result
+            print(f"  ✅ Successfully lazy-loaded model '{matched_key}'!")
+            return result, matched_key
+        else:
+            print(f"  ❌ Loader returned None for model '{matched_key}'")
+            return None, matched_key
+    except Exception as e:
+        print(f"  ❌ Exception loading model '{matched_key}': {e}")
+        traceback.print_exc()
+        return None, matched_key
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -457,15 +908,40 @@ def predict_keras_image(model_info, image_path, target_size=(224, 224)):
     if not HAS_PIL or not HAS_TF:
         return None
 
+    model = model_info['model']
+
+    # Dynamically extract target size from model input shape if possible
+    try:
+        if hasattr(model, 'input_shape') and model.input_shape:
+            shape = model.input_shape
+            # shape is typically (None, height, width, channels) or [ (None, height, width, channels) ]
+            if isinstance(shape, list):
+                shape = shape[0]
+            if len(shape) == 4:
+                h, w = shape[1], shape[2]
+                if h is not None and w is not None:
+                    target_size = (int(h), int(w))
+                    print(f"  🎯 Dynamically adjusted Keras image target size to: {target_size}")
+    except Exception as e:
+        print(f"  ⚠️ Could not parse model input shape: {e}. Using default {target_size}")
+
     img = Image.open(image_path).convert('RGB').resize(target_size)
     img_array = np.array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    model = model_info['model']
     prediction = model.predict(img_array, verbose=0)
 
-    confidence = float(np.max(prediction)) * 100
-    predicted_class = int(np.argmax(prediction))
+    if prediction.shape[-1] == 1:
+        p = float(prediction[0][0])
+        if p >= 0.5:
+            predicted_class = 1
+            confidence = p * 100
+        else:
+            predicted_class = 0
+            confidence = (1.0 - p) * 100
+    else:
+        confidence = float(np.max(prediction)) * 100
+        predicted_class = int(np.argmax(prediction))
 
     return {
         'predicted_class': predicted_class,
@@ -609,8 +1085,10 @@ def clinical_fallback(test_id, answers, files):
 # 🎯 RISK LEVEL MAPPING
 # ═══════════════════════════════════════════════════════════════
 
-def map_risk_level(confidence):
+def map_risk_level(confidence, is_normal=False):
     """Map confidence score to a risk level string."""
+    if is_normal:
+        return 'Low'
     if confidence >= 80:
         return 'Critical'
     elif confidence >= 60:
@@ -619,6 +1097,7 @@ def map_risk_level(confidence):
         return 'Moderate'
     else:
         return 'Low'
+
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -651,6 +1130,7 @@ def health():
         'status': 'OK',
         'service': 'Amrith ML Service',
         'models_loaded': len(loaded_models),
+        'models_registered': len(available_models),
         'model_names': list(loaded_models.keys()),
         'frameworks': {
             'tensorflow': HAS_TF,
@@ -663,14 +1143,24 @@ def health():
 @app.route('/models', methods=['GET'])
 def list_models():
     models_info = []
-    for name, info in loaded_models.items():
+    for name, info in available_models.items():
         framework = 'scikit-learn'
         if info['type'] == 'keras':
             framework = 'TensorFlow/Keras'
         elif info['type'] == 'pytorch':
             framework = 'PyTorch'
-        models_info.append({'name': name, 'type': info['type'], 'framework': framework})
-    return jsonify({'models': models_info, 'total': len(models_info)})
+        status = 'loaded' if name in loaded_models else 'registered'
+        models_info.append({
+            'name': name,
+            'type': info['type'],
+            'framework': framework,
+            'status': status
+        })
+    return jsonify({
+        'models': models_info,
+        'total': len(models_info),
+        'loaded_count': len(loaded_models)
+    })
 
 
 @app.route('/predict', methods=['POST'])
@@ -693,7 +1183,7 @@ def predict():
 
         # 1) General Medicine diseases → general_medicine.pkl
         if test_id in GENERAL_MEDICINE_IDS:
-            model_info = loaded_models.get('general_medicine')
+            model_info, _ = get_or_load_model('general_medicine')
             if model_info:
                 features = map_general_medicine(answers)
                 result = predict_with_tabular(model_info, features)
@@ -723,21 +1213,22 @@ def predict():
 
         # 2) Heart Failure
         if test_id == 'heart-failure':
-            model_info = loaded_models.get('heart_failure')
+            model_info, _ = get_or_load_model('heart_failure')
             if model_info:
                 features = map_heart_failure(answers)
                 result = predict_with_tabular(model_info, features)
                 pred = result.get('predicted_class', 0)
                 diagnosis = 'Heart Disease Detected' if pred == 1 else 'No Heart Disease Detected'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
                         'classification': 'Positive' if pred == 1 else 'Negative',
-                        'recommendations': _get_recommendations('heart_failure', confidence),
+                        'recommendations': _get_recommendations('heart_failure', confidence, is_normal),
                         'model_used': 'heart_failure',
                     },
                     'model_version': 'heart_failure-v1.0',
@@ -745,20 +1236,21 @@ def predict():
 
         # 3) Hypertension (specialist)
         if test_id == 'hypertension':
-            model_info = loaded_models.get('hypertension')
+            model_info, _ = get_or_load_model('hypertension')
             if model_info:
                 features = map_hypertension(answers)
                 result = predict_with_tabular(model_info, features)
                 pred = result.get('predicted_class', 0)
                 diagnosis = 'Hypertension Risk Detected' if pred == 1 else 'Normal Blood Pressure'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
-                        'recommendations': _get_recommendations('hypertension', confidence),
+                        'recommendations': _get_recommendations('hypertension', confidence, is_normal),
                         'model_used': 'hypertension',
                     },
                     'model_version': 'hypertension-v1.0',
@@ -766,20 +1258,21 @@ def predict():
 
         # 4) Stroke Risk
         if test_id == 'stroke-risk':
-            model_info = loaded_models.get('stroke_risk')
+            model_info, _ = get_or_load_model('stroke_risk')
             if model_info:
                 features = map_stroke_risk(answers)
                 result = predict_with_tabular(model_info, features)
                 pred = result.get('predicted_class', 0)
                 diagnosis = 'Elevated Stroke Risk' if pred == 1 else 'Low Stroke Risk'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
-                        'recommendations': _get_recommendations('stroke', confidence),
+                        'recommendations': _get_recommendations('stroke', confidence, is_normal),
                         'model_used': 'stroke_risk',
                     },
                     'model_version': 'stroke_risk-v1.0',
@@ -787,20 +1280,21 @@ def predict():
 
         # 5) Parkinson's
         if test_id == 'parkinsons':
-            model_info = loaded_models.get('parkinsons')
+            model_info, _ = get_or_load_model('parkinsons')
             if model_info:
                 features = map_parkinsons(answers)
                 result = predict_with_tabular(model_info, features)
                 pred = result.get('predicted_class', 0)
                 diagnosis = "Parkinson's Indicators Present" if pred == 1 else "No Parkinson's Indicators"
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
-                        'recommendations': _get_recommendations('parkinsons', confidence),
+                        'recommendations': _get_recommendations('parkinsons', confidence, is_normal),
                         'model_used': 'parkinsons',
                     },
                     'model_version': 'parkinsons-v1.0',
@@ -808,7 +1302,7 @@ def predict():
 
         # 6) Arrhythmia
         if test_id == 'arrhythmia':
-            model_info = loaded_models.get('arrhythmia')
+            model_info, _ = get_or_load_model('arrhythmia')
             if model_info:
                 features = map_arrhythmia(answers)
                 result = predict_with_tabular(model_info, features)
@@ -816,14 +1310,15 @@ def predict():
                 pred_idx = int(result.get('predicted_class', 0))
                 diagnosis = arrhythmia_classes[pred_idx] if pred_idx < len(arrhythmia_classes) else 'Unknown'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred_idx == 0)
                 return jsonify({
                     'prediction': f'ECG Classification: {diagnosis}',
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
                         'ecg_class': diagnosis,
-                        'recommendations': _get_recommendations('arrhythmia', confidence),
+                        'recommendations': _get_recommendations('arrhythmia', confidence, is_normal),
                         'model_used': 'arrhythmia',
                     },
                     'model_version': 'arrhythmia-v1.0',
@@ -831,20 +1326,21 @@ def predict():
 
         # 7) Seizure
         if test_id == 'seizures':
-            model_info = loaded_models.get('seizure')
+            model_info, _ = get_or_load_model('seizure')
             if model_info:
                 features = map_seizure(answers)
                 result = predict_with_tabular(model_info, features)
                 pred = result.get('predicted_class', 0)
                 diagnosis = 'Seizure Activity Detected' if pred == 1 else 'No Seizure Activity'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
-                        'recommendations': _get_recommendations('seizure', confidence),
+                        'recommendations': _get_recommendations('seizure', confidence, is_normal),
                         'model_used': 'seizure',
                     },
                     'model_version': 'seizure-v1.0',
@@ -852,19 +1348,21 @@ def predict():
 
         # 8) Asthma / COPD (tabular pkl)
         if test_id in ('asthma', 'copd'):
-            model_info = loaded_models.get(model_key)
+            model_info, model_key = get_or_load_model(model_key)
             if model_info and model_info['type'] == 'sklearn':
                 # Generic tabular mapping from questionnaire
                 features = _generic_tabular_map(answers)
                 result = predict_with_tabular(model_info, features)
                 confidence = result.get('confidence', 50.0)
+                pred = result.get('predicted_class', 0)
+                is_normal = (pred == 0)
                 return jsonify({
                     'prediction': f'{test_id.title()} Assessment Complete',
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': f'{test_id.title()} risk assessment',
-                        'recommendations': _get_recommendations(test_id, confidence),
+                        'recommendations': _get_recommendations(test_id, confidence, is_normal),
                         'model_used': model_key,
                     },
                     'model_version': f'{model_key}-v1.0',
@@ -872,32 +1370,27 @@ def predict():
 
         # 9) Ophthalmology combined model
         if test_id in ('myopia', 'diabetic-retinopathy', 'glaucoma', 'cataracts'):
-            model_info = loaded_models.get('ophthalmology')
+            model_info, _ = get_or_load_model('ophthalmology')
             if model_info and model_info['type'] == 'sklearn':
                 features = _generic_tabular_map(answers)
                 result = predict_with_tabular(model_info, features)
                 confidence = result.get('confidence', 50.0)
+                pred = result.get('predicted_class', 0)
+                is_normal = (pred == 0 or str(pred).lower() == 'normal')
                 return jsonify({
                     'prediction': f'{test_id.replace("-", " ").title()} Assessment',
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': str(result.get('predicted_class', 'Assessment Complete')),
-                        'recommendations': _get_recommendations(test_id, confidence),
+                        'recommendations': _get_recommendations(test_id, confidence, is_normal),
                         'model_used': 'ophthalmology',
                     },
                     'model_version': 'ophthalmology-v1.0',
                 })
 
         # 10) IMAGE-based models (dermatology, pulmonology, oncology, orthopedics)
-        model_info = loaded_models.get(model_key)
-        if not model_info:
-            # Try partial match
-            for key in loaded_models:
-                if model_key in key or key in model_key:
-                    model_info = loaded_models[key]
-                    model_key = key
-                    break
+        model_info, model_key = get_or_load_model(model_key)
 
         if model_info and file_paths and len(file_paths) > 0:
             image_path = file_paths[0]
@@ -913,16 +1406,17 @@ def predict():
                 labels = CLASS_LABELS.get(model_key, [])
                 diagnosis = labels[pred_class] if pred_class < len(labels) else f'Class {pred_class}'
                 confidence = result.get('confidence', 50.0)
+                is_normal = (pred_class == 0)
 
                 return jsonify({
                     'prediction': diagnosis,
                     'confidence': confidence,
-                    'risk_level': map_risk_level(confidence),
+                    'risk_level': map_risk_level(confidence, is_normal),
                     'details': {
                         'diagnosis': diagnosis,
                         'predicted_class_index': pred_class,
                         'class_labels': labels,
-                        'recommendations': _get_recommendations(model_key, confidence),
+                        'recommendations': _get_recommendations(model_key, confidence, is_normal),
                         'model_used': model_key,
                     },
                     'model_version': f'{model_key}-v1.0',
@@ -933,17 +1427,20 @@ def predict():
             features = _generic_tabular_map(answers)
             result = predict_with_tabular(model_info, features)
             confidence = result.get('confidence', 50.0)
+            pred = result.get('predicted_class', 0)
+            is_normal = (pred == 0 or str(pred).lower() == 'normal')
             return jsonify({
                 'prediction': str(result.get('predicted_class', 'Assessment Complete')),
                 'confidence': confidence,
-                'risk_level': map_risk_level(confidence),
+                'risk_level': map_risk_level(confidence, is_normal),
                 'details': {
                     'diagnosis': str(result.get('predicted_class', '')),
-                    'recommendations': _get_recommendations(test_id, confidence),
+                    'recommendations': _get_recommendations(test_id, confidence, is_normal),
                     'model_used': model_key,
                 },
                 'model_version': f'{model_key}-v1.0',
             })
+
 
         # 12) Clinical fallback for everything else
         fb = clinical_fallback(test_id, answers, file_paths)
@@ -982,8 +1479,16 @@ def _generic_tabular_map(answers):
     return features
 
 
-def _get_recommendations(condition, confidence):
-    """Generate clinically relevant recommendations based on condition and confidence."""
+def _get_recommendations(condition, confidence, is_normal=False):
+    """Generate clinically relevant recommendations based on condition, confidence, and normal status."""
+    if is_normal:
+        return [
+            'Continue monitoring symptoms at home and note any changes',
+            'Maintain a healthy lifestyle, balanced diet, and adequate rest',
+            'Schedule a routine wellness check-up if you experience new symptoms',
+            'Do not self-diagnose or self-medicate without consulting a physician.'
+        ]
+
     base_recs = {
         'heart_failure': [
             'Schedule an echocardiogram and stress test',
@@ -1031,18 +1536,20 @@ def _get_recommendations(condition, confidence):
     return recs
 
 
+
 # ═══════════════════════════════════════════════════════════════
 # 🚀 START SERVER
 # ═══════════════════════════════════════════════════════════════
 
 if __name__ == '__main__':
-    discover_and_load_models()
+    discover_models()
+    init_huggingface_model()
 
     port = int(os.environ.get('ML_PORT', 5001))
     debug = os.environ.get('FLASK_DEBUG', 'true').lower() == 'true'
 
     print(f"🧠 Amrith ML Service starting on port {port}")
     print(f"   Health check: http://localhost:{port}/health")
-    print(f"   Frameworks: TF={HAS_TF}, PyTorch={HAS_TORCH}, Pillow={HAS_PIL}\n")
+    print(f"   Frameworks: TF={HAS_TF}, PyTorch={HAS_TORCH}, Pillow={HAS_PIL}, HF={HAS_HF}\n")
 
     app.run(host='0.0.0.0', port=port, debug=debug)

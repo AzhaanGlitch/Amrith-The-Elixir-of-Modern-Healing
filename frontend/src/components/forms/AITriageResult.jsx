@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight, HeartPulse, Activity, CheckCircle } from 'lucide-react';
+import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight, HeartPulse, Activity, CheckCircle, Download, ShieldAlert, Pills } from 'lucide-react';
 import { Card, Button } from '../ui';
 
 export default function AITriageResult({ testId, inputType, answers, uploadedFiles, onProceed, onReset }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const fetchTriageResult = async () => {
@@ -64,6 +65,45 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
     fetchTriageResult();
   }, [testId, inputType, answers, uploadedFiles]);
 
+  // Download triage report
+  const handleDownloadReport = async () => {
+    if (!result) return;
+    setDownloading(true);
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const response = await fetch('http://localhost:5000/api/reports/download-triage', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prediction: result.prediction,
+          confidence: result.confidence,
+          riskLevel: result.riskLevel,
+          details: result.details,
+          modelVersion: result.modelVersion,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Download failed');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `amrith-triage-report-${Date.now()}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download error:', err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -71,8 +111,8 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
           <Loader2 className="w-16 h-16 text-primary animate-spin" />
           <HeartPulse className="w-6 h-6 text-primary absolute inset-0 m-auto animate-pulse" />
         </div>
-        <h3 className="text-2xl font-heading font-bold text-slate-800 dark:text-white mb-2">Analyzing Clinical Data</h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto leading-relaxed">
+        <h3 className="text-2xl font-heading font-bold text-text mb-2">Analyzing Clinical Data</h3>
+        <p className="text-text-muted text-sm max-w-sm mx-auto leading-relaxed">
           Amrith's ML model is processing your medical indicators, checklist answers, and file attachments to generate a precision diagnostic result...
         </p>
       </div>
@@ -86,10 +126,10 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-xl mx-auto py-8 text-center"
       >
-        <Card className="p-8 border-red-100 bg-red-50/50 dark:bg-red-950/20 dark:border-red-900/50 rounded-2xl">
+        <Card className="p-8 border border-red-200 bg-red-50 rounded-2xl" hover={false}>
           <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-red-800 dark:text-red-400 mb-2">Triage Analysis Failed</h3>
-          <p className="text-red-700 dark:text-red-500 text-sm mb-6 leading-relaxed">
+          <h3 className="text-lg font-bold text-red-800 mb-2">Triage Analysis Failed</h3>
+          <p className="text-red-700 text-sm mb-6 leading-relaxed">
             {error}
           </p>
           <div className="flex justify-center gap-4">
@@ -110,31 +150,35 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
     switch (risk) {
       case 'Critical':
         return {
-          color: 'text-red-500 dark:text-red-400',
-          bg: 'bg-red-50 dark:bg-red-950/30',
-          border: 'border-red-100 dark:border-red-900/50',
-          circleColor: 'rgb(239, 68, 68)',
+          color: 'text-red-600',
+          bg: 'bg-red-50',
+          border: 'border-red-200',
+          circleColor: 'rgb(220, 38, 38)',
+          badgeBg: 'bg-red-600',
         };
       case 'High':
         return {
-          color: 'text-orange-500 dark:text-orange-400',
-          bg: 'bg-orange-50 dark:bg-orange-950/30',
-          border: 'border-orange-100 dark:border-orange-900/50',
-          circleColor: 'rgb(249, 115, 22)',
+          color: 'text-orange-600',
+          bg: 'bg-orange-50',
+          border: 'border-orange-200',
+          circleColor: 'rgb(234, 88, 12)',
+          badgeBg: 'bg-orange-600',
         };
       case 'Moderate':
         return {
-          color: 'text-amber-500 dark:text-amber-400',
-          bg: 'bg-amber-50 dark:bg-amber-950/30',
-          border: 'border-amber-100 dark:border-amber-900/50',
-          circleColor: 'rgb(245, 158, 11)',
+          color: 'text-amber-600',
+          bg: 'bg-amber-50',
+          border: 'border-amber-200',
+          circleColor: 'rgb(217, 119, 6)',
+          badgeBg: 'bg-amber-600',
         };
       default:
         return {
-          color: 'text-emerald-500 dark:text-emerald-400',
-          bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-          border: 'border-emerald-100 dark:border-emerald-900/50',
-          circleColor: 'rgb(16, 185, 129)',
+          color: 'text-emerald-600',
+          bg: 'bg-emerald-50',
+          border: 'border-emerald-200',
+          circleColor: 'rgb(5, 150, 105)',
+          badgeBg: 'bg-emerald-600',
         };
     }
   };
@@ -155,23 +199,23 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
       animate={{ opacity: 1, y: 0 }}
       className="max-w-2xl mx-auto py-4"
     >
-      <Card className={`p-8 border-none shadow-xl relative overflow-hidden rounded-2xl ${riskStyle.bg}`}>
+      <Card className="p-8 border border-border-light shadow-xl relative overflow-hidden rounded-2xl bg-white" hover={false}>
         <div className="relative z-10 space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
+          <div className="flex items-center justify-between border-b border-border-light pb-4">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border ${riskStyle.border}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-white shadow-sm border ${riskStyle.border}`}>
                 <ShieldCheck className={`w-5 h-5 ${riskStyle.color}`} />
               </div>
               <div>
-                <h3 className="text-lg font-heading font-black text-slate-800 dark:text-white">AI Clinical Diagnosis</h3>
-                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider">Precision Screening Completed</p>
+                <h3 className="text-lg font-heading font-black text-text">AI Clinical Diagnosis</h3>
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider">Precision Screening Completed</p>
               </div>
             </div>
             {result.fallback && (
-              <Badge variant="outline" className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400 animate-pulse">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 border border-amber-300 text-amber-700 animate-pulse">
                 Heuristic Fallback
-              </Badge>
+              </span>
             )}
           </div>
 
@@ -182,7 +226,7 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
               <div className="relative w-28 h-28">
                 <svg className="w-full h-full transform -rotate-90">
                   <circle
-                    className="text-slate-200 dark:text-slate-700"
+                    className="text-gray-200"
                     strokeWidth={stroke}
                     stroke="currentColor"
                     fill="transparent"
@@ -206,22 +250,22 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-black text-slate-800 dark:text-white leading-none">{confidence}%</span>
-                  <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mt-0.5">Confidence</span>
+                  <span className="text-2xl font-black text-text leading-none">{confidence}%</span>
+                  <span className="text-[9px] font-bold text-text-muted uppercase mt-0.5">Confidence</span>
                 </div>
               </div>
-              <span className={`mt-3 text-sm font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-slate-800 shadow-sm border ${riskStyle.border} ${riskStyle.color}`}>
+              <span className={`mt-3 text-sm font-black uppercase tracking-wider px-3 py-1 rounded-full text-white ${riskStyle.badgeBg} shadow-sm`}>
                 {result.riskLevel} Risk
               </span>
             </div>
 
             {/* AI Diagnosis Details */}
             <div className="col-span-1 sm:col-span-2 space-y-2">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Top Detected Condition</div>
-              <h4 className="text-xl font-black text-slate-800 dark:text-white leading-tight">
+              <div className="text-xs font-bold text-text-muted uppercase tracking-wider">Top Detected Condition</div>
+              <h4 className="text-xl font-black text-text leading-tight">
                 {result.prediction}
               </h4>
-              <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed font-medium">
+              <p className="text-text-secondary text-xs leading-relaxed font-medium">
                 Our model indicates a {confidence}% probability match with the clinical symptoms submitted.
               </p>
             </div>
@@ -229,19 +273,19 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
 
           {/* Tabular Differential Diagnoses (General Medicine List) */}
           {result.details && result.details.top_predictions && result.details.top_predictions.length > 0 && (
-            <div className="space-y-3 bg-white/40 dark:bg-slate-800/40 p-5 rounded-2xl border border-white/60 dark:border-slate-800/60 shadow-inner">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="space-y-3 bg-background-alt p-5 rounded-2xl border border-border-light shadow-inner">
+              <div className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
                 <Activity className="w-4 h-4 text-primary" />
                 Differential Diagnostic Distribution
               </div>
               <div className="space-y-2.5">
                 {result.details.top_predictions.slice(0, 3).map((pred, i) => (
                   <div key={i} className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <div className="flex justify-between text-xs font-semibold text-text">
                       <span className="truncate pr-2">{pred.disease}</span>
                       <span className="shrink-0">{pred.confidence}%</span>
                     </div>
-                    <div className="w-full bg-slate-200/60 dark:bg-slate-700/60 h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${pred.confidence}%` }}
@@ -258,7 +302,7 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
           {/* Clinical Recommendations */}
           {result.details && result.details.recommendations && result.details.recommendations.length > 0 && (
             <div className="space-y-3">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <div className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
                 Immediate Action Recommendations
               </div>
@@ -269,31 +313,86 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
                     initial={{ opacity: 0, x: -5 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 + i * 0.05 }}
-                    className="flex gap-2.5 items-start p-3 bg-white/60 dark:bg-slate-800/60 border border-white/80 dark:border-slate-800/80 rounded-xl"
+                    className="flex gap-2.5 items-start p-3 bg-background-alt border border-border-light rounded-xl"
                   >
                     <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-normal">{rec}</span>
+                    <span className="text-xs font-bold text-text-secondary leading-normal">{rec}</span>
                   </motion.div>
                 ))}
               </div>
             </div>
           )}
 
+          {/* AI-Generated Insights Grid */}
+          {result.details && ((result.details.ai_precautions && result.details.ai_precautions.length > 0) || 
+                             (result.details.ai_medications && result.details.ai_medications.length > 0)) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {/* Precautions Column */}
+              {result.details.ai_precautions && result.details.ai_precautions.length > 0 && (
+                <div className="space-y-3">
+                  <div className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldAlert className="w-4 h-4 text-amber-500" />
+                    AI-Suggested Safety Precautions
+                  </div>
+                  <div className="grid gap-2">
+                    {result.details.ai_precautions.map((prec, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 + i * 0.05 }}
+                        className="flex gap-2.5 items-start p-3 bg-amber-50/50 border border-amber-100 rounded-xl"
+                      >
+                        <CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                        <span className="text-xs font-semibold text-text-secondary leading-normal">{prec}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Medications Column */}
+              {result.details.ai_medications && result.details.ai_medications.length > 0 && (
+                <div className="space-y-3">
+                  <div className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                    <Pills className="w-4 h-4 text-emerald-500" />
+                    AI-Suggested Medications
+                  </div>
+                  <div className="grid gap-2">
+                    {result.details.ai_medications.map((med, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 + i * 0.05 }}
+                        className="flex gap-2.5 items-start p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl"
+                      >
+                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className="text-xs font-semibold text-text-secondary leading-normal">{med}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+
           {/* Medical Disclaimer Banner */}
-          <div className="bg-slate-100/60 dark:bg-slate-900/60 rounded-xl p-4 border border-slate-200/50 dark:border-slate-800/50 flex gap-3 items-start">
+          <div className="bg-background-alt rounded-xl p-4 border border-border-light flex gap-3 items-start">
             <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <div className="space-y-0.5">
-              <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">AI Screening Disclaimer</span>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+              <span className="text-xs font-black text-text block">AI Screening Disclaimer</span>
+              <p className="text-[10px] text-text-muted leading-relaxed font-medium">
                 This is an automated machine learning screening tool designed for initial triage and clinical routing. It is not an official clinical diagnosis or a replacement for emergency professional care. Please consult a registered physician to analyze these results.
               </p>
             </div>
           </div>
 
-          {/* Booking Navigation Buttons */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button 
-              onClick={onProceed} 
+              onClick={() => onProceed(result)} 
               className="flex-[2] h-13 rounded-xl text-sm font-bold tracking-wide group bg-primary hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-lg transition-all"
             >
               Proceed to Booking
@@ -301,8 +400,17 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
             </Button>
             <Button 
               variant="outline"
+              onClick={handleDownloadReport}
+              disabled={downloading}
+              className="flex-1 h-13 rounded-xl text-sm font-bold transition-all"
+            >
+              <Download className="w-4 h-4 mr-1" />
+              {downloading ? 'Preparing...' : 'Download Report'}
+            </Button>
+            <Button 
+              variant="ghost"
               onClick={onReset} 
-              className="flex-1 h-13 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-all"
+              className="flex-1 h-13 rounded-xl text-sm font-bold text-text-muted hover:text-text hover:bg-background-alt transition-all"
             >
               Screen Another
             </Button>
@@ -310,8 +418,8 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
         </div>
 
         {/* Premium blur decorations */}
-        <div className="absolute top-[-25%] right-[-15%] w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-25%] left-[-15%] w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-[-25%] right-[-15%] w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-[-25%] left-[-15%] w-60 h-60 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
       </Card>
     </motion.div>
   );

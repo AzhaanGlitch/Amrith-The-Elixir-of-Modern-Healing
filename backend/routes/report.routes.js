@@ -1,6 +1,7 @@
 import express from 'express';
 import Report from '../models/Report.model.js';
 import { protect, authorize } from '../middleware/auth.middleware.js';
+import { compileReportHtml } from '../utils/reportGenerator.js';
 
 const router = express.Router();
 
@@ -42,12 +43,48 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// ─── POST /api/reports/download-triage ───────────────────────
+// Stateless triage download (before booking, from results page)
+router.post('/download-triage', async (req, res, next) => {
+  try {
+    const { prediction, confidence, riskLevel, details, modelVersion, testName } = req.body;
+
+    const html = compileReportHtml({
+      patient: {
+        name: req.user.name,
+        email: req.user.email,
+        phone: req.user.phone,
+        age: req.user.age,
+        gender: req.user.gender,
+        bloodGroup: req.user.bloodGroup,
+      },
+      doctor: null,
+      appointment: null,
+      triage: {
+        prediction,
+        confidence,
+        riskLevel,
+        details,
+        modelVersion,
+        processedAt: new Date(),
+      },
+      isTemp: true,
+    });
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="amrith-triage-report-${Date.now()}.html"`);
+    res.send(html);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // ─── GET /api/reports/:id ────────────────────────────────────
 router.get('/:id', async (req, res, next) => {
   try {
     const report = await Report.findById(req.params.id)
       .populate('patient', 'name email phone avatar age gender bloodGroup')
-      .populate('doctor', 'name email specialization')
+      .populate('doctor', 'name email specialization qualification')
       .populate('appointment');
 
     if (!report) {
@@ -55,6 +92,42 @@ router.get('/:id', async (req, res, next) => {
     }
 
     res.json({ success: true, report });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ─── GET /api/reports/:id/download ───────────────────────────
+// Download a saved report as HTML
+router.get('/:id/download', async (req, res, next) => {
+  try {
+    const report = await Report.findById(req.params.id)
+      .populate('patient', 'name email phone age gender bloodGroup')
+      .populate('doctor', 'name email specialization qualification')
+      .populate('appointment');
+
+    if (!report) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+
+    const html = compileReportHtml({
+      patient: report.patient || {},
+      doctor: report.doctor || null,
+      appointment: report.appointment || null,
+      triage: {
+        _id: report._id,
+        prediction: report.aiAnalysis?.prediction || report.testName,
+        confidence: report.aiAnalysis?.confidence || 0,
+        riskLevel: report.aiAnalysis?.riskLevel || 'Low',
+        details: report.aiAnalysis?.details || {},
+        modelVersion: report.aiAnalysis?.modelVersion || 'v1.0',
+        processedAt: report.aiAnalysis?.processedAt || report.createdAt,
+      },
+    });
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="amrith-report-${report._id}.html"`);
+    res.send(html);
   } catch (error) {
     next(error);
   }
@@ -93,3 +166,4 @@ router.patch('/:id/review', authorize('doctor', 'admin'), async (req, res, next)
 });
 
 export default router;
+

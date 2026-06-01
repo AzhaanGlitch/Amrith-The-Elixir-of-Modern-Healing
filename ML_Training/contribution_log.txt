@@ -223,3 +223,4 @@
 [2026-06-01T11:16:50] Implement draft saving for doctor reports
 [2026-06-01T11:35:40] Add loading spinners to async components
 [2026-06-01T11:50:48] Improve performance of symptom dropdown
+[2026-06-01T12:01:40] Update linting rules and format files

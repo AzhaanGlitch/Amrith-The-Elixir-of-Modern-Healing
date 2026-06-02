@@ -265,3 +265,4 @@
 [2026-06-02T12:57:18] Refactor ml model metadata schema
 [2026-06-02T13:12:12] Fix layout responsiveness in dashboard
 [2026-06-02T13:25:42] Add integrations tests for appointment booking
+[2026-06-02T13:46:18] Update readme with installation instructions

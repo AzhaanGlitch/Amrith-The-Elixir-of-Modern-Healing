@@ -262,3 +262,4 @@
 [2026-06-02T12:12:14] Add analytics tracking events for booking
 [2026-06-02T12:28:22] Update security dependencies to resolve alerts
 [2026-06-02T12:45:52] Add telemetry for model inference requests
+[2026-06-02T12:57:18] Refactor ml model metadata schema

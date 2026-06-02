@@ -263,3 +263,4 @@
 [2026-06-02T12:28:22] Update security dependencies to resolve alerts
 [2026-06-02T12:45:52] Add telemetry for model inference requests
 [2026-06-02T12:57:18] Refactor ml model metadata schema
+[2026-06-02T13:12:12] Fix layout responsiveness in dashboard

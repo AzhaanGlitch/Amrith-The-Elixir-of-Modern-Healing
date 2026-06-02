@@ -277,3 +277,4 @@
 [2026-06-02T16:04:21] Update user avatar upload constraints
 [2026-06-02T16:15:42] Implement retry logic for external requests
 [2026-06-02T16:29:43] Add unit tests for seed data generator
+[2026-06-02T16:47:50] Refactor helper utilities for date formatting

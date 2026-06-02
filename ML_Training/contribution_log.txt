@@ -250,3 +250,4 @@
 [2026-06-02T09:18:43] Refactor utility functions for token verify
 [2026-06-02T09:29:13] Document doctor schedule management flow
 [2026-06-02T09:42:07] Improve error message clarity for auth failures
+[2026-06-02T10:00:23] Fix cursor pointer state on disabled buttons

@@ -249,3 +249,4 @@
 [2026-06-02T09:00:00] Improve doctor dashboard metrics and visualization layout
 [2026-06-02T09:18:43] Refactor utility functions for token verify
 [2026-06-02T09:29:13] Document doctor schedule management flow
+[2026-06-02T09:42:07] Improve error message clarity for auth failures

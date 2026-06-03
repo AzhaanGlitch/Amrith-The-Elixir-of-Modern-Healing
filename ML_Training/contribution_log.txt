@@ -283,3 +283,4 @@
 [2026-06-02T17:25:58] Add database index for appointment timestamps
 [2026-06-02T17:44:18] Improve patient dashboard design and navigation
 [2026-06-03T09:00:00] Update landing page typography and colors
+[2026-06-03T09:15:05] Standardize font weight variables in css

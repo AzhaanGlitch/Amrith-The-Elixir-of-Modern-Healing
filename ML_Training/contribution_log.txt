@@ -293,3 +293,4 @@
 [2026-06-03T11:07:02] Add search functionality to doctor directory
 [2026-06-03T11:16:20] Refactor dashboard navigation bar menu
 [2026-06-03T11:31:11] Fix table rendering issue on patient dashboard
+[2026-06-03T11:49:12] Standardize border radius across forms

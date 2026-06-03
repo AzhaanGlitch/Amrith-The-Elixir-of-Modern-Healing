@@ -300,3 +300,4 @@
 [2026-06-03T12:55:39] Add breadcrumb navigation to portal pages
 [2026-06-03T13:06:17] Add data sanitation for report titles
 [2026-06-03T13:25:53] Improve validation feedback on login form
+[2026-06-03T13:38:13] Fix modal backdrop click handling

@@ -297,3 +297,4 @@
 [2026-06-03T12:04:21] Add test script for database seed runner
 [2026-06-03T12:18:21] Add test coverage for token generation
 [2026-06-03T12:33:29] Implement sorting options for reports
+[2026-06-03T12:55:39] Add breadcrumb navigation to portal pages

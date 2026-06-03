@@ -286,3 +286,4 @@
 [2026-06-03T09:15:05] Standardize font weight variables in css
 [2026-06-03T09:33:08] Fix alignment of card grid on small screens
 [2026-06-03T09:48:01] Improve validation of email address inputs
+[2026-06-03T10:06:33] Add unit tests for appointment controller

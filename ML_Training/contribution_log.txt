@@ -303,3 +303,4 @@
 [2026-06-03T13:38:13] Fix modal backdrop click handling
 [2026-06-03T13:48:38] Update mock data with diverse conditions
 [2026-06-03T14:13:33] Refactor department data fetching logic
+[2026-06-03T14:27:21] Improve loading state of report dashboard

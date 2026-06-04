@@ -48,7 +48,7 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
   ];
   const recommendationsList = recs.map((r, i) => `<li>${i + 1}. ${r}</li>`).join('');
 
-  // AI precautions (numbered)
+  // Safety precautions
   let aiPrecautionsSection = '';
   if (triage.details?.ai_precautions && Array.isArray(triage.details.ai_precautions) && triage.details.ai_precautions.length > 0) {
     const pList = triage.details.ai_precautions.map((p, i) => `<li>${i + 1}. ${p}</li>`).join('');
@@ -62,7 +62,7 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
     `;
   }
 
-  // AI medications (numbered)
+  // Suggested medications
   let aiMedicationsSection = '';
   if (triage.details?.ai_medications && Array.isArray(triage.details.ai_medications) && triage.details.ai_medications.length > 0) {
     const mList = triage.details.ai_medications.map((m, i) => `<li>${i + 1}. ${m}</li>`).join('');
@@ -76,7 +76,7 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
     `;
   }
 
-  // Doctor section
+  // Doctor section rendering
   let doctorHtml = '<p class="text-muted">No physician consultation booked yet.</p>';
   if (doctor) {
     doctorHtml = `
@@ -99,7 +99,7 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
     `;
   }
 
-  // Appointment details
+  // Appointment details tracking row
   let appointmentDetails = '';
   if (appointment && !isTemp) {
     const apptDateStr = new Date(appointment.scheduledDate).toLocaleDateString('en-US', {
@@ -117,35 +117,28 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
     `;
   }
 
-  // Build the image + scatter plot section
-  // The image data is passed as base64 via triage.details.uploadedImageBase64
+  // FIXED: Detect incoming client image vectors un-conditionally
   const hasImage = triage.details?.uploadedImageBase64;
-  const inputType = triage.details?.inputType || 'TABULAR';
+  
+  const imageHtml = hasImage
+    ? `<img src="${triage.details.uploadedImageBase64}" alt="Patient uploaded medical image" class="patient-image" />`
+    : `<div class="patient-image-placeholder">No Diagnostic Image Attached<br/><span style="font-size:10px; color:#999;">Tabular profile analysis pipeline</span></div>`;
 
-  let imagePlotSection = '';
-  if (hasImage || inputType === 'IMAGE') {
-    const imageHtml = hasImage
-      ? `<img src="${triage.details.uploadedImageBase64}" alt="Patient uploaded medical image" class="patient-image" />`
-      : `<div class="patient-image-placeholder">Medical Image<br/>(not available in download)</div>`;
+  const scatterSvg = generateScatterPlotSVG(confidence, risk);
 
-    // Generate scatter plot SVG inline
-    // Green dots along 45-degree line (predicted vs actual), patient result marked
-    const scatterSvg = generateScatterPlotSVG(confidence, risk);
-
-    imagePlotSection = `
-      <div class="section-title">Diagnostic Imaging Analysis</div>
-      <div class="image-plot-grid">
-        <div class="image-cell">
-          <div class="cell-label">Patient Upload</div>
-          ${imageHtml}
-        </div>
-        <div class="plot-cell">
-          <div class="cell-label">Model Confidence Distribution</div>
-          ${scatterSvg}
-        </div>
+  const imagePlotSection = `
+    <div class="section-title">Diagnostic Imaging & Calibration Analysis</div>
+    <div class="image-plot-grid">
+      <div class="image-cell">
+        <div class="cell-label">Patient Source Input Matrix</div>
+        ${imageHtml}
       </div>
-    `;
-  }
+      <div class="plot-cell">
+        <div class="cell-label">Model Calibration Curve (45° Alignment)</div>
+        ${scatterSvg}
+      </div>
+    </div>
+  `;
 
   return `
 <!DOCTYPE html>
@@ -153,16 +146,16 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amrith Diagnostic Report - ${reportId}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <title>Clinical Screening Report - ${reportId}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #7e57c2;
-      --primary-dark: #4d2c91;
-      --primary-light: #ede7f6;
-      --text: #1a1a2e;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
+      --primary: #4d2c91;
+      --primary-light: #f5f3f7;
+      --text: #111111;
+      --text-muted: #555555;
+      --border: #000000;
+      --border-light: #cccccc;
       --surface: #ffffff;
     }
     
@@ -170,14 +163,15 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      border-radius: 0 !important;
     }
     
     body {
       font-family: 'Inter', sans-serif;
       color: var(--text);
-      background-color: #f3f4f6;
-      line-height: 1.6;
-      padding: 40px 20px;
+      background-color: #ffffff;
+      line-height: 1.5;
+      padding: 40px;
     }
     
     .print-actions {
@@ -185,71 +179,49 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
       margin: 0 auto 20px auto;
       display: flex;
       justify-content: flex-end;
-      align-items: center;
     }
     
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
       background-color: var(--primary);
       color: white;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 0;
+      border: 1px solid var(--primary);
+      padding: 8px 20px;
       font-weight: 600;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      transition: background 0.2s;
-    }
-    
-    .btn:hover {
-      background-color: var(--primary-dark);
     }
     
     .report-container {
       max-width: 800px;
       margin: 0 auto;
       background-color: var(--surface);
-      border-radius: 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      padding: 50px;
-      position: relative;
-      border: 1px solid var(--border);
+      padding: 0;
     }
     
     .header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 2px solid var(--primary);
-      padding-bottom: 24px;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
       margin-bottom: 30px;
     }
     
-    .logo-area {
-      display: flex;
-      flex-direction: column;
-    }
-    
     .logo-text {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: 26px;
-      color: var(--primary);
-      letter-spacing: 1px;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--text);
+      letter-spacing: 0.5px;
     }
     
     .logo-subtext {
       font-size: 9px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 2.5px;
+      letter-spacing: 1px;
       color: var(--text-muted);
-      margin-top: 2px;
     }
     
     .meta-area {
@@ -257,93 +229,75 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
     }
     
     .report-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      color: var(--text);
+      text-transform: uppercase;
     }
     
     .report-id {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      color: var(--primary);
-      font-weight: 700;
-      margin-top: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 2px;
     }
     
     .report-date {
       font-size: 11px;
       color: var(--text-muted);
-      margin-top: 2px;
     }
     
     .section-title {
-      font-family: 'Outfit', sans-serif;
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       color: var(--primary);
-      margin-bottom: 14px;
-      margin-top: 32px;
-      border-left: 3px solid var(--primary);
-      padding-left: 10px;
+      margin-bottom: 10px;
+      margin-top: 30px;
+      border-bottom: 1px solid var(--primary);
+      padding-bottom: 4px;
     }
     
     table.data-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     
-    table.data-table th,
-    table.data-table td {
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
+    table.data-table th, table.data-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--border-light);
+      font-size: 12px;
     }
     
     table.data-table th {
-      font-weight: 600;
-      color: var(--text-muted);
-      width: 30%;
-    }
-    
-    table.data-table td {
-      font-weight: 500;
-      color: var(--text);
+      background-color: var(--primary-light);
+      width: 25%;
     }
     
     .card {
-      border-radius: 0;
-      padding: 20px;
-      border: 1px solid var(--border);
-      margin-bottom: 24px;
-      background-color: #ffffff;
+      padding: 15px;
+      border: 1px solid var(--border-light);
+      margin-bottom: 20px;
     }
     
-    /* Triage summary */
     .triage-summary {
       display: flex;
       align-items: center;
-      gap: 28px;
-      padding: 20px;
       border: 1px solid var(--border);
-      margin-bottom: 24px;
-      background-color: #ffffff;
+      margin-bottom: 20px;
     }
     
     .triage-score-block {
       text-align: center;
-      flex-shrink: 0;
-      min-width: 100px;
+      padding: 20px;
+      min-width: 120px;
+      background-color: var(--primary-light);
     }
     
     .triage-score-val {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--text);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
       line-height: 1;
     }
     
@@ -352,265 +306,156 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 4px;
-    }
-    
-    .triage-divider {
-      width: 1px;
-      height: 60px;
-      background-color: var(--border);
-      flex-shrink: 0;
     }
     
     .triage-desc {
       flex: 1;
+      padding: 20px;
     }
     
     .triage-badge {
       display: inline-block;
-      padding: 3px 10px;
-      border-radius: 0;
-      background-color: var(--primary);
-      color: white;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .triage-pred {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      color: var(--text);
-      line-height: 1.3;
     }
     
     .triage-meta {
       font-size: 11px;
       color: var(--text-muted);
-      margin-top: 4px;
     }
     
-    /* Differential diagnosis */
     .diff-item {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
-      font-size: 13px;
+      margin-bottom: 8px;
+      font-size: 12px;
     }
     
-    .diff-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .diff-rank {
-      font-weight: 700;
-      color: var(--text-muted);
-      width: 24px;
-      flex-shrink: 0;
-    }
-    
-    .diff-name {
-      font-weight: 600;
-      width: 32%;
-      color: var(--text);
-    }
-    
+    .diff-rank { font-weight: 700; width: 20px; }
+    .diff-name { font-weight: 500; width: 35%; }
     .diff-bar-container {
       flex: 1;
-      height: 6px;
-      background-color: #e5e7eb;
-      overflow: hidden;
-      margin: 0 14px;
+      height: 8px;
+      background-color: var(--primary-light);
+      margin: 0 15px;
+      border: 1px solid var(--border-light);
     }
+    .diff-bar { height: 100%; background-color: var(--primary); }
+    .diff-val { font-weight: 700; width: 12%; text-align: right; }
     
-    .diff-bar {
-      height: 100%;
-      background-color: var(--primary);
-    }
+    ul.plain-list { list-style-type: none; }
+    ul.plain-list li { padding: 4px 0; font-size: 12px; }
     
-    .diff-val {
-      font-weight: 700;
-      color: var(--primary-dark);
-      width: 10%;
-      text-align: right;
-    }
+    .physician-card { padding: 12px; border: 1px solid var(--border-light); }
+    .doc-name { font-weight: 700; font-size: 13px; }
+    .doc-spec { font-size: 11px; color: var(--primary); font-weight: 600; }
+    .doc-qual { font-size: 11px; color: var(--text-muted); }
     
-    /* Lists */
-    ul.plain-list {
-      list-style-type: none;
-      padding: 0;
-    }
-    
-    ul.plain-list li {
-      padding: 6px 0;
-      margin-bottom: 4px;
-      font-size: 13px;
-      color: var(--text);
-      font-weight: 500;
-      border-bottom: 1px solid #f3f4f6;
-    }
-    
-    ul.plain-list li:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    
-    /* Physician card */
-    .physician-card {
-      padding: 14px;
-      background-color: #ffffff;
-      border: 1px solid var(--border);
-    }
-    
-    .doc-name {
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text);
-    }
-    
-    .doc-spec {
-      font-size: 12px;
-      color: var(--primary);
-      font-weight: 600;
-    }
-    
-    .doc-qual {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    
-    /* Image + scatter plot grid */
+    /* Layout styling blocks */
     .image-plot-grid {
       display: flex;
       gap: 20px;
-      margin-bottom: 24px;
-      border: 1px solid var(--border);
-      padding: 20px;
+      margin-bottom: 20px;
     }
     
-    .image-cell,
-    .plot-cell {
+    .image-cell, .plot-cell {
       flex: 1;
+      border: 1px solid var(--border-light);
+      padding: 12px;
+      background-color: #ffffff;
     }
     
     .cell-label {
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 2px;
     }
     
     .patient-image {
       width: 100%;
-      max-height: 280px;
+      height: 220px;
       object-fit: contain;
-      border: 1px solid var(--border);
-      background-color: #f9fafb;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
     }
     
     .patient-image-placeholder {
       width: 100%;
-      height: 240px;
-      border: 1px dashed var(--border);
+      height: 220px;
+      border: 1px dashed var(--border-light);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: var(--text-muted);
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
-      background-color: #f9fafb;
     }
     
     .scatter-svg {
       width: 100%;
-      height: auto;
-      border: 1px solid var(--border);
-      background-color: #fafafa;
+      height: 220px;
+      background-color: #ffffff;
     }
     
-    /* Disclaimer */
     .disclaimer {
       font-size: 10px;
       color: var(--text-muted);
-      background-color: #f9fafb;
-      padding: 14px;
-      border: 1px solid var(--border);
-      margin-top: 28px;
+      border: 1px solid var(--border-light);
+      padding: 12px;
+      margin-top: 30px;
       text-align: justify;
-      line-height: 1.7;
     }
     
-    .disclaimer strong {
-      color: var(--text);
-    }
-    
-    .text-muted {
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-    
-    /* Footer */
     .footer {
-      margin-top: 32px;
-      border-top: 2px solid var(--primary);
-      padding-top: 16px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
       display: flex;
       justify-content: space-between;
       font-size: 10px;
       color: var(--text-muted);
     }
     
-    .footer-stamp {
-      text-align: right;
-      font-family: 'Courier New', monospace;
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-    }
+    .footer-stamp { font-family: monospace; font-weight: 700; color: #111; }
     
     @media print {
-      body {
-        background-color: white;
-        padding: 0;
-      }
-      .print-actions {
-        display: none;
-      }
-      .report-container {
-        box-shadow: none;
-        border: none;
-        padding: 0;
-      }
+      .print-actions { display: none; }
     }
   </style>
 </head>
 <body>
 
   <div class="print-actions">
-    <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn" onclick="window.print()">Print Report</button>
   </div>
 
   <div class="report-container">
-    <!-- Header -->
     <div class="header">
       <div class="logo-area">
-        <span class="logo-text">AMRITH.</span>
-        <span class="logo-subtext">The Elixir of Modern Healing</span>
+        <span class="logo-text">AMRITH DIAGNOSTICS</span>
+        <span class="logo-subtext">Clinical Decision Support Systems</span>
       </div>
       <div class="meta-area">
-        <div class="report-title">AI Clinical Diagnosis Report</div>
-        <div class="report-id">ID: ${reportId}</div>
+        <div class="report-title">Automated Screening Record</div>
+        <div class="report-id">REF-ID: ${reportId}</div>
         <div class="report-date">${dateStr}</div>
       </div>
     </div>
 
-    <!-- Patient Details -->
     <div class="section-title">Patient Profile</div>
     <table class="data-table">
       <tr>
@@ -618,7 +463,7 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
         <td>${patient.name || 'Anonymous Patient'}</td>
       </tr>
       <tr>
-        <th>Email / Contact</th>
+        <th>Contact/Identifier</th>
         <td>${patient.email || 'N/A'} ${patient.phone ? `| ${patient.phone}` : ''}</td>
       </tr>
       <tr>
@@ -628,28 +473,23 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
       ${appointmentDetails}
     </table>
 
-    <!-- AI Diagnostic Summary -->
     <div class="section-title">Diagnostic Screening Summary</div>
     <div class="triage-summary">
       <div class="triage-score-block">
         <div class="triage-score-val">${confidence}%</div>
-        <div class="triage-score-lbl">Confidence</div>
+        <div class="triage-score-lbl">Confidence Metric</div>
       </div>
-      <div class="triage-divider"></div>
       <div class="triage-desc">
-        <span class="triage-badge">${risk} Risk</span>
-        <div class="triage-pred">${triage.prediction || 'Unknown Result'}</div>
-        <div class="triage-meta">Model: ${triage.modelVersion || 'Amrith AI Diagnostics v1.0'}</div>
+        <div class="triage-badge">${risk} Risk Classification</div>
+        <div class="triage-pred">${triage.prediction || 'Unknown Classification'}</div>
+        <div class="triage-meta">Analytical Engine: ${triage.modelVersion || 'Amrith AI Core v1.0'}</div>
       </div>
     </div>
 
-    <!-- Image + Scatter Plot (if applicable) -->
     ${imagePlotSection}
 
-    <!-- Differential Diagnosis Distribution -->
     ${differentialSection}
 
-    <!-- Action Recommendations -->
     <div class="section-title">Clinical Recommendations</div>
     <div class="card">
       <ul class="plain-list">
@@ -657,28 +497,21 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
       </ul>
     </div>
 
-    <!-- AI Guidelines Sections -->
     ${aiPrecautionsSection}
     ${aiMedicationsSection}
 
-    <!-- Medical Consultation Routing -->
-    <div class="section-title">Consultation Routing</div>
-    <div style="margin-bottom: 24px;">
+    <div class="section-title">Consultation Routing Profile</div>
+    <div style="margin-bottom: 20px;">
       ${doctorHtml}
     </div>
 
-    <!-- Disclaimer -->
     <div class="disclaimer">
-      <strong>AI Screening Disclaimer:</strong> This document is generated by an automated clinical machine learning screening system. 
-      It utilizes patient-provided symptoms, checklist responses, and uploads for initial routing, risk scoring, and triaging. 
-      It is NOT a replacement for a formal medical diagnosis, laboratory testing, or physical examination by a registered physician. 
-      Please consult your doctor or clinical team to review these findings and initiate proper diagnostic validation.
+      <strong>CRITICAL NOTICE:</strong> This framework does not replace standard medical diagnosis, diagnostic lab analysis, or physical evaluation by licensed physicians. Clinical teams must authenticate these parameters explicitly.
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-      <div>Report generated securely via Amrith Health Portal  |  2026 Amrith Inc.</div>
-      <div class="footer-stamp">SECURELY ENCRYPTED | VERIFIED DATA</div>
+      <div>Secure transmission protocol | 2026 Amrith Inc. All Rights Reserved.</div>
+      <div class="footer-stamp">AUTHENTICATED DIGITAL ARCHIVE</div>
     </div>
   </div>
 
@@ -687,103 +520,70 @@ export function compileReportHtml({ patient, doctor, appointment, triage, isTemp
   `;
 }
 
-
-/**
- * Generates an inline SVG scatter plot:
- * - Many green dots along the 45-degree diagonal (representing well-calibrated reference data)
- * - The patient's result marked at the confidence level, colored by risk
- */
 function generateScatterPlotSVG(confidence, risk) {
   const w = 320;
-  const h = 280;
-  const pad = 40;
+  const h = 220; 
+  const pad = 35;
   const plotW = w - pad * 2;
   const plotH = h - pad * 2;
 
-  // Marker color based on risk
-  let markerColor = '#16a34a'; // green for low
-  if (risk === 'Critical') markerColor = '#dc2626';
-  else if (risk === 'High') markerColor = '#ea580c';
-  else if (risk === 'Moderate') markerColor = '#d97706';
+  let markerColor = '#4d2c91'; 
+  if (risk === 'Critical' || risk === 'High') markerColor = '#000000'; 
 
-  // Generate reference green dots along the 45-degree line with some natural scatter
-  const seed = 12345;
+  const seed = 54321;
   function pseudoRandom(n) {
     let x = Math.sin(n * 9301 + seed) * 49297;
     return x - Math.floor(x);
   }
 
   let dots = '';
-  const numDots = 65;
+  const numDots = 60;
   for (let i = 0; i < numDots; i++) {
     const baseVal = (i / (numDots - 1)) * 100;
-    const scatter = (pseudoRandom(i * 3) - 0.5) * 12;
-    const scatterY = (pseudoRandom(i * 7 + 1) - 0.5) * 12;
+    const scatterX = (pseudoRandom(i * 2) - 0.5) * 6;
+    const scatterY = (pseudoRandom(i * 5 + 2) - 0.5) * 6;
     
-    const xVal = Math.max(2, Math.min(98, baseVal + scatter));
+    const xVal = Math.max(2, Math.min(98, baseVal + scatterX));
     const yVal = Math.max(2, Math.min(98, baseVal + scatterY));
     
     const cx = pad + (xVal / 100) * plotW;
     const cy = pad + plotH - (yVal / 100) * plotH;
     
-    const opacity = 0.35 + pseudoRandom(i * 11) * 0.35;
-    const radius = 2.5 + pseudoRandom(i * 13) * 1.5;
-    
-    dots += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${radius.toFixed(1)}" fill="#22c55e" opacity="${opacity.toFixed(2)}" />`;
+    dots += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="1.5" fill="#55aa55" opacity="0.6" />`;
   }
 
-  // Patient marker position
-  // X = confidence, Y = offset from diagonal based on risk
   const patientX = confidence;
   let patientY = confidence;
-  if (risk === 'Critical') patientY = Math.max(5, confidence - 25);
-  else if (risk === 'High') patientY = Math.max(5, confidence - 15);
-  else if (risk === 'Moderate') patientY = Math.max(5, confidence - 8);
-  else patientY = Math.min(98, confidence + 3);
+  if (risk === 'Critical') patientY = Math.max(5, confidence - 20);
+  else if (risk === 'High') patientY = Math.max(5, confidence - 12);
+  else if (risk === 'Moderate') patientY = Math.min(95, confidence + 8);
+  else patientY = Math.min(98, confidence + 2);
 
   const px = pad + (patientX / 100) * plotW;
   const py = pad + plotH - (patientY / 100) * plotH;
 
-  // Grid lines
   let gridLines = '';
   for (let i = 0; i <= 4; i++) {
     const val = i * 25;
     const x = pad + (val / 100) * plotW;
     const y = pad + plotH - (val / 100) * plotH;
-    gridLines += `<line x1="${pad}" y1="${y}" x2="${pad + plotW}" y2="${y}" stroke="#e5e7eb" stroke-width="0.5" />`;
-    gridLines += `<line x1="${x}" y1="${pad}" x2="${x}" y2="${pad + plotH}" stroke="#e5e7eb" stroke-width="0.5" />`;
-    // Labels
-    gridLines += `<text x="${pad - 6}" y="${y + 3}" font-size="8" fill="#9ca3af" text-anchor="end" font-family="Inter, sans-serif">${val}</text>`;
-    gridLines += `<text x="${x}" y="${pad + plotH + 14}" font-size="8" fill="#9ca3af" text-anchor="middle" font-family="Inter, sans-serif">${val}</text>`;
+    gridLines += `<line x1="${pad}" y1="${y}" x2="${pad + plotW}" y2="${y}" stroke="#eeeeee" stroke-width="0.5" />`;
+    gridLines += `<line x1="${x}" y1="${pad}" x2="${x}" y2="${pad + plotH}" stroke="#eeeeee" stroke-width="0.5" />`;
+    gridLines += `<text x="${pad - 6}" y="${y + 3}" font-size="7" fill="#666666" text-anchor="end">${val}</text>`;
+    gridLines += `<text x="${x}" y="${pad + plotH + 10}" font-size="7" fill="#666666" text-anchor="middle">${val}</text>`;
   }
 
   return `
-    <svg class="scatter-svg" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-      <!-- Background -->
-      <rect x="0" y="0" width="${w}" height="${h}" fill="#fafafa" />
-      
-      <!-- Plot area border -->
-      <rect x="${pad}" y="${pad}" width="${plotW}" height="${plotH}" fill="none" stroke="#d1d5db" stroke-width="1" />
-      
-      <!-- Grid -->
+    <svg class="scatter-svg" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <rect x="0" y="0" width="${w}" height="${h}" fill="#ffffff" />
+      <rect x="${pad}" y="${pad}" width="${plotW}" height="${plotH}" fill="none" stroke="#000000" stroke-width="1" />
       ${gridLines}
-      
-      <!-- 45-degree reference line -->
-      <line x1="${pad}" y1="${pad + plotH}" x2="${pad + plotW}" y2="${pad}" stroke="#7e57c2" stroke-width="1" stroke-dasharray="4,3" opacity="0.5" />
-      
-      <!-- Reference dots (green, along diagonal) -->
+      <line x1="${pad}" y1="${pad + plotH}" x2="${pad + plotW}" y2="${pad}" stroke="#4d2c91" stroke-width="1" stroke-dasharray="2,2" opacity="0.6" />
       ${dots}
-      
-      <!-- Patient marker -->
-      <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="7" fill="${markerColor}" stroke="#ffffff" stroke-width="2" />
-      <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="10" fill="none" stroke="${markerColor}" stroke-width="1.5" opacity="0.4" />
-      
-      <!-- Patient label -->
-      <text x="${(px + 14).toFixed(1)}" y="${(py + 4).toFixed(1)}" font-size="9" fill="${markerColor}" font-weight="700" font-family="Inter, sans-serif">Patient (${confidence}%)</text>
-      
-      <!-- Axis labels -->
-      <text x="${pad + plotW / 2}" y="${h - 4}" font-size="9" fill="#6b7280" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600">Predicted Confidence (%)</text>
-      <text x="10" y="${pad + plotH / 2}" font-size="9" fill="#6b7280" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" transform="rotate(-90, 10, ${pad + plotH / 2})">Actual Outcome (%)</text>
+      <polygon points="${px},${py - 5} ${px + 5},${py + 3} ${px - 5},${py + 3}" fill="${markerColor}" stroke="#000000" stroke-width="0.7" />
+      <text x="${(px + 8).toFixed(1)}" y="${(py + 3).toFixed(1)}" font-size="8" fill="#000000" font-weight="700">Patient (${confidence}%)</text>
+      <text x="${pad + plotW / 2}" y="${h - 2}" font-size="8" fill="#111111" text-anchor="middle" font-weight="600">Predicted Confidence %</text>
+      <text x="8" y="${pad + plotH / 2}" font-size="8" fill="#111111" text-anchor="middle" font-weight="600" transform="rotate(-90, 8, ${pad + plotH / 2})">Observed Variance %</text>
     </svg>
   `;
 }

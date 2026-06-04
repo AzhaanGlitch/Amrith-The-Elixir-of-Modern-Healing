@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight, HeartPulse, Activity, CheckCircle, Download, ShieldAlert, Pills } from 'lucide-react';
+import { Loader2, ShieldCheck, AlertTriangle, Info, ArrowRight, HeartPulse, Activity, CheckCircle, Download, ShieldAlert, Pill } from 'lucide-react';
 import { Card, Button } from '../ui';
 
 export default function AITriageResult({ testId, inputType, answers, uploadedFiles, onProceed, onReset }) {
@@ -355,7 +355,7 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
               {result.details.ai_medications && result.details.ai_medications.length > 0 && (
                 <div className="space-y-3">
                   <div className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                    <Pills className="w-4 h-4 text-emerald-500" />
+                    <Pill className="w-4 h-4 text-emerald-500" />
                     AI-Suggested Medications
                   </div>
                   <div className="grid gap-2">

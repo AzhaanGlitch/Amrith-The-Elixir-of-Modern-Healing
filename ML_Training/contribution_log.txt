@@ -347,3 +347,4 @@
 [2026-06-04T15:22:52] Refactor model prediction response parser
 [2026-06-04T15:38:43] Standardize response schema for API errors
 [2026-06-04T15:52:19] Add visual indicators for critical symptoms
+[2026-06-04T16:10:39] Fix memory leak in web socket listener

@@ -345,3 +345,4 @@
 [2026-06-04T14:56:12] Refactor patient profile update endpoint
 [2026-06-04T15:10:40] Improve accessibility of triage form inputs
 [2026-06-04T15:22:52] Refactor model prediction response parser
+[2026-06-04T15:38:43] Standardize response schema for API errors

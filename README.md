@@ -41,3 +41,7 @@ The platform adheres to a "True Black" aesthetic, emphasizing a premium, focused
 
 ## Conclusion
 Amrith represents the next generation of healthcare platforms, where artificial intelligence and clinical practice converge. By providing a scalable, efficient, and highly accurate diagnostic layer, the project contributes to a future where healthcare is more proactive, personalized, and precise.
+
+
+## ML Inference Integration
+The platform integrates PyTorch, Keras, and tabular models inside the `ml_service` backend component for instantaneous patient diagnosis.

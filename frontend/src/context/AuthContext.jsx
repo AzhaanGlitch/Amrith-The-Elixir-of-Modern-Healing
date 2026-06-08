@@ -41,6 +41,7 @@ export function AuthProvider({ children }) {
     checkAuth();
   }, []);
 
+  // Handles patient and doctor login sessions
   const login = useCallback(async (role, credentials) => {
     setIsLoading(true);
     try {
@@ -96,9 +97,13 @@ export function AuthProvider({ children }) {
     setUser(prev => ({ ...prev, ...newData }));
   }, []);
 
+  if (isInitializing) {
+    return <LoadingScreen />;
+  }
+
   return (
     <AuthContext.Provider value={{ user, isLoading, login, logout, signup, updateUserData, isAuthenticated: !!user }}>
-      {!isInitializing && children}
+      {children}
     </AuthContext.Provider>
   );
 }

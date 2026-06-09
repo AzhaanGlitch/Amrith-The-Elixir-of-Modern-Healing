@@ -42,6 +42,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Handles patient and doctor login sessions
+  // Handles patient and doctor login sessions
   const login = useCallback(async (role, credentials) => {
     setIsLoading(true);
     try {

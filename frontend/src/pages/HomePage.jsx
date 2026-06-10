@@ -49,7 +49,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section
         className="relative min-h-screen bg-cover bg-center bg-no-repeat text-white overflow-hidden flex items-center pt-24 pb-16"
-        style={{ backgroundImage: `url('/home_page.png')` }}
+        style={{ backgroundImage: `url('/home_page.webp')` }}
       >
 
         <div className="relative w-full px-6 sm:px-12 lg:px-20 xl:px-32 z-10 flex items-center justify-center">

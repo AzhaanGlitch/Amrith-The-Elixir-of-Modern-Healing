@@ -76,7 +76,7 @@ export default function HomePage() {
               {t('home.heroDesc')}
             </motion.p>
 
-            {/* Role Buttons */}
+            {/* Role Buttons - customized padding and size layout */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

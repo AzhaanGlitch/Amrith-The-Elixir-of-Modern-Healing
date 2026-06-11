@@ -500,7 +500,7 @@ def load_pytorch_model(path):
         return None
     try:
         model = torch.load(path, map_location=torch.device('cpu'), weights_only=False)
-        if isinstance(model, dict) and 'model_state_dict' in model:
+        if isinstance(model, dict):
             print(f"  ⚠️  PyTorch state_dict detected for {os.path.basename(path)} — needs architecture definition")
             return None
         if hasattr(model, 'eval'):

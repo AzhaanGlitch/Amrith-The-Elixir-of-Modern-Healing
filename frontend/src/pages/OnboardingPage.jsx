@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/ui';
 import { User, Stethoscope, ShieldAlert } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function OnboardingPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/profile`, {
+      const response = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',

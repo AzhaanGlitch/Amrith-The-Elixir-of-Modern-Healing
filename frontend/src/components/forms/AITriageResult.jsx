@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { API_URL } from '../../config';
 
 export default function AITriageResult({ testId, inputType, answers, uploadedFiles, onProceed, onReset }) {
   const [loading, setLoading] = useState(true);
@@ -31,7 +32,7 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
           });
         }
 
-        const response = await fetch('http://localhost:5000/api/ml/predict', {
+        const response = await fetch(`${API_URL}/ml/predict`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -99,7 +100,7 @@ export default function AITriageResult({ testId, inputType, answers, uploadedFil
         uploadedImageBase64: clientSideImageBase64 || result.details?.uploadedImageBase64 || null
       };
 
-      const response = await fetch('http://localhost:5000/api/reports/download-triage', {
+      const response = await fetch(`${API_URL}/reports/download-triage`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -227,11 +227,56 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Right side: PDF placeholder */}
-            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-primary/5 rounded-md border-2 border-dashed border-primary/30 flex flex-col items-center justify-center text-primary/60 relative overflow-hidden group">
-              <FileText className="w-12 h-12 mb-3 group-hover:scale-110 transition-transform duration-300" />
-              <p className="font-semibold text-lg">Sample PDF Report</p>
-              <p className="text-sm">(PDF document will be embedded here)</p>
+            {/* Right side: PDF display */}
+            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-white rounded-xl border border-border shadow-xl flex flex-col overflow-hidden relative group">
+              {/* Header controls for the PDF */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border-light">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <span className="font-semibold text-sm text-text">amrith_report.pdf</span>
+                </div>
+                <div className="flex gap-2">
+                  <a 
+                    href="/amrith_report.pdf" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary hover:text-white bg-white hover:bg-primary border border-primary/30 rounded-md transition-all shadow-sm"
+                  >
+                    Open in New Tab
+                  </a>
+                  <a 
+                    href="/amrith_report.pdf" 
+                    download="Amrith_Sample_Report.pdf"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-md transition-all shadow-md"
+                  >
+                    Download PDF
+                  </a>
+                </div>
+              </div>
+              <div className="flex-1 w-full bg-slate-100">
+                <object 
+                  data="/amrith_report.pdf" 
+                  type="application/pdf" 
+                  className="w-full h-full"
+                >
+                  <iframe 
+                    src="/amrith_report.pdf" 
+                    title="Amrith Demo Report"
+                    className="w-full h-full border-none"
+                  >
+                    <div className="p-6 text-center">
+                      <p className="text-text-secondary mb-4">Your browser does not support viewing PDFs directly.</p>
+                      <a 
+                        href="/amrith_report.pdf" 
+                        download
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md font-semibold"
+                      >
+                        Download PDF Report
+                      </a>
+                    </div>
+                  </iframe>
+                </object>
+              </div>
             </div>
           </div>
         </div>

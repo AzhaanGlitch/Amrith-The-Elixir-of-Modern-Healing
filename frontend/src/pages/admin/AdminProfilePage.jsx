@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { User, Mail, Shield, Bell, Lock, Edit3 } from 'lucide-react';
 import { Button } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
+import { API_URL } from '../../config';
 
 export default function AdminProfilePage() {
   const { user, updateUserData } = useAuth();
@@ -18,7 +19,7 @@ export default function AdminProfilePage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
+      const res = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

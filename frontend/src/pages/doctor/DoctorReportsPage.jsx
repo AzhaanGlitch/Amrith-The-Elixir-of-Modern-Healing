@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Badge, Button, SearchBar } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
 import { FileCheck, AlertTriangle, CheckCircle2, Eye, Clock, X, Loader2, Download, Check } from 'lucide-react';
+import { API_URL } from '../../config';
 
 export default function DoctorReportsPage() {
   const [reports, setReports] = useState([]);
@@ -28,7 +29,7 @@ export default function DoctorReportsPage() {
       const token = localStorage.getItem('amrith_token');
       if (!token) return;
 
-      const res = await fetch('http://localhost:5000/api/reports', {
+      const res = await fetch(`${API_URL}/reports`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -78,7 +79,7 @@ export default function DoctorReportsPage() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('amrith_token');
-      const res = await fetch(`http://localhost:5000/api/reports/${selectedReport._id}/review`, {
+      const res = await fetch(`${API_URL}/reports/${selectedReport._id}/review`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -106,7 +107,7 @@ export default function DoctorReportsPage() {
   const handleDownloadReport = async (reportId, testName) => {
     try {
       const token = localStorage.getItem('amrith_token');
-      const response = await fetch(`http://localhost:5000/api/reports/${reportId}/download`, {
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { Card, Button, Avatar, Badge } from '../../components/ui';
 import { User, Phone, Mail, MapPin, Heart, Shield, Bell, Edit3, Plus, Save } from 'lucide-react';
+import { API_URL } from '../../config';
 
 export default function PatientProfilePage() {
   const { user, updateUserData } = useAuth();
@@ -40,7 +41,7 @@ export default function PatientProfilePage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
+      const res = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Edit2, ChevronDown, MoreHorizontal, Calendar, Users, ClipboardList, Stethoscope, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 export default function DoctorDashboard() {
   const { t } = useLanguage();
@@ -22,7 +23,7 @@ export default function DoctorDashboard() {
         if (!token) return;
 
         // Fetch doctor's appointments
-        const appRes = await fetch('http://localhost:5000/api/appointments', {
+        const appRes = await fetch(`${API_URL}/appointments`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const appData = await appRes.json();
@@ -31,7 +32,7 @@ export default function DoctorDashboard() {
         }
 
         // Fetch doctor's reports
-        const repRes = await fetch('http://localhost:5000/api/reports', {
+        const repRes = await fetch(`${API_URL}/reports`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const repData = await repRes.json();

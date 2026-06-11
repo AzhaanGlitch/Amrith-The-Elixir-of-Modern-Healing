@@ -13,6 +13,7 @@ import {
   User, MapPin, Calendar, Search, Stethoscope, AlertCircle, 
   ChevronRight, ChevronDown, Activity, Loader2
 } from 'lucide-react';
+import { API_URL } from '../../config';
 
 
 const iconMap = { Stethoscope, Activity };
@@ -112,7 +113,7 @@ export default function BookingPage() {
         const specializations = getSpecializationsForTest(selectedTest.id, selectedTest.departmentName);
         const queryVal = specializations.join(',');
         
-        const res = await fetch(`http://localhost:5000/api/users/doctors?specialization=${queryVal}`, {
+        const res = await fetch(`${API_URL}/users/doctors?specialization=${queryVal}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -182,7 +183,7 @@ export default function BookingPage() {
         });
       }
 
-      const res = await fetch('http://localhost:5000/api/appointments', {
+      const res = await fetch(`${API_URL}/appointments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

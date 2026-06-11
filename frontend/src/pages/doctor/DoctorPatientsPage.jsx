@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, Badge, Button, SearchBar, Avatar } from '../../components/ui';
 import { User, Phone, Calendar, FileText, Eye, Loader2, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 export default function DoctorPatientsPage() {
   const [appointments, setAppointments] = useState([]);
@@ -17,7 +18,7 @@ export default function DoctorPatientsPage() {
         const token = localStorage.getItem('amrith_token');
         if (!token) return;
 
-        const res = await fetch('http://localhost:5000/api/appointments', {
+        const res = await fetch(`${API_URL}/appointments`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

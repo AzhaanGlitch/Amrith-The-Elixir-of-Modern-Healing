@@ -2,11 +2,13 @@ node_modules/
 .env
 uploads/
 ml_models/
-models/
+ml_service/models/
 __pycache__/
 *.pyc
 *.h5
 *.pkl
 *.pth
+*.keras
 venv/
 .venv/
+.cache/

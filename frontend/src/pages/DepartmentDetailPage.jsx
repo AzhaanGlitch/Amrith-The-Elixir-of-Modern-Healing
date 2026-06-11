@@ -93,14 +93,14 @@ export default function DepartmentDetailPage() {
   };
 
   const answeredQuestions = selectedDisease
-    ? selectedDisease.questions.filter(q => {
+    ? (selectedDisease.questions || []).filter(q => {
         const a = answers[q.id];
         if (Array.isArray(a)) return a.length > 0;
         return a !== undefined && a !== '';
       }).length
     : 0;
 
-  const totalQuestions = selectedDisease ? selectedDisease.questions.length : 0;
+  const totalQuestions = selectedDisease ? (selectedDisease.questions || []).length : 0;
   const allQuestionsAnswered = answeredQuestions === totalQuestions;
 
   if (!department) {
@@ -197,7 +197,7 @@ export default function DepartmentDetailPage() {
                         ))}
                         <div className="flex items-center gap-1.5 text-xs font-medium text-text-secondary bg-gray-100 px-2.5 py-1 rounded-lg">
                           <ClipboardList className="w-3 h-3" />
-                          {disease.questions.length} Questions
+                          {(disease.questions || []).length} Questions
                         </div>
                       </div>
 
@@ -221,7 +221,7 @@ export default function DepartmentDetailPage() {
                             <div className="bg-background rounded-xl p-4 text-xs text-text-secondary space-y-2">
                               <p className="font-semibold text-text">What you'll need:</p>
                               <ul className="space-y-1">
-                                <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" /> Answer {disease.questions.length} symptom & history questions</li>
+                                <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" /> Answer {(disease.questions || []).length} symptom & history questions</li>
                                 <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" /> {disease.uploadLabel}</li>
                                 <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" /> Up to {disease.maxFiles} files accepted</li>
                               </ul>
@@ -272,7 +272,7 @@ export default function DepartmentDetailPage() {
                 </div>
 
                 <div className="space-y-8">
-                  {selectedDisease.questions.map((q, idx) => (
+                  {(selectedDisease.questions || []).map((q, idx) => (
                     <motion.div
                       key={q.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -509,7 +509,7 @@ export default function DepartmentDetailPage() {
                     <ClipboardList className="w-5 h-5 text-primary" /> Your Answers
                   </h3>
                   <div className="space-y-3">
-                    {selectedDisease.questions.map((q, idx) => {
+                    {(selectedDisease.questions || []).map((q, idx) => {
                       const answer = answers[q.id];
                       const displayAnswer = Array.isArray(answer) ? answer.join(', ') : answer || '—';
                       return (

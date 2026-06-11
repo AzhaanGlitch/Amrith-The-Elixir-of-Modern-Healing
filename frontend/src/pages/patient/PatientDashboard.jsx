@@ -5,6 +5,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { Badge } from '../../components/ui';
 import { Edit2, Download, FileText, CheckCircle2, CalendarPlus, User, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 export default function PatientDashboard() {
   const { t } = useLanguage();
@@ -34,7 +35,7 @@ export default function PatientDashboard() {
         if (!token) return;
 
         // Fetch appointments
-        const appRes = await fetch('http://localhost:5000/api/appointments', {
+        const appRes = await fetch(`${API_URL}/appointments`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const appData = await appRes.json();
@@ -43,7 +44,7 @@ export default function PatientDashboard() {
         }
 
         // Fetch reports
-        const repRes = await fetch('http://localhost:5000/api/reports', {
+        const repRes = await fetch(`${API_URL}/reports`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const repData = await repRes.json();
@@ -62,7 +63,7 @@ export default function PatientDashboard() {
   const handleDownloadReport = async (reportId, testName) => {
     try {
       const token = localStorage.getItem('amrith_token');
-      const response = await fetch(`http://localhost:5000/api/reports/${reportId}/download`, {
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

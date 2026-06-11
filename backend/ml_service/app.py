@@ -513,8 +513,54 @@ def load_pytorch_model(path):
         return None
 
 
+
+def download_models_from_hf():
+    """Download models dynamically from Hugging Face Hub if HF_MODELS_REPO is set."""
+    repo_id = os.environ.get('HF_MODELS_REPO')
+    if not repo_id:
+        print("⏭️  HF_MODELS_REPO not configured in environment. Skipping Hugging Face download.")
+        return
+
+    print(f"\n📥 Downloading missing models from Hugging Face Model Hub: {repo_id}...")
+    try:
+        from huggingface_hub import hf_hub_download
+    except ImportError:
+        print("⚠️  huggingface_hub library not installed. Cannot download models from HF Hub.")
+        return
+
+    model_filenames = [
+        "arrhythmia.pkl", "asthma.pkl", "breast_cancer.h5", "eczema.h5", 
+        "fracture.pth", "fungal_infection.pth", "general_medicine.pkl", 
+        "heart_failure.pkl", "hypertension.pkl", "lung_cancer.h5", 
+        "ophthalmology.pkl", "osteoporosis.h5", "parkinsons.pkl", 
+        "pneumonia.h5", "psoriasis.pth", "seizure.pkl", 
+        "skin_cancer.keras", "skin_cancer_onc.keras", "stroke_risk.pkl", 
+        "tuberculosis.h5"
+    ]
+
+    os.makedirs(MODELS_DIR, exist_ok=True)
+
+    for filename in model_filenames:
+        target_path = os.path.join(MODELS_DIR, filename)
+        if not os.path.exists(target_path):
+            print(f"  👉 Downloading {filename}...")
+            try:
+                hf_hub_download(
+                    repo_id=repo_id,
+                    filename=filename,
+                    local_dir=MODELS_DIR,
+                    local_dir_use_symlinks=False
+                )
+                print(f"  ✅ Downloaded {filename} successfully.")
+            except Exception as e:
+                print(f"  ❌ Failed to download {filename}: {e}")
+        else:
+            print(f"  ✓ {filename} already exists locally.")
+
+
 def discover_models():
     """Scan the models/ directory and register available model files without loading them."""
+    download_models_from_hf()
     print("\n🔍 Scanning for ML models on disk...")
 
     extensions = {
@@ -1546,7 +1592,7 @@ if __name__ == '__main__':
     init_huggingface_model()
 
     port = int(os.environ.get('ML_PORT', 5001))
-    debug = os.environ.get('FLASK_DEBUG', 'true').lower() == 'true'
+    debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
 
     print(f"🧠 Amrith ML Service starting on port {port}")
     print(f"   Health check: http://localhost:{port}/health")

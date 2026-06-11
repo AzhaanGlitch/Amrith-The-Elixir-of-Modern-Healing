@@ -228,7 +228,7 @@ export default function HomePage() {
             </div>
 
             {/* Right side: PDF display */}
-            <div className="w-full aspect-[4/3] bg-white rounded-xl border border-border shadow-xl overflow-hidden relative">
+            <div className="w-full h-[900px] bg-white rounded-xl border border-border shadow-xl overflow-hidden relative">
               <div className="w-full h-full bg-slate-100">
                 <object 
                   data="/amrith_report.pdf" 

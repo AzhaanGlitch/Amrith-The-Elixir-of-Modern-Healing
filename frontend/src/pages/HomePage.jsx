@@ -228,32 +228,8 @@ export default function HomePage() {
             </div>
 
             {/* Right side: PDF display */}
-            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] bg-white rounded-xl border border-border shadow-xl flex flex-col overflow-hidden relative group">
-              {/* Header controls for the PDF */}
-              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border-light">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <span className="font-semibold text-sm text-text">amrith_report.pdf</span>
-                </div>
-                <div className="flex gap-2">
-                  <a 
-                    href="/amrith_report.pdf" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary hover:text-white bg-white hover:bg-primary border border-primary/30 rounded-md transition-all shadow-sm"
-                  >
-                    Open in New Tab
-                  </a>
-                  <a 
-                    href="/amrith_report.pdf" 
-                    download="Amrith_Sample_Report.pdf"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-md transition-all shadow-md"
-                  >
-                    Download PDF
-                  </a>
-                </div>
-              </div>
-              <div className="flex-1 w-full bg-slate-100">
+            <div className="w-full aspect-[4/3] bg-white rounded-xl border border-border shadow-xl overflow-hidden relative">
+              <div className="w-full h-full bg-slate-100">
                 <object 
                   data="/amrith_report.pdf" 
                   type="application/pdf" 

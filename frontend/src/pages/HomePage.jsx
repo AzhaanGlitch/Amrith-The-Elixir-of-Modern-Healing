@@ -231,12 +231,12 @@ export default function HomePage() {
             <div className="w-full h-[900px] bg-white rounded-xl border border-border shadow-xl overflow-hidden relative">
               <div className="w-full h-full bg-slate-100">
                 <object 
-                  data="/amrith_report.pdf" 
+                  data="/amrith_report.pdf#toolbar=0&navpanes=0&scrollbar=0" 
                   type="application/pdf" 
                   className="w-full h-full"
                 >
                   <iframe 
-                    src="/amrith_report.pdf" 
+                    src="/amrith_report.pdf#toolbar=0&navpanes=0&scrollbar=0" 
                     title="Amrith Demo Report"
                     className="w-full h-full border-none"
                   >

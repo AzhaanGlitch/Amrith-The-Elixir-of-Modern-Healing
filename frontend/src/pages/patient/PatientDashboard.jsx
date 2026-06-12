@@ -7,6 +7,7 @@ import { Edit2, Download, FileText, CheckCircle2, CalendarPlus, User, Loader2 } 
 import { Link } from 'react-router-dom';
 import { API_URL } from '../../config';
 
+// Handles visualization of general medical information, reports, and upcoming visits
 export default function PatientDashboard() {
   const { t } = useLanguage();
   const { user } = useAuth();

@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button, EmptyState } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
-import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX } from 'lucide-react';
+import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX, Loader2 } from 'lucide-react';
 import { API_URL } from '../../config';
-import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX } from 'lucide-react';
+import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX, Loader2 } from 'lucide-react';
 
 export default function AppointmentsPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -36,6 +36,15 @@ export default function AppointmentsPage() {
   }, []);
 
   const filtered = appointments.filter(a => a.status === activeTab);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+        <p className="text-text-muted text-sm font-semibold">Loading your appointments...</p>
+      </div>
+    );
+  }
 
   const handleCancel = (id) => {
     addToast('Appointment cancelled successfully.', 'warning');

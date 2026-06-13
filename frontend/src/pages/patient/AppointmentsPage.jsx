@@ -2,13 +2,38 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button, EmptyState } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
-import { appointments } from '../../data/mockData';
+import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX } from 'lucide-react';
+import { API_URL } from '../../config';
 import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX } from 'lucide-react';
 
 export default function AppointmentsPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
   const { addToast } = useToast();
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const tabs = ['upcoming', 'completed', 'cancelled'];
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('amrith_token');
+        if (!token) return;
+        const res = await fetch(`${API_URL}/appointments`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setAppointments(data.appointments);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAppointments();
+  }, []);
 
   const filtered = appointments.filter(a => a.status === activeTab);
 

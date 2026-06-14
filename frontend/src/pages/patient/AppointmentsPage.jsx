@@ -46,8 +46,24 @@ export default function AppointmentsPage() {
     );
   }
 
-  const handleCancel = (id) => {
-    addToast('Appointment cancelled successfully.', 'warning');
+  const handleCancel = async (id) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const res = await fetch(`${API_URL}/appointments/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('Appointment cancelled successfully.', 'warning');
+        setAppointments(prev => prev.map(a => a._id === id ? { ...a, status: 'cancelled' } : a));
+      } else {
+        throw new Error(data.error || 'Failed to cancel appointment');
+      }
+    } catch (err) {
+      console.error(err);
+      addToast(err.message || 'Error cancelling appointment.', 'error');
+    }
   };
 
   const handleReschedule = (id) => {

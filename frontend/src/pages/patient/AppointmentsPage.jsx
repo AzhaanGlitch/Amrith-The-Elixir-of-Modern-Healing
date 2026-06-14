@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button, EmptyState } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
 import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX, Loader2 } from 'lucide-react';
 import { API_URL } from '../../config';
-import { Calendar, Clock, MapPin, X, RefreshCw, CalendarX, Loader2 } from 'lucide-react';
 
 export default function AppointmentsPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -27,24 +26,13 @@ export default function AppointmentsPage() {
           setAppointments(data.appointments);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load appointments:', err);
       } finally {
         setLoading(false);
       }
     };
     fetchAppointments();
   }, []);
-
-  const filtered = appointments.filter(a => a.status === activeTab);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-        <p className="text-text-muted text-sm font-semibold">Loading your appointments...</p>
-      </div>
-    );
-  }
 
   const handleCancel = async (id) => {
     try {
@@ -70,6 +58,33 @@ export default function AppointmentsPage() {
     addToast('Reschedule feature coming soon!', 'info');
   };
 
+  const filtered = appointments.filter(appt => {
+    if (activeTab === 'upcoming') {
+      return appt.status !== 'completed' && appt.status !== 'cancelled';
+    }
+    return appt.status === activeTab;
+  });
+
+  const mappedFiltered = filtered.map(appt => ({
+    id: appt._id,
+    testName: appt.testName,
+    date: new Date(appt.scheduledDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+    time: appt.scheduledTime,
+    location: appt.collectionType === 'home' ? 'Home Sample Collection' : 'Amrith Diagnostic Lab',
+    type: appt.collectionType === 'home' ? 'Home' : 'Lab',
+    price: appt.price || '0 (Free)',
+    status: appt.status,
+  }));
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+        <p className="text-text-muted text-sm font-semibold">Loading your appointments...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-heading font-bold text-text mb-6">My Appointments</h1>
@@ -92,9 +107,9 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Appointments List */}
-      {filtered.length > 0 ? (
+      {mappedFiltered.length > 0 ? (
         <div className="space-y-4">
-          {filtered.map((appt, i) => (
+          {mappedFiltered.map((appt, i) => (
             <motion.div
               key={appt.id}
               initial={{ opacity: 0, y: 10 }}

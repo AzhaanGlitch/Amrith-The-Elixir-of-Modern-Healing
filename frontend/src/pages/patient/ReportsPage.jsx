@@ -1,11 +1,37 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button, SearchBar } from '../../components/ui';
-import { reports } from '../../data/mockData';
+import { FileText, Download, Share2, Eye, Sparkles, Loader2 } from 'lucide-react';
+import { API_URL } from '../../config';
 import { FileText, Download, Share2, Eye, Sparkles } from 'lucide-react';
 
 export default function ReportsPage() {
   const [search, setSearch] = useState('');
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('amrith_token');
+        if (!token) return;
+        const res = await fetch(`${API_URL}/reports`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setReports(data.reports);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReports();
+  }, []);
+
   const filtered = reports.filter(r => r.testName.toLowerCase().includes(search.toLowerCase()));
 
   return (

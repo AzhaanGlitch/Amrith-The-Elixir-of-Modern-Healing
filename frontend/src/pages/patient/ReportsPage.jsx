@@ -5,8 +5,53 @@ import { FileText, Download, Share2, Eye, Sparkles, Loader2 } from 'lucide-react
 import { API_URL } from '../../config';
 import { FileText, Download, Share2, Eye, Sparkles } from 'lucide-react';
 
+import { useToast } from '../../context/ToastContext';
+
 export default function ReportsPage() {
   const [search, setSearch] = useState('');
+  const { addToast } = useToast();
+
+  const handleViewReport = async (reportId) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to load report');
+      const htmlText = await response.text();
+      const newTab = window.open();
+      if (newTab) {
+        newTab.document.open();
+        newTab.document.write(htmlText);
+        newTab.document.close();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDownloadReport = async (reportId, testName) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `amrith-report-${testName.toLowerCase().replace(/\\s+/g, '-')}-${reportId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 

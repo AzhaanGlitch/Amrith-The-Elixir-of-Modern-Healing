@@ -180,38 +180,35 @@ export default function HomePage() {
             <p className="text-text-muted text-xl">Follow these simple steps to get your AI-powered health analysis</p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start mb-24">
-            {/* Left side: Steps */}
-            <div>
-              <h3 className="text-2xl font-heading font-bold text-text mb-6">Steps</h3>
-              <div className="flex flex-col gap-3">
-                {[
-                  'Visit the website',
-                  'Search or choose which disease you want to check',
-                  'Login as patient to proceed further',
-                  'Give some basic answers of the questions asked on symptoms',
-                  'Upload your respected data in the form of images or reports',
-                  'Wait for our trained ml model to analyze',
-                  'Get your results in few miniutes',
-                  'If you logged in as a doctor, monitor all your patients and deal accordingly with our doctors dashboard'
-                ].map((stepText, i) => (
-                  <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-border-light rounded-md p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-                    <span className="font-heading font-black text-primary/40 text-xl w-6 shrink-0">{i + 1}.</span>
-                    <p className="text-text-secondary text-sm font-medium">{stepText}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Centered Video Element */}
+          <div className="w-full max-w-6xl mx-auto aspect-video bg-black rounded-xl border border-border shadow-2xl overflow-hidden mb-16">
+            <video 
+              src="/amrith_demo_video.mp4" 
+              controls 
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          </div>
 
-            {/* Right side: Video placeholder */}
-            <div className="w-full aspect-video bg-black/5 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center text-text-muted relative overflow-hidden group">
-              <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                 <div className="w-16 h-16 rounded-md bg-primary flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                   <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-white ml-1"></div>
-                 </div>
-              </div>
-              <p className="font-semibold text-lg z-10 group-hover:opacity-0 transition-opacity">Video Demo Area</p>
-              <p className="text-sm z-10 group-hover:opacity-0 transition-opacity">(Video will be added here later)</p>
+          {/* Steps section beneath the video */}
+          <div className="max-w-5xl mx-auto mb-24">
+            <h3 className="text-2xl font-heading font-bold text-text mb-6 text-center">Steps</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                'Visit the website',
+                'Search or choose which disease you want to check',
+                'Login as patient to proceed further',
+                'Give some basic answers of the questions asked on symptoms',
+                'Upload your respected data in the form of images or reports',
+                'Wait for our trained ml model to analyze',
+                'Get your results in few miniutes',
+                'If you logged in as a doctor, monitor all your patients and deal accordingly with our doctors dashboard'
+              ].map((stepText, i) => (
+                <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-border-light rounded-md p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+                  <span className="font-heading font-black text-primary/40 text-xl w-6 shrink-0">{i + 1}.</span>
+                  <p className="text-text-secondary text-sm font-medium">{stepText}</p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -228,7 +225,7 @@ export default function HomePage() {
             </div>
 
             {/* Right side: PDF display */}
-            <div className="w-full h-[900px] bg-white rounded-xl border border-border shadow-xl overflow-hidden relative">
+            <div className="w-full h-[600px] bg-white rounded-none border border-border shadow-xl overflow-hidden relative">
               <div className="w-full h-full bg-slate-100">
                 <object 
                   data="/amrith_report.pdf#toolbar=0&navpanes=0&scrollbar=0" 

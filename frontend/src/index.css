@@ -1,3 +1,4 @@
+@import url('https://fonts.cdnfonts.com/css/google-sans');
 @import "tailwindcss";
 
 @theme {
@@ -21,8 +22,8 @@
   --color-error: #E53E3E;
   --color-warning: #ED8936;
 
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Product Sans', sans-serif;
+  --font-body: 'Product Sans', sans-serif;
 
   --shadow-card: 0 1px 3px rgba(126, 87, 194, 0.06), 0 4px 12px rgba(126, 87, 194, 0.04);
   --shadow-card-hover: 0 4px 12px rgba(126, 87, 194, 0.1), 0 8px 24px rgba(126, 87, 194, 0.06);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Card, Badge } from '../components/ui';
@@ -7,8 +7,11 @@ import { useLanguage } from '../context/LanguageContext';
 import {
   HeartPulse, Scan, Microscope, Activity, Star, Send, Shield, Zap, Award, CheckCircle2,
   Bone, Eye, Brain, TestTubes, Search, UserCheck, Stethoscope, ArrowRight, Home,
-  Wind, Sparkles, Upload, FileText, ClipboardList
+  Wind, Sparkles, Upload, FileText, ClipboardList, Trash2
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { API_URL } from '../config';
 import NewsSection from '../components/NewsSection';
 
 const iconMap = { HeartPulse, Scan, Microscope, Activity, Bone, Eye, Brain, Stethoscope, Wind, Sparkles };
@@ -30,19 +33,119 @@ const departmentColors = {
 export default function HomePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const { addToast } = useToast();
 
-  // Reviews state (frontend only)
   const [reviews, setReviews] = useState([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [newReview, setNewReview] = useState({ name: '', rating: 5, comment: '' });
   const [hoverRating, setHoverRating] = useState(0);
 
-  const submitReview = (e) => {
-    e.preventDefault();
-    if (!newReview.name || !newReview.comment) return;
+  // Autofill name if user is logged in
+  useEffect(() => {
+    if (user && user.name) {
+      setNewReview(prev => ({ ...prev, name: user.name }));
+    }
+  }, [user]);
 
-    setReviews([{ ...newReview, id: Date.now(), date: new Date().toLocaleDateString() }, ...reviews]);
-    setNewReview({ name: '', rating: 5, comment: '' });
+  const fetchReviews = useCallback(async () => {
+    setIsLoadingReviews(true);
+    try {
+      const response = await fetch(`${API_URL}/reviews`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.reviews || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch reviews:', error);
+    } finally {
+      setIsLoadingReviews(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  const submitReview = async (e) => {
+    e.preventDefault();
+    if (!newReview.name || !newReview.comment) {
+      addToast('Please fill out all fields.', 'error');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_URL}/reviews`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          name: newReview.name,
+          rating: newReview.rating,
+          comment: newReview.comment
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        addToast('Feedback submitted successfully! Thank you.', 'success');
+        setReviews(prev => [data.review, ...prev]);
+        setNewReview(prev => ({ name: user?.name || '', rating: 5, comment: '' }));
+      } else {
+        addToast(data.error || 'Failed to submit review.', 'error');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      addToast('An error occurred. Please try again.', 'error');
+    }
   };
+
+  const deleteReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      if (!token) {
+        addToast('You must be logged in to delete a review.', 'error');
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        addToast('Review deleted successfully.', 'success');
+        setReviews(prev => prev.filter(r => r._id !== reviewId));
+      } else {
+        addToast(data.error || 'Failed to delete review.', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      addToast('An error occurred. Please try again.', 'error');
+    }
+  };
+
+  // Only display the top 5-6 reviews based on highest rating, then newest first
+  const displayedReviews = [...reviews]
+    .sort((a, b) => {
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating;
+      }
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    })
+    .slice(0, 6);
 
   return (
     <div className="overflow-hidden bg-background">
@@ -359,7 +462,11 @@ export default function HomePage() {
 
             {/* Display Reviews */}
             <div className="md:col-span-7 flex flex-col gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              {reviews.length === 0 ? (
+              {isLoadingReviews ? (
+                <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-background rounded-3xl border border-dashed border-border-light">
+                  <p className="text-text-muted">Loading reviews...</p>
+                </div>
+              ) : displayedReviews.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-background rounded-3xl border border-dashed border-border-light">
                   <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
                     <Send className="w-8 h-8 text-border-dark" />
@@ -369,9 +476,9 @@ export default function HomePage() {
                 </div>
               ) : (
                 <AnimatePresence>
-                  {reviews.map((review) => (
+                  {displayedReviews.map((review) => (
                     <motion.div
-                      key={review.id}
+                      key={review._id || review.id}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       className="bg-white p-6 rounded-2xl shadow-sm border border-border-light flex gap-5"
@@ -382,7 +489,20 @@ export default function HomePage() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <h4 className="font-bold text-text text-lg">{review.name}</h4>
-                          <span className="text-xs text-text-muted font-medium">{review.date}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs text-text-muted font-medium">
+                              {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : (review.date || '')}
+                            </span>
+                            {user && (review.userId === user._id || user.role === 'admin') && (
+                              <button 
+                                onClick={() => deleteReview(review._id || review.id)}
+                                className="text-text-muted hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+                                title="Delete Review"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <div className="flex gap-1 mb-3">
                           {Array.from({ length: 5 }).map((_, i) => (

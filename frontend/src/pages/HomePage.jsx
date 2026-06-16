@@ -184,7 +184,10 @@ export default function HomePage() {
           <div className="w-full max-w-6xl mx-auto aspect-video bg-black rounded-xl border border-border shadow-2xl overflow-hidden mb-16">
             <video 
               src="/amrith_demo_video.mp4" 
-              controls 
+              autoPlay
+              loop
+              muted
+              playsInline
               preload="metadata"
               className="w-full h-full object-cover"
             />

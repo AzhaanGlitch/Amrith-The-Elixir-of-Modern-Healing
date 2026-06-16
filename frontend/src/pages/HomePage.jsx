@@ -61,7 +61,7 @@ export default function HomePage() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="font-heading font-black leading-tight mb-8"
             >
-              <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] drop-shadow-lg leading-none">{t('home.heroTitle')}</span>
+              <span className="block text-6xl sm:text-8xl lg:text-[9.5rem] mb-4 uppercase tracking-[0.1em] text-[#b085f5] leading-none" style={{ textShadow: '0 0 20px #ffffff, 0 0 35px rgba(255,255,255,0.8), 0 0 50px rgba(176,133,245,0.8)' }}>{t('home.heroTitle')}</span>
               <span className="block text-xl sm:text-2xl lg:text-[1.6rem] text-[#5b3b98] font-bold tracking-widest pl-2">
                 {t('home.heroSubtitle')}
               </span>

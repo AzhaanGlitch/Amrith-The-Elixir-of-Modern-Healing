@@ -1,59 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Badge, Button, SearchBar } from '../../components/ui';
+import { useToast } from '../../context/ToastContext';
 import { FileText, Download, Share2, Eye, Sparkles, Loader2 } from 'lucide-react';
 import { API_URL } from '../../config';
-import { FileText, Download, Share2, Eye, Sparkles } from 'lucide-react';
-
-import { useToast } from '../../context/ToastContext';
 
 export default function ReportsPage() {
   const [search, setSearch] = useState('');
-  const { addToast } = useToast();
-
-  const handleViewReport = async (reportId) => {
-    try {
-      const token = localStorage.getItem('amrith_token');
-      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error('Failed to load report');
-      const htmlText = await response.text();
-      const newTab = window.open();
-      if (newTab) {
-        newTab.document.open();
-        newTab.document.write(htmlText);
-        newTab.document.close();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleDownloadReport = async (reportId, testName) => {
-    try {
-      const token = localStorage.getItem('amrith_token');
-      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error('Download failed');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `amrith-report-${testName.toLowerCase().replace(/\\s+/g, '-')}-${reportId}.html`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToast } = useToast();
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -69,7 +25,7 @@ export default function ReportsPage() {
           setReports(data.reports);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load reports:', err);
       } finally {
         setLoading(false);
       }
@@ -77,7 +33,81 @@ export default function ReportsPage() {
     fetchReports();
   }, []);
 
+  const handleViewReport = async (reportId) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to load report');
+      const htmlText = await response.text();
+      const newTab = window.open();
+      if (newTab) {
+        newTab.document.open();
+        newTab.document.write(htmlText);
+        newTab.document.close();
+      }
+    } catch (err) {
+      console.error('Error viewing report:', err);
+      addToast('Failed to load report preview.', 'error');
+    }
+  };
+
+  const handleDownloadReport = async (reportId, testName) => {
+    try {
+      const token = localStorage.getItem('amrith_token');
+      const response = await fetch(`${API_URL}/reports/${reportId}/download`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `amrith-report-${testName.toLowerCase().replace(/\\s+/g, '-')}-${reportId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      addToast('Report downloaded successfully.', 'success');
+    } catch (err) {
+      console.error('Error downloading report:', err);
+      addToast('Failed to download report.', 'error');
+    }
+  };
+
+  const handleShareReport = (reportId) => {
+    const shareUrl = `${window.location.origin}/reports/${reportId}`;
+    navigator.clipboard.writeText(shareUrl);
+    addToast('Report share link copied to clipboard!', 'success');
+  };
+
   const filtered = reports.filter(r => r.testName.toLowerCase().includes(search.toLowerCase()));
+
+  const mappedReports = filtered.map(rep => {
+    const isNormal = (rep.doctorReview?.reviewed ? rep.doctorReview.severity === 'normal' : rep.aiAnalysis?.riskLevel === 'Low');
+    return {
+      id: rep._id,
+      testName: rep.testName,
+      date: new Date(rep.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+      doctor: rep.doctor?.name ? `Dr. ${rep.doctor.name}` : 'AI Specialist',
+      status: isNormal ? 'normal' : 'attention',
+      summary: rep.aiAnalysis?.prediction || 'Diagnostic screening successfully processed. Full insights are generated.',
+    };
+  });
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+        <p className="text-text-muted text-sm font-semibold">Loading your reports...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -87,7 +117,7 @@ export default function ReportsPage() {
       </div>
 
       <div className="space-y-4">
-        {filtered.map((report, i) => (
+        {mappedReports.map((report, i) => (
           <motion.div
             key={report.id}
             initial={{ opacity: 0, y: 10 }}
@@ -122,13 +152,13 @@ export default function ReportsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-3 mt-4">
-                    <Button size="sm" variant="primary">
+                    <Button size="sm" variant="primary" onClick={() => handleViewReport(report.id)}>
                       <Eye className="w-4 h-4" /> View Full Report
                     </Button>
-                    <Button size="sm" variant="outline">
-                      <Download className="w-4 h-4" /> Download PDF
+                    <Button size="sm" variant="outline" onClick={() => handleDownloadReport(report.id, report.testName)}>
+                      <Download className="w-4 h-4" /> Download Report
                     </Button>
-                    <Button size="sm" variant="ghost">
+                    <Button size="sm" variant="ghost" onClick={() => handleShareReport(report.id)}>
                       <Share2 className="w-4 h-4" /> Share
                     </Button>
                   </div>
@@ -138,7 +168,7 @@ export default function ReportsPage() {
           </motion.div>
         ))}
 
-        {filtered.length === 0 && (
+        {mappedReports.length === 0 && (
           <div className="text-center py-16">
             <FileText className="w-16 h-16 text-text-muted/30 mx-auto mb-4" />
             <p className="text-text-muted">No reports found.</p>

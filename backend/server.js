@@ -16,6 +16,7 @@ import contactRoutes from './routes/contact.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import mlRoutes from './routes/ml.routes.js';
 import userRoutes from './routes/user.routes.js';
+import reviewRoutes from './routes/review.routes.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
 
 dotenv.config();
@@ -79,6 +80,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ml', mlRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // ─── Health Check ────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
